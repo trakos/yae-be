@@ -1,0 +1,58 @@
+h1
+{
+	font-size:		0;
+	background:		url(images/logo.png);
+	width:			547px;
+	height:			221px;
+	display:		block;
+	border:			none;
+}
+
+#menu
+{
+	background:		url(images/search.jpg) no-repeat left;
+	height:			50px;
+	padding-left:	250px;
+}
+
+	#menu a, #menu a.first
+	{
+		border:			none;
+		border-bottom:	1px dotted #000000;
+		background:		none;
+		color:			#000000;
+		font-weight:	none;
+		padding:		0 0 0 0;
+		margin:			20px 15px 20px 15px;
+		display:		block;
+		float:			left;
+		text-transform: uppercase; 
+	}
+	
+	#menu a.first:after
+	{
+		content:		' FOR PLAYERS/SERVER';
+	}
+	
+	#menu a.selected
+	{
+		background:		#efefef;
+	}
+	
+table
+{
+	opacity:	0.8;
+}
+
+	
+#content
+{
+	background:		url(images/yaebg.jpg);
+}
+
+#footer
+{
+	color:			#000000;
+	border-color:	#000000;
+	opacity:		0.6;
+}
