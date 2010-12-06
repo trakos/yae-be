@@ -45,6 +45,32 @@ template std::wostream& operator <<(std::wostream& stream, std::vector<std::wstr
 std::vector<std::wstring> wsplit(std::wstring string, std::wstring character)
 {
 	std::vector<std::wstring> array;
-	boost::split(array, string, boost::is_any_of(character), boost::token_compress_on);
+	int found;
+	while ( (found=string.find_first_of(character)) != string.npos)
+	{
+		if(found!=0)
+		{
+			array.push_back(string.substr(0, found));
+		}
+		string = string.substr(found+1);
+	}
+	if (string.length() > 0)
+	{
+		array.push_back(string);
+	}
 	return array;
+}
+
+std::wstring rtrim(std::wstring string)
+{
+	int k = string.length();
+	while(k>=0)
+	{
+		if(string[k] == L' ')
+		{
+			string.erase(string.end()-1);
+		}
+		k--;
+	}
+	return string;
 }

@@ -7,11 +7,13 @@
 
 #include <Windows.h>
 #include <ETClient/Console.h>
+#include <Logger/Logger.h>
 
 ETClientConsole ETClientConsole::instance = ETClientConsole();
 
 void ETClientConsole::toggleWindow(bool show)
 {
+	LOG("ETClientConsole","toggleWindow","",LSDBG);
 	this->showWindow = show;
 	if(this->isConsoleAttached())
 	{
@@ -22,12 +24,14 @@ void ETClientConsole::toggleWindow(bool show)
 
 bool ETClientConsole::attachConsole()
 {
+	LOG("ETClientConsole","attachConsole","",LSDBG);
 	this->hConWin = FindWindowEx(NULL, NULL, NULL, "ET Console");
 	if(this->hConWin == NULL)
 	{
 		this->hWriteCmd = NULL;
 		this->hReadCmd = NULL;
 		this->processId = 0;
+		LOG("ETClientConsole","attachConsole","not found",LDBG);
 		return false;
 	}
 	ShowWindow(this->hConWin,this->showWindow?SW_SHOW:SW_HIDE);
@@ -36,20 +40,24 @@ bool ETClientConsole::attachConsole()
 	if( this->hWriteCmd == NULL || this->hReadCmd == NULL )
 	{
 		this->processId = 0;
+		LOG("ETClientConsole","attachConsole","found window, but no write or read cmd!",LERR);
 		return false;
 	}
 	this->processId = GetWindowThreadProcessId( this->hConWin, NULL );
+	LOG("ETClientConsole","attachConsole"," done, all ok",LDBG);
 	return true;
 }
 
 ETClientConsole::ETClientConsole(): charConsolePointer(0),processId(0)
 {
+	LOG("ETClientConsole","ETClientConsole","",LSDBG);
 }
 
 bool ETClientConsole::sendMessage(std::wstring tekst)
 {
 	if (!this->isConsoleAttached())
 	{
+		LOG("ETClientConsole","sendMessage","console not attached...",LNOTE);
 		return false;
 	}
 	// save what's written now
@@ -58,6 +66,10 @@ bool ETClientConsole::sendMessage(std::wstring tekst)
 	SendMessageW(this->hWriteCmd, WM_GETTEXT , (WPARAM)(length+1), (LPARAM)buffer);
 	// send what we need to send
 	bool success = SendMessageW( this->hWriteCmd, WM_SETTEXT, (WPARAM)NULL, (LPARAM)tekst.c_str());
+	if(!success)
+	{
+		LOG("ETClientConsole","sendMessage","found window, but no write or read boxes!",LERR);
+	}
 	SendMessageW( this->hWriteCmd, WM_CHAR, 13, 1);
 	// restore what was written before
 	SendMessageW( this->hWriteCmd, WM_SETTEXT, (WPARAM)NULL, (LPARAM)buffer);
@@ -72,6 +84,7 @@ std::wstring ETClientConsole::getLastLine()
 	const wchar_t* charPointer = L"";
 	if (!this->isConsoleAttached())
 	{
+		LOG("ETClientConsole","getLastLine","console not attached...",LNOTE);
 		return (std::wstring)charPointer;
 	}
 	int length = (int)SendMessageW(this->hReadCmd, WM_GETTEXTLENGTH, (WPARAM)NULL, (LPARAM)NULL);
@@ -107,6 +120,7 @@ std::wstring ETClientConsole::getLastLine()
 
 void ETClientConsole::moveToTheEnd()
 {
+	LOG("ETClientConsole","moveToTheEnd","",LNOTE);
 	// get messages until there will be 4 empty rows one after another
 	// (AFAIK there can only be one-two empty row between the normal output)
 	while(this->getLastLine() != L"" || this->getLastLine() != L"" || this->getLastLine() != L"" || this->getLastLine() != L"");
@@ -114,11 +128,13 @@ void ETClientConsole::moveToTheEnd()
 
 bool ETClientConsole::isConsoleAttached()
 {
-	if (this->processId && IsWindow(this->hConWin) &&
-			GetWindowThreadProcessId(this->hConWin,NULL) == GetWindowThreadProcessId(this->hReadCmd,NULL)
-			== GetWindowThreadProcessId(this->hWriteCmd,NULL) == this->processId)
+	if (this->processId && IsWindow(this->hConWin) && GetWindowThreadProcessId(this->hConWin,NULL) == this->processId && GetWindowThreadProcessId(this->hReadCmd,NULL) == this->processId && GetWindowThreadProcessId(this->hWriteCmd,NULL) == this->processId)
 	{
 		return true;
+	}
+	else if (this->processId && IsWindow(this->hConWin))
+	{
+		LOG("ETClientConsole","isConsoleAttached",(std::string)"Process does exist, but windows seem to be having wrong pid: "+this->processId+", "+GetWindowThreadProcessId(this->hConWin,NULL)+", "+GetWindowThreadProcessId(this->hReadCmd,NULL)+", "+GetWindowThreadProcessId(this->hWriteCmd,NULL),LNOTE);
 	}
 	return this->attachConsole();
 }

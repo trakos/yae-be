@@ -13,6 +13,8 @@
 #include <ETClient/Console.h>
 #include <ETClient/Input.h>
 #include <ETClient/Listener.h>
+#include <ETClient/Info.h>
+#include <Logger/Logger.h>
 
 using std::wstring;
 using std::wcout;
@@ -24,10 +26,11 @@ typedef std::vector< std::vector < wstring > > array2D;
 
 int main()
 {
+	LOG.couting = LSDBG;
+	LOG("","main","",LSDBG);
 	ETClientConsole::getInstance().toggleWindow(true);
 	ETClientConsole::getInstance().moveToTheEnd();
-	ETClientConsole::getInstance().sendMessage(L"players");
-
+	ETClientStatus status = ETClientInfo::getInstance().getStatus();
 	return 0;
 	while(1)
 	{
