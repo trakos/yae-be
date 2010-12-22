@@ -6,8 +6,24 @@
  */
 
 #include <utils.h>
-/*
 #include <indent.h>
+#include <iomanip>
+
+template<typename T> std::ostream& operator <<(std::ostream& stream, std::map<std::string, T> const &map)
+{
+	typedef typename std::map<std::string, T>::const_iterator mapIterator;
+	stream << "Map()" << std::endl;
+	stream << "{" << std::endl;
+	mapIterator end = map.end();
+	for ( mapIterator it = map.begin(); it != end; ++it)
+	{
+		stream << "\t" << std::setw(20) << std::left << "["+it->first+"]" << " " << "=>" << "\t" << indent
+				<< it->second << std::endl << unindent;
+	}
+	stream << "}";
+	return stream;
+}
+
 template<typename T> std::ostream& operator <<(std::ostream& stream, std::vector<T> &vector)
 {
 	stream << "Vector()" << std::endl;
@@ -20,7 +36,7 @@ template<typename T> std::ostream& operator <<(std::ostream& stream, std::vector
 	}
 	stream << "}";
 	return stream;
-}*/
+}
 
 template<typename T> std::wostream& operator <<(std::wostream& stream, std::vector<T> &vector)
 {
@@ -35,6 +51,10 @@ template<typename T> std::wostream& operator <<(std::wostream& stream, std::vect
 	return stream;
 }
 
+template std::ostream& operator <<(std::ostream& stream, std::map<std::string, int> const &map);
+template std::ostream& operator <<(std::ostream& stream, std::map<std::string, std::string> const &map);
+template std::ostream& operator <<(std::ostream& stream, std::vector<int> &vector);
+template std::ostream& operator <<(std::ostream& stream, std::vector<std::string> &vector);
 template std::wostream& operator <<(std::wostream& stream, std::vector<std::wstring> &vector);
 
 #include <boost/algorithm/string.hpp>

@@ -6,7 +6,7 @@ INCFLAGS=-IK:\\Program\ Files\\Boost-1.41.0\\include\\boost-1_41\\ -I.
 CFLAGS=-std=c++0x -g -Wl,--enable-auto-import
 TARGETS=$(D_B)/Logger.dll $(D_B)/etclient.exe
 
-all: $(TARGETS)
+all: $(TARGETS) 
 
 clean:
 	$(RM) $(TARGETS)
@@ -15,7 +15,7 @@ clean:
 $(D_B)/Logger.dll: _force_
 	cd Logger && make all
 
-$(D_B)/etclient.exe: main.cpp $(D_O)/ETClientConsole.o $(D_O)/ETClientInput.o $(D_O)/ETClientListener.o $(D_O)/ETClientInfo.o $(D_O)/utils.o $(D_O)/indent.o $(D_O)/WindowAuthDialog.o
+$(D_B)/etclient.exe: main.cpp $(D_O)/ETClientConsole.o $(D_O)/ETClientInput.o $(D_O)/ETClientListener.o $(D_O)/ETClientInfo.o $(D_O)/utils.o $(D_O)/indent.o $(D_O)/WindowAuthDialog.o $(D_O)/TNetServer.o $(D_O)/TNetConnection.o $(D_O)/TNetClient.o $(D_O)/TNetMessage.o
 	$(CXX) $(CFLAGS) $(INCFLAGS) $< $(filter %.o,$^) $(LIBFLAGS) -o $@ 
 
 $(D_O)/utils.o: utils.cpp utils.h
@@ -37,6 +37,18 @@ $(D_O)/ETClientListener.o: ETClient/Listener.cpp ETClient/Listener.h
 	$(CXX) $(CFLAGS) $(INCFLAGS) $< -c -o $@
 	
 $(D_O)/ETClientInfo.o: ETClient/Info.cpp ETClient/Info.h
+	$(CXX) $(CFLAGS) $(INCFLAGS) $< -c -o $@
+	
+$(D_O)/TNetServer.o: Tnet/Server.cpp Tnet/Server.h
+	$(CXX) $(CFLAGS) $(INCFLAGS) $< -c -o $@
+	
+$(D_O)/TNetClient.o: Tnet/Client.cpp Tnet/Client.h
+	$(CXX) $(CFLAGS) $(INCFLAGS) $< -c -o $@
+	
+$(D_O)/TNetConnection.o: Tnet/Connection.cpp Tnet/Connection.h
+	$(CXX) $(CFLAGS) $(INCFLAGS) $< -c -o $@	
+	
+$(D_O)/TNetMessage.o: Tnet/Message.cpp Tnet/Message.h
 	$(CXX) $(CFLAGS) $(INCFLAGS) $< -c -o $@
 	
 _force_:
