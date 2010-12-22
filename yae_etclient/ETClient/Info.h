@@ -22,9 +22,12 @@ struct ETServer
 	unsigned int port;
 	std::wstring mod;
 	std::wstring password;
+	std::wstring map;
 	bool etpro;
 	bool punkbuster;
 	bool slac;
+	short int gametype;
+	short int maxClients;
 };
 
 struct ETPlayer
@@ -54,12 +57,14 @@ class ETClientInfo
 		static ETClientInfo instance;
 		std::wstring localPlayerName();
 		ETServer serverInfo();
-		ETPlayers playersInfo();
+		ETPlayers playersInfo(bool& success,bool& online,bool& slac,bool& etpro,bool& pb);
 	public:
 		static ETClientInfo& getInstance();
 		int waitingForETCommandTime;
+		int pauseAfterCommand;
 		ETClientStatus getStatus();
 		bool isPlaying();
+		std::wstring getVariableValue(std::wstring name, bool& success);
 };
 
 #endif /* ET_CLIENT_INFO_H_ */

@@ -2,6 +2,7 @@
 #define _LOGGER_H_
 #include <string>
 #include <iomanip>
+#include <cstdio>
 
 #include "Filelogger.h"
 #include "BufferLogger.h"
@@ -13,11 +14,12 @@ class Logger
 {
    public:
 	//Logger( std::string file, std::string dir="/var/log" ): warnings(0), errors(0), criticals(0), bufflog(), filelog( file, dir ), logging(WARNING), buffering(DEBUG), couting(DISABLE) {};
-	void operator() ( std::string classname, std::string function, std::string msg, logger_priority prior);
-	void operator() ( std::string classname, std::string function, std::wstring msg, logger_priority prior);
+	void operator() ( std::string msg, logger_priority prior);
+	void operator() ( std::wstring msg, logger_priority prior);
 	bool setfile ( std::string file, std::string dir="/var/log" ) { return filelog.setfile( file, dir ); };
 	Logger& operator>> ( std::string &str );
 	static Logger& getInstance();
+	static Logger& getInstance(std::string filename, unsigned int line, std::string function);
 	logger_priority buffering;
 	logger_priority logging;
 	logger_priority couting;
@@ -29,9 +31,12 @@ class Logger
 	int criticals;
 	BufferLogger bufflog;
 	FileLogger filelog;
+	std::string instanceInvokeFilename;
+	unsigned long instanceInvokeLine;
+	std::string instanceInvokeFunction;
 };
 
-#define LOG Logger::getInstance()
+#define LOG Logger::getInstance(__FILE__, __LINE__, __PRETTY_FUNCTION__)
 #define LDIS LOG_DISABLE
 #define LCRIT LOG_CRITICAL
 #define LERR LOG_ERROR

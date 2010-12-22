@@ -2,7 +2,7 @@ D_O = ../build/obj
 D_B = ../build/bin
 OBJS=$(patsubst %.cpp,$(D_O)/%.o,$(wildcard *.cpp))
 LIB=Logger
-CFLAGS=-g -Wl,--enable-auto-import
+CFLAGS=-g -Wl,--enable-auto-import -D debug
 
 
 all: $(D_B)/${LIB}.dll

@@ -38,21 +38,28 @@ template<typename T> std::wostream& operator <<(std::wostream& stream, std::vect
 template std::wostream& operator <<(std::wostream& stream, std::vector<std::wstring> &vector);
 
 #include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/trim.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <vector>
 #include <string>
 
-std::vector<std::wstring> wsplit(std::wstring string, std::wstring character)
+std::vector<std::wstring> wsplit(std::wstring string, std::wstring character, int limit)
 {
 	std::vector<std::wstring> array;
 	int found;
+	int k = 0;
 	while ( (found=string.find_first_of(character)) != string.npos)
 	{
 		if(found!=0)
 		{
 			array.push_back(string.substr(0, found));
+			k++;
 		}
 		string = string.substr(found+1);
+		if(limit && k==limit)
+		{
+			break;
+		}
 	}
 	if (string.length() > 0)
 	{
@@ -63,14 +70,14 @@ std::vector<std::wstring> wsplit(std::wstring string, std::wstring character)
 
 std::wstring rtrim(std::wstring string)
 {
-	int k = string.length();
-	while(k>=0)
-	{
-		if(string[k] == L' ')
-		{
-			string.erase(string.end()-1);
-		}
-		k--;
-	}
+	boost::algorithm::trim_right(string);
 	return string;
+}
+
+std::string wtoa(std::wstring string)
+{
+	const wchar_t* wstr = string.c_str();
+	char* ascii = new char[wcslen(wstr) + 1];
+	wcstombs( ascii, wstr, wcslen(wstr) );
+	return ascii;
 }

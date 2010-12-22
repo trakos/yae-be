@@ -14,7 +14,9 @@
 #include <ETClient/Input.h>
 #include <ETClient/Listener.h>
 #include <ETClient/Info.h>
+#include <Window/AuthDialog.h>
 #include <Logger/Logger.h>
+#include <windows.h>
 
 using std::wstring;
 using std::wcout;
@@ -23,11 +25,18 @@ using std::endl;
 typedef std::vector< wstring > array;
 typedef std::vector< std::vector < wstring > > array2D;
 
-
 int main()
 {
+	WindowAuthDialogReturn data = WindowAuthDialog::getInstance().ask();
+	wcout << data.success << "\t" << data.login << " " << data.password << endl;
+	//showWindow();
+	//MessageBox(NULL, "Goodbye, cruel world!", "Note", MB_OK);
+	return 0;
 	LOG.couting = LSDBG;
-	LOG("","main","",LSDBG);
+	LOG("",LSDBG);
+	int k = MessageBox(NULL, "Za mało pamięci RAM", "My application", MB_OKCANCEL | MB_DEFBUTTON2 | MB_ICONWARNING | MB_SYSTEMMODAL);
+	wcout << k << endl;
+	return 0;
 	ETClientConsole::getInstance().toggleWindow(true);
 	ETClientConsole::getInstance().moveToTheEnd();
 	ETClientStatus status = ETClientInfo::getInstance().getStatus();
