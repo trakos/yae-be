@@ -31,6 +31,7 @@ typedef std::vector< std::vector < string > > array2D;
 
 int main()
 {
+	//
 	IndentFacet::initialize();
 	Tnet_Server* server = new Tnet_Server(27960);
 	Tnet_Client* client = new Tnet_Client("127.0.0.1", 27960);
