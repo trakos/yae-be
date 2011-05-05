@@ -3,6 +3,12 @@
 	(
 		array
 		(
+			'title' => "YAE alive!",
+			'date'	=> "05.05.2011",
+			'text'	=> "<p>After a half a year of downtime (without few days) YAE comes back. For now it does it without core features: registration and update. However, the search within past results works fine.</p><p>Time will show whether it came back it in vain.</p>"
+		),
+		array
+		(
 			'title'	=> "YAE down!",
 			'date'	=> "16.11.2010",
 			'text'	=> "<p>Due to a problems with crossfire and registering accounts, today yae is being closed. Sorry!</p>"

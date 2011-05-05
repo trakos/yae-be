@@ -8,7 +8,7 @@
 		<body>
 		<!-- Piwik -->
 		<script type="text/javascript">
-		var pkBaseURL = (("https:" == document.location.protocol) ? "https://trakos.pl/piwik/" : "http://trakos.pl/piwik/");
+		var pkBaseURL = (("https:" == document.location.protocol) ? "https://piwik.s2.trakos.pl/" : "http://piwik.s2.trakos.pl/");
 		document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
 		</script><script type="text/javascript">
 		try {
@@ -16,10 +16,10 @@
 		piwikTracker.trackPageView();
 		piwikTracker.enableLinkTracking();
 		} catch( err ) {}
-		</script><noscript><p><img src="http://trakos.pl/piwik/piwik.php?idsite=2" style="border:0" alt=""/></p></noscript>
+		</script><noscript><p><img src="http://piwik.s2.trakos.pl/piwik.php?idsite=2" style="border:0" alt="" /></p></noscript>
+		<!-- End Piwik Tracking Code -->
 		</body>
 		</html>
-		<!-- End Piwik Tag -->
 	<?php
 		die('yae project is currently suspended, due to lack of interest - in case you think it\'s needed, contact <a href="http://www.crossfire.nu/?x=user&mode=view&id=13943">trakos</a>');
 	}
@@ -58,6 +58,7 @@
 <meta http-equiv="Description" content="YAE - you are exposed - yawn replacement for enemy territory - pbguid/etproguid/ip/nick matcher" />
 <meta http-equiv="Keywords" content="et, enemy territory, yae, you are exposed, crossfire, yawn, wolfenstein, rtcw, return to castle wolfenstein, pbguid, ip, matches, anticheat, cheaters, trakos" />
 <meta http-equiv="Robots" content="all" />
+<meta name="google-site-verification" content="CUFrM0HOx5Zh6Hd_KCcKXGVGeBmQI8QguMfbp62NWPs" />
 <title>You Are Exposed - <?php echo $pages[$action]; ?></title>
 <link rel="stylesheet" href="style.css" type="text/css" />
 <?php
@@ -79,9 +80,9 @@
 <link rel="stylesheet" href="/cf/js/extjs/themes/default/css/ext-all.css" />
 <link rel="stylesheet" href="/cf/account/account.css" />
 <?php
-	require('../../cf/lib/JavascriptIncluder.php');
+	require('classes/JavascriptIncluder.php');
 	$js = new JavascriptIncluder;
-	$js->addFile("js/extjs/ext-base.js");
+	/*$js->addFile("js/extjs/ext-base.js");
 	$js->addFile("js/extjs/ext-all-debug.js");
 	$js->output(true);
 	$js->addFile("js/tjs/sgif.js");
@@ -98,10 +99,10 @@
 	$js->addFile("account/step4.js");
 	$js->addFile("account/step5.js");
 	$js->addFile("account/registerWizard.js");
-	$js->output();
+	$js->output();*/
 ?>
 	<script type="text/javascript">
-		Ext.onReady(function()
+		/*Ext.onReady(function()
 		{
 			var registerWindow = new Ext.Window(
 			{
@@ -129,24 +130,23 @@
 				registerWindow.hide();
 			};
 			registerWizard.cancelRegistration = registerWizard.finishRegistration;
-		});
+		});*/
 	</script>
 <!-- Piwik -->
 <script type="text/javascript">
-	var pkBaseURL = (("https:" == document.location.protocol) ? "https://trakos.pl/piwik/" : "http://trakos.pl/piwik/");
-	document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+var pkBaseURL = (("https:" == document.location.protocol) ? "https://piwik.s2.trakos.pl/" : "http://piwik.s2.trakos.pl/");
+document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script type="text/javascript">
+try {
+var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 2);
+piwikTracker.trackPageView();
+piwikTracker.enableLinkTracking();
+} catch( err ) {}
 </script>
-<script type="text/javascript">
-	try {
-	var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 2);
-	piwikTracker.trackPageView();
-	piwikTracker.enableLinkTracking();
-	} catch( err ) {}
-</script>
-<!-- End Piwik Tag -->
+<!-- End Piwik Tracking Code -->
 </head>
 <body>
-<noscript><p><img src="http://trakos.pl/piwik/piwik.php?idsite=2" style="border:0" alt=""/></p></noscript>
+<noscript><p><img src="http://piwik.s2.trakos.pl/piwik.php?idsite=2" style="border:0" alt="" /></p></noscript>
 <a href="index.php"><h1 class="top">YAE - you are exposed</h1></a>
 <div id="menu-l"><div id="menu-r"><div id="menu">
 <?php

@@ -1,5 +1,5 @@
 <?php
-echo '<p>No javascript enabled?</p>';
+echo '<p>Registration temporarily disabled.</p>';
 return;
 function form($form_elements, $title, $button, $hidden='' )
 {
