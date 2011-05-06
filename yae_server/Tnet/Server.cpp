@@ -13,6 +13,7 @@
 #else
 	#include <windows.h>
 	#include <winsock.h>
+	#define socklen_t int
 	#define EWOULDBLOCK WSAEWOULDBLOCK
 	#define getNetErrno() WSAGetLastError()
 #endif
