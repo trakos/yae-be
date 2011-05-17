@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <gmp.h> 
 #include <gmpxx.h>
 
@@ -39,7 +40,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 	const char* text = argv[1];
-        int encoded[strlen(text)+1];
+	int encoded[strlen(text)+1];
 	cipher( text, encoded );
 	int* texti = encoded;
 	while( *texti != 0 )

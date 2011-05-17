@@ -25,7 +25,7 @@ void* process_server( void *data )
 	server_name[0] = '\0';
 	int count = get_players_data(server, players, server_name);
 	save_players_data(server, players, count);
-	if( players)
+	if( players )
 	{
 		delete[] players; // count can be 0 and data is not allocated + error handlers already deletes it, thus 'if(players)' before deleting[]
 	}

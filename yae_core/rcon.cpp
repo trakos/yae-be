@@ -485,7 +485,7 @@ status_data* rconstatus( array<array<array<char> > > & result, int& players_coun
 		{
 			status_data& player = players[l-3];
 			array<array<char> > tmp;
-			// ping równy ZMBI oznacza jakis dziwny przypadek, ale ze wtedy i tak nie podany jest nick, to nie ma co trzymac takich danych, pomijamy
+			// ping rï¿½wny ZMBI oznacza jakis dziwny przypadek, ale ze wtedy i tak nie podany jest nick, to nie ma co trzymac takich danych, pomijamy
 			if( result[l][2][0] == 'Z' && result[l][2][1] == 'M' && result[l][2][2] == 'B' && result[l][2][3] == 'I')
 			{
 				result.unset(l);
@@ -814,6 +814,10 @@ int rcon( server_data* server, player_data* &players, int fails, char* server_na
 		if( slac_players ) delete[] slac_players;
 		if( pb_players )delete[] pb_players;
 		if( players ) delete[] players;
+		etpro_players = 0;
+		slac_players = 0;
+		pb_players = 0;
+		players = 0;
 		TrconArrayException ae = TrconArrayException(e,str);
 		ae.command = command;
 		ae.packet = str;
@@ -825,6 +829,10 @@ int rcon( server_data* server, player_data* &players, int fails, char* server_na
 		if( slac_players ) delete[] slac_players;
 		if( pb_players )delete[] pb_players;
 		if( players ) delete[] players;
+		etpro_players = 0;
+		slac_players = 0;
+		pb_players = 0;
+		players = 0;
 		printf("Exception caught and sent\n");
 		e.command = command;
 		e.packet = str;
@@ -836,6 +844,10 @@ int rcon( server_data* server, player_data* &players, int fails, char* server_na
 		if( slac_players ) delete[] slac_players;
 		if( pb_players )delete[] pb_players;
 		if( players ) delete[] players;
+		etpro_players = 0;
+		slac_players = 0;
+		pb_players = 0;
+		players = 0;
 		printf("Exception caught and sent\n");
 		e.command = command;
 		throw;
@@ -843,6 +855,9 @@ int rcon( server_data* server, player_data* &players, int fails, char* server_na
 	if( etpro_players ) delete[] etpro_players;
 	if( slac_players ) delete[] slac_players;
 	if( pb_players )delete[] pb_players;
+	etpro_players = 0;
+	slac_players = 0;
+	pb_players = 0;
 	for(int p=0;p<players_count;p++)
 	{
 		player_data& player = players[ p ];

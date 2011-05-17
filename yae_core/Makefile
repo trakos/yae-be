@@ -1,8 +1,9 @@
 D_O = build/obj
 D_B = build/bin
 
+CXX=gcc44
 DEPS_TLIB=tlib/array/array.cpp tlib/array/array.h
-LIBFLAGS=-lmysqlclient_r -lm -lgmpxx -lpthread
+LIBFLAGS=-lmysqlclient_r -lm -lgmpxx -lpthread -L/usr/lib64/mysql
 INCFLAGS=-Itlib
 CFLAGS=-g
 TARGETS=$(D_B)/yae $(D_B)/tmysql_example $(D_B)/testrcon $(D_B)/testip $(D_B)/enc $(D_B)/testerrors
