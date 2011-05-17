@@ -17,7 +17,9 @@ protected:
 	static ETClientInput instance;
 public:
 	static ETClientInput& getInstance();
-	bool shortMessage(std::wstring message,std::wstring nocolor=L"",std::wstring color=L"");
+	static char color;
+	bool shortMessageW(std::wstring message,std::wstring nocolor=L"",std::wstring color=L"");
+	bool shortMessage(std::string message,std::string nocolor="",std::string color="");
 	//bool multiLineMessage(std::wstring message);
 };
 

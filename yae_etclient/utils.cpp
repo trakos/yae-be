@@ -97,8 +97,9 @@ std::wstring rtrim(std::wstring string)
 std::string wtoa(std::wstring string)
 {
 	const wchar_t* wstr = string.c_str();
-	char* ascii = new char[wcslen(wstr) + 1];
-	wcstombs( ascii, wstr, wcslen(wstr) );
+	int stringLength = wcslen(wstr);
+	char* ascii = new char[stringLength + 1];
+	wcstombs( ascii, wstr, stringLength+1 );
 	return ascii;
 }
 

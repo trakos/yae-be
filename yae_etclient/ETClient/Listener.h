@@ -17,7 +17,8 @@ protected:
 	static ETClientListener instance;
 public:
 	static ETClientListener& getInstance();
-	std::wstring getCommand();
+	std::wstring getCommandW();
+	std::string getCommand();
 };
 
 #endif /* ET_CLIENT_LISTENER_H_ */

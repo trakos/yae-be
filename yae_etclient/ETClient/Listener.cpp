@@ -7,6 +7,7 @@
 
 #include <ETClient/Listener.h>
 #include <ETClient/Console.h>
+#include <utils.h>
 #include <string>
 
 ETClientListener ETClientListener::instance = ETClientListener();
@@ -18,7 +19,7 @@ ETClientListener& ETClientListener::getInstance()
 	return ETClientListener::instance;
 }
 
-std::wstring ETClientListener::getCommand()
+std::wstring ETClientListener::getCommandW()
 {
 	std::wstring lastLine = ETClientConsole::getInstance().getLastLine();
 	if (lastLine.empty())
@@ -26,7 +27,7 @@ std::wstring ETClientListener::getCommand()
 		return lastLine;
 	}
 	// find the special command - yae.
-	if (lastLine == L"[skipnotify]unknown cmd /yae" || lastLine == L"unknown cmd /yae")
+	if (lastLine == L"[skipnotify]unknown cmd /yae" || lastLine == L"[skipnotify]unknown cmd yae" || lastLine == L"unknown cmd /yae" || lastLine == L"unknown cmd yae" || lastLine == L"Unknown command \"/yae\"" || lastLine == L"Unknown command \"yae\"" || lastLine == L"[skipnotify]yae not allowed during intermission." || lastLine == L"[skipnotify]/yae not allowed during intermission." )
 	{
 		return L"yae";
 	}
@@ -59,4 +60,10 @@ std::wstring ETClientListener::getCommand()
 	std::wcout << lastLine << std::endl;
 	return L"";
 	 */
+}
+
+std::string ETClientListener::getCommand()
+{
+	std::wstring command = this->getCommandW();
+	return wtoa(command);
 }

@@ -8,18 +8,18 @@
 #include <Window/AuthDialog.h>
 #include <string>
 
-WindowAuthDialog WindowAuthDialog::instance = WindowAuthDialog();
+Window_AuthDialog Window_AuthDialog::instance = Window_AuthDialog();
 
-WindowAuthDialog::WindowAuthDialog(){}
+Window_AuthDialog::Window_AuthDialog(){}
 
-WindowAuthDialog& WindowAuthDialog::getInstance()
+Window_AuthDialog& Window_AuthDialog::getInstance()
 {
-	return WindowAuthDialog::instance;
+	return Window_AuthDialog::instance;
 }
 
-WindowAuthDialogReturn WindowAuthDialog::ask()
+Window_AuthDialogReturn Window_AuthDialog::ask(std::string title)
 {
-	WindowAuthDialogReturn returnData;
+	Window_AuthDialogReturn returnData;
 	returnData.success = false;
 	this->currentFocus = -1;
 	this->buttonClicked = false;
@@ -35,7 +35,7 @@ WindowAuthDialogReturn WindowAuthDialog::ask()
 	//Step 1: Registering the Window Class
 	wc.cbSize = sizeof(WNDCLASSEX);
 	wc.style = 0;
-	wc.lpfnWndProc = WindowAuthDialog::WndProc;
+	wc.lpfnWndProc = Window_AuthDialog::WndProc;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 	wc.hInstance = hInstance;
@@ -53,10 +53,14 @@ WindowAuthDialogReturn WindowAuthDialog::ask()
 	}
 
 	// Step 2: Creating the Window
-	this->hWindow
-			= CreateWindowEx(
+	if ( title == "" )
+	{
+		title = "log in";
+	}
+	std::string windowTitle = "YAE - "+title;
+	this->hWindow = CreateWindowEx(
 					0,//WS_EX_CLIENTEDGE,
-					g_szClassName, "YAE - log in",
+					g_szClassName, windowTitle.c_str(),
 					WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 240,
 					120, NULL, NULL, hInstance, NULL);
 
@@ -124,10 +128,13 @@ WindowAuthDialogReturn WindowAuthDialog::ask()
 		returnData.password = password;
 		returnData.success = true;
 	}
+	DestroyWindow(this->hWindow);
 	return returnData;
 }
 
-LRESULT CALLBACK WindowAuthDialog::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+#include <iostream>
+
+LRESULT CALLBACK Window_AuthDialog::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch( msg )
 	{
@@ -141,29 +148,28 @@ LRESULT CALLBACK WindowAuthDialog::WndProc(HWND hwnd, UINT msg, WPARAM wParam, L
 			switch( HIWORD(wParam) )
 			{
 				case EN_KILLFOCUS:
-					WindowAuthDialog::getInstance().currentFocus = -1;
+					Window_AuthDialog::getInstance().currentFocus = -1;
 					break;
 				case EN_SETFOCUS:
-					for( int k = 0; k < WindowAuthDialog::getInstance().editForm.size(); k++ )
+					for( int k = 0; k < Window_AuthDialog::getInstance().editForm.size(); k++ )
 					{
-						HWND item = WindowAuthDialog::getInstance().editForm[k];
+						HWND item = Window_AuthDialog::getInstance().editForm[k];
 						if( item == (HWND)lParam )
 						{
-							WindowAuthDialog::getInstance().currentFocus = k;
+							Window_AuthDialog::getInstance().currentFocus = k;
 							break;
 						}
 					}
 					break;
-			}
-			break;
-		case WM_PARENTNOTIFY:
-			switch( LOWORD(wParam) )
-			{
-				case WM_LBUTTONDOWN:
-					WindowAuthDialog::getInstance().buttonClicked = true;
+				case BN_CLICKED:
+					if ( Window_AuthDialog::getInstance().isHButton((HWND)lParam) )
+					{
+						Window_AuthDialog::getInstance().buttonClicked = true;
+					}
 					break;
 			}
 			break;
+
 		default:
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 	}

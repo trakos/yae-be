@@ -15,7 +15,7 @@
 
 enum team { AXIS, ALLIES, SPECTATOR };
 
-struct ETServer
+struct ETServerW
 {
 	std::wstring name;
 	unsigned int ip;
@@ -30,7 +30,22 @@ struct ETServer
 	short int maxClients;
 };
 
-struct ETPlayer
+struct ETServer
+{
+	std::string name;
+	unsigned int ip;
+	unsigned int port;
+	std::string mod;
+	std::string password;
+	std::string map;
+	bool etpro;
+	bool punkbuster;
+	bool slac;
+	short int gametype;
+	short int maxClients;
+};
+
+struct ETPlayerW
 {
 	int id;
 	team side;
@@ -40,7 +55,26 @@ struct ETPlayer
 	int slacid;
 };
 
+struct ETPlayer
+{
+	int id;
+	team side;
+	std::string nick;
+	std::string pbguid;
+	std::string etproguid;
+	int slacid;
+};
+
+typedef std::vector<ETPlayerW> ETPlayersW;
 typedef std::vector<ETPlayer> ETPlayers;
+
+struct ETClientStatusW
+{
+	bool isPlaying;
+	ETServerW server;
+	ETPlayerW client;
+	ETPlayersW players;
+};
 
 struct ETClientStatus
 {
@@ -56,13 +90,15 @@ class ETClientInfo
 		ETClientInfo();
 		static ETClientInfo instance;
 		std::wstring localPlayerName();
-		ETServer serverInfo();
-		ETPlayers playersInfo(bool& success,bool& online,bool& slac,bool& etpro,bool& pb);
+		ETServerW serverInfo();
+		ETPlayersW playersInfo(bool& success,bool& online,bool& slac,bool& etpro,bool& pb);
+		ETPlayer ETPlayerWToETPlayer(ETPlayerW etplayerw);
 	public:
 		static ETClientInfo& getInstance();
 		int waitingForETCommandTime;
 		int pauseAfterCommand;
-		ETClientStatus getStatus();
+		ETClientStatus getStatus( bool echoProgress=false );
+		ETClientStatusW getStatusW( bool echoProgress=false );
 		bool isPlaying();
 		std::wstring getVariableValue(std::wstring name, bool& success);
 };

@@ -19,6 +19,7 @@ template<typename T> std::wostream& operator <<(std::wostream& stream, std::vect
 std::vector<std::wstring> wsplit(std::wstring string, std::wstring character, int limit=0);
 std::wstring rtrim(std::wstring string);
 std::string wtoa(std::wstring string);
+std::wstring atow(std::string string);
 
 
 #endif /* UTILS_H_ */

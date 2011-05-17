@@ -12,27 +12,28 @@
 #include <string>
 #include <vector>
 
-struct WindowAuthDialogReturn
+struct Window_AuthDialogReturn
 {
 	std::wstring login;
 	std::wstring password;
 	bool success;
 };
 
-class WindowAuthDialog
+class Window_AuthDialog
 {
 	protected:
-		static WindowAuthDialog instance;
+		static Window_AuthDialog instance;
 		static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-		WindowAuthDialog();
 		HWND hLogin;
 		HWND hPassword;
 		HWND hButton;
 		HWND hWindow;
+		Window_AuthDialog();
 
 	public:
-		static WindowAuthDialog& getInstance();
-		WindowAuthDialogReturn ask();
+		static Window_AuthDialog& getInstance();
+		bool isHButton(HWND cmp) { return cmp==this->hButton; }
+		Window_AuthDialogReturn ask( std::string title="" );
 		int currentFocus;
 		std::vector< HWND > editForm;
 		bool buttonClicked;
