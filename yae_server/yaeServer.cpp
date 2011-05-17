@@ -6,6 +6,7 @@
 #include <Tnet/Server.h>
 #include <Tnet/Client.h>
 #include <Tnet/Message.h>
+#include <indent.h>
 
 
 using std::cout;
@@ -22,18 +23,23 @@ void* processClient( void *data )
 	{
 		Tnet_Client* yaeClient = (Tnet_Client*)data;
 		Tnet_Message message = yaeClient->receive(50);
-		yaeClient->send(message);
 		cout << message << endl;
+		message.clear();
+		message.strings["status"] = "ok";
+		message.strings["authStatus"] = "ok";
+		cout << message << endl;
+		yaeClient->send(message);
 	}
 	catch (Tnet_Exception exception)
 	{
-		throw exception;
+		std::cout << exception.what() << std::endl;
 	}
 	currently_checking--;
 }
 
 int main()
 {
+	IndentFacet::initialize();
 	// we are not joining pthreads (i.e. waiting for them)
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);

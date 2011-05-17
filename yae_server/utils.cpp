@@ -5,9 +5,12 @@
  *      Author: trakos
  */
 
+#include <iomanip>
+
+#include <Tmysql/LiveRow.h>
+#include <Tmysql/String.h>
 #include <utils.h>
 #include <indent.h>
-#include <iomanip>
 
 template<typename T> std::ostream& operator <<(std::ostream& stream, std::map<std::string, T> const &map)
 {
@@ -23,6 +26,7 @@ template<typename T> std::ostream& operator <<(std::ostream& stream, std::map<st
 	stream << "}";
 	return stream;
 }
+template std::ostream& operator <<(std::ostream& stream, std::map<std::string, Tmysql_Row> const &map);
 
 template<typename T> std::ostream& operator <<(std::ostream& stream, std::vector<T> &vector)
 {
