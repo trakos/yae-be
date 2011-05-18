@@ -4,7 +4,9 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-//#include <sys/stat.h>
+#ifdef __unix__
+	#include <sys/stat.h>
+#endif
 
 #include "LoggerMisc.h"
 

@@ -4,7 +4,7 @@
 #include <iomanip>
 #include <cstdio>
 
-#include "Filelogger.h"
+#include "FileLogger.h"
 #include "BufferLogger.h"
 #include "LoggerMisc.h"
 

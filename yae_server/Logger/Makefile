@@ -3,12 +3,20 @@ D_B = ../build/bin
 OBJS=$(patsubst %.cpp,$(D_O)/%.o,$(wildcard *.cpp))
 LIB=Logger
 CFLAGS=-g -Wl,--enable-auto-import -D debug
+LINUX_TARGET=
+TARGET=$(D_B)/${LIB}.dll
 
+UNAME := $(shell uname)
+ifeq ($(UNAME), Linux)
+	TARGET=$(D_B)/lib${LIB}.so
+	CXX=gcc44
+	CFLAGS=-g -D debug -fPIC
+endif
 
-all: $(D_B)/${LIB}.dll
+all: $(TARGET)
 	
-$(D_B)/${LIB}.dll: ${OBJS}
-	${CXX} $(CFLAGS) -shared ${OBJS} -o $(D_B)/${LIB}.dll
+$(TARGET): ${OBJS}
+	${CXX} $(CFLAGS) -shared ${OBJS} -o $@
 
 $(D_O)/%.o: %.cpp %.h
 	$(CXX) $(CFLAGS) -c $< -o $@

@@ -2,6 +2,9 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <cstring>
+#ifdef __unix__
+	#include <errno.h>
+#endif
 
 #include "FileLogger.h"
 
