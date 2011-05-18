@@ -20,6 +20,9 @@ template<typename T> std::wostream& operator <<(std::wostream& stream, std::vect
 std::vector<std::wstring> wsplit(std::wstring string, std::wstring character, int limit=0);
 std::wstring rtrim(std::wstring string);
 std::string wtoa(std::wstring string);
+std::string itos(int number);
+std::string itos(unsigned int number);
+int stoi(std::string string);
 
 
 #endif /* UTILS_H_ */

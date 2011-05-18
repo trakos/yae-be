@@ -21,6 +21,7 @@ class YaeMaster_Protocol
 	protected:
 		YaeMaster_Protocol();
 		static YaeMaster_Protocol instance;
+		static unsigned int timeout;
 	public:
 		static YaeMaster_Protocol& getInstance();
 		ETClientStatus receiveETClientStatus( Tnet_Connection* connection );

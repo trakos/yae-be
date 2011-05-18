@@ -11,6 +11,8 @@
 #include <string>
 #include <YaeMaster/Exception.h>
 #include <ETClient/Status.h>
+#include <Tmysql/LiveRow.h>
+#include <Tnet/Message.h>
 
 class YaeMaster_Database
 {

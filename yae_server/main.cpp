@@ -11,6 +11,7 @@
 #include <indent.h>
 #include <YaeMaster/Database.h>
 #include <YaeMaster/Protocol.h>
+#include <Tmysql/Connection.h>
 
 #define YAETIMEOUT 50
 
@@ -94,7 +95,7 @@ void* processClient( void *data )
 	}
 	catch (YaeMaster_Exception exception)
 	{
-		message.clear();
+		Tnet_Message message;
 		message.strings["status"] = "error";
 		yaeClient->send(message);
 		cout << message << endl;
@@ -112,6 +113,8 @@ void* processClient( void *data )
 int main()
 {
 	IndentFacet::initialize();
+	Tmysql_Connection::defineInstance("dawn", "localhost", "dawn", "***REMOVED***", "dawn", 0);
+	Tmysql_Connection::getInstance("dawn").setAutoReconnect(true);
 	LOG.couting = LSDBG;
 	// we are not joining pthreads (i.e. waiting for them)
 	pthread_attr_t attr;

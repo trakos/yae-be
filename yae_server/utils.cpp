@@ -11,6 +11,7 @@
 #include <Tmysql/String.h>
 #include <utils.h>
 #include <indent.h>
+#include <sstream>
 
 template<typename T> std::ostream& operator <<(std::ostream& stream, std::map<std::string, T> const &map)
 {
@@ -104,4 +105,31 @@ std::string wtoa(std::wstring string)
 	char* ascii = new char[wcslen(wstr) + 1];
 	wcstombs( ascii, wstr, wcslen(wstr) );
 	return ascii;
+}
+
+std::string itos(int number)
+{
+	std::stringstream ss;
+	std::string str;
+	ss << number;
+	ss >> str;
+	return str;
+}
+
+std::string itos(unsigned int number)
+{
+	std::stringstream ss;
+	std::string str;
+	ss << number;
+	ss >> str;
+	return str;
+}
+
+int stoi(std::string string)
+{
+	std::stringstream ss;
+	ss << string;
+	int k;
+	ss >> k;
+	return k;
 }

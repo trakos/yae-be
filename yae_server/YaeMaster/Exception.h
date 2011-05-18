@@ -13,7 +13,7 @@
 class YaeMaster_Exception : public std::runtime_error
 {
 	public:
-		YaeMaster_Exception(std::string& what) : std::runtime_error(what) {};
+		YaeMaster_Exception(std::string what) : std::runtime_error(what) {};
 };
 
 #endif /* YAEMASTER_EXCEPTION_H_ */

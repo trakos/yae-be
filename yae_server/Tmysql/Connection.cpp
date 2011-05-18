@@ -6,6 +6,8 @@
  */
 
 #include <Tmysql/Connection.h>
+#include <Logger/Logger.h>
+
 #include <string>
 #include <map>
 #include <cstring>
@@ -39,6 +41,7 @@ void Tmysql_Connection::reconnectInstance( std::string instanceName )
 {
 	if ( !Tmysql_Connection::instancesDefinitions.count(instanceName) )
 	{
+		LOG("instance undefined "+instanceName, LERR);
 		throw new Tmysql_Exception_InstanceUndefined(instanceName);
 	}
 	if ( !Tmysql_Connection::instances.count(instanceName) )
@@ -52,6 +55,7 @@ Tmysql_Connection& Tmysql_Connection::getInstance( std::string instanceName )
 {
 	if ( !Tmysql_Connection::instancesDefinitions.count(instanceName) )
 	{
+		LOG("instance undefined "+instanceName, LERR);
 		throw new Tmysql_Exception_InstanceUndefined(instanceName);
 	}
 	if ( !Tmysql_Connection::instances .count(instanceName) )
@@ -67,6 +71,7 @@ Tmysql_Connection::Tmysql_Connection( std::string name, Tmysql_Connection_Instan
 	this->instanceName = name;
 	if(!mysql_real_connect(this->connection,instanceDefinition.host,instanceDefinition.user,instanceDefinition.passwd,instanceDefinition.db,instanceDefinition.port,NULL,0))
 	{
+		LOG(mysql_error(this->connection), LERR);
 		throw Tmysql_Exception_Connection(mysql_error(this->connection));
 	}
 }
@@ -82,6 +87,7 @@ MYSQL_RES* Tmysql_Connection::getQueryResultBase( std::string query )
 	std::cout << "QUERY :" << query << std::endl;
 	if ( mysql_real_query( this->connection, query.c_str(), query.size() ) )
 	{
+		LOG(mysql_error(this->connection), LERR);
 		throw new Tmysql_Exception_Query( mysql_error(this->connection), query );
 	}
 	return mysql_use_result(this->connection);
@@ -101,6 +107,7 @@ std::string Tmysql_Connection::getQueryString( std::string query, std::vector<st
 	{
 		if ( argumentNumber >= vectorCount )
 		{
+			LOG("queryArguments number mismatch in "+query, LERR);
 			throw new Tmysql_Exception_QueryArguments( query, arguments );
 		}
 		std::string argument = "'" + this->escape( arguments[argumentNumber] ) + "'";
@@ -225,6 +232,7 @@ void Tmysql_Connection::ping()
 {
 	if(mysql_ping(this->connection))
 	{
+		LOG(mysql_error(this->connection), LERR);
 		throw new Tmysql_Exception_Connection( mysql_error(this->connection) );
 	}
 	return;

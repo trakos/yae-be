@@ -77,7 +77,7 @@ ETPlayersW ETClientInfo::playersInfo(bool& success,bool& online,bool& slac,bool&
 	empty.pbguid = L"";
 	empty.side = SPECTATOR;
 	empty.slacid = 0;
-	int MAXPLAYERS = 64;
+	int MAXPLAYERS = ET_CLIENT_STATUS_MAXPLAYERS;
 	int k=0;
 	ETPlayersW players = ETPlayersW(MAXPLAYERS+1,empty);
 	if( !ETClientConsole::getInstance().isConsoleAttached( ))
