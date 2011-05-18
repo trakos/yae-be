@@ -21,15 +21,16 @@ class Communication_Yae_Server
 		static int masterPort;
 		static unsigned int timeout;
 		static Communication_Yae_Server instance;
+		static int version;
 		Tnet_Connection* connection;
 		Communication_Yae_Server();
 		void connect();
 		void reconnect();
 		void disconnect();
+		Tnet_Message receiveSimpleStatusPacket();
 		Tnet_Message sendAuthMessage(Tnet_Message message);
 		Tnet_Message sendMessage(Tnet_Message message);
-		void sendYaeClientData(ETClientStatus data);
-		Tnet_Message getYaeSearchResults();
+		Tnet_Message sendYaeClientData(ETClientStatus data);
 
 	public:
 		static Communication_Yae_Server& getInstance();

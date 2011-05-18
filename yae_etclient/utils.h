@@ -20,6 +20,8 @@ std::vector<std::wstring> wsplit(std::wstring string, std::wstring character, in
 std::wstring rtrim(std::wstring string);
 std::string wtoa(std::wstring string);
 std::wstring atow(std::string string);
+std::string itos(int number);
+std::string itos(unsigned int number);
 
 
 #endif /* UTILS_H_ */

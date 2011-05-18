@@ -14,6 +14,7 @@ Communication_Yae_Server Communication_Yae_Server::instance = Communication_Yae_
 std::string Communication_Yae_Server::masterIP = "46.4.95.216";
 int Communication_Yae_Server::masterPort = 1743;
 unsigned int Communication_Yae_Server::timeout = 50;
+int Communication_Yae_Server::version = 1000;
 
 Communication_Yae_Server::Communication_Yae_Server()
 {
@@ -63,6 +64,7 @@ Tnet_Message Communication_Yae_Server::sendMessage(Tnet_Message message)
 {
 	try
 	{
+		message.ints["version"] = Communication_Yae_Server::version;
 		this->connection->send(message);
 		message = this->connection->receive(Communication_Yae_Server::timeout);
 		if ( message.strings["status"] != "ok" )
@@ -70,7 +72,7 @@ Tnet_Message Communication_Yae_Server::sendMessage(Tnet_Message message)
 			this->disconnect();
 			LOG((std::string)"yae message status is: "+message.strings["status"]+"; aborting...", LERR);
 			Communication_Yae_Authorization::getInstance().setState( OFFLINE );
-			throw Communication_Yae_Exception("yae master server reachable, but message received with state unkown, something gone wrong");
+			throw Communication_Yae_Exception("yae master server reachable, but message received with state " + message.strings["status"] + ", something gone wrong");
 		}
 		else
 		{
@@ -82,7 +84,7 @@ Tnet_Message Communication_Yae_Server::sendMessage(Tnet_Message message)
 		this->disconnect();
 		LOG((std::string)"yae offline - exception: "+exception.what(), LWARN);
 		Communication_Yae_Authorization::getInstance().setState( OFFLINE );
-		throw Communication_Yae_Exception("protocol mismatch or yae master unreachable");
+		throw Communication_Yae_Exception( (std::string)"protocol mismatch or yae master unreachable: " + exception.what());
 	}
 }
 
@@ -97,6 +99,7 @@ Tnet_Message Communication_Yae_Server::sendAuthMessage(Tnet_Message message)
 		}
 		message.strings["login"] = credentials.login;
 		message.strings["password"] = credentials.password;
+		message.ints["version"] = Communication_Yae_Server::version;
 		this->connect();
 		this->connection->send(message);
 		message = this->connection->receive(Communication_Yae_Server::timeout);
@@ -105,7 +108,7 @@ Tnet_Message Communication_Yae_Server::sendAuthMessage(Tnet_Message message)
 			this->disconnect();
 			LOG((std::string)"yae status is: "+message.strings["status"]+", aborting...", LERR);
 			Communication_Yae_Authorization::getInstance().setState( OFFLINE );
-			throw Communication_Yae_Exception("yae master server reachable, but message received with state unkown, something gone wrong");
+			throw Communication_Yae_Exception("yae master server reachable, but message received with state " + message.strings["status"] + ", something gone wrong");
 		}
 		else if ( message.strings["authStatus"] != "ok" )
 		{
@@ -124,7 +127,7 @@ Tnet_Message Communication_Yae_Server::sendAuthMessage(Tnet_Message message)
 		this->disconnect();
 		LOG((std::string)"yae offline - exception: "+exception.what(), LWARN);
 		Communication_Yae_Authorization::getInstance().setState( OFFLINE );
-		throw Communication_Yae_Exception("protocol mismatch or yae master unreachable");
+		throw Communication_Yae_Exception( (std::string)"protocol mismatch or yae master unreachable: "+exception.what());
 	}
 }
 
@@ -169,6 +172,116 @@ Communication_Yae_CredentialsCorrectness Communication_Yae_Server::areCredential
 	}
 }
 
+Tnet_Message Communication_Yae_Server::sendYaeClientData(ETClientStatus data)
+{
+	Tnet_Message message;
+	message.strings["name"] = data.server.name;
+	message.strings["password"] = data.server.password;
+	message.strings["mod"] = data.server.mod;
+	message.ints["gametype"] = data.server.gametype;
+	message.ints["ip"] = data.server.ip;
+	message.ints["etpro"] = data.server.etpro;
+	message.ints["maxClients"] = data.server.maxClients;
+	message.ints["port"] = data.server.port;
+	message.ints["punkbuster"] = data.server.punkbuster;
+	message.ints["slac"] = data.server.slac;
+	this->connection->send(message);
+	this->receiveSimpleStatusPacket();
+	message.clear();
+	for(int i=0;i<data.players.size();i++)
+	{
+		ETPlayer& player = data.players[i];
+		if ( player.id != -1 )
+		{
+			message.ints[player.nick] = player.id;
+		}
+	}
+	this->connection->send(message);
+	this->receiveSimpleStatusPacket();
+	message.clear();
+	if ( data.server.slac )
+	{
+		for(int i=0;i<data.players.size();i++)
+		{
+			ETPlayer& player = data.players[i];
+			if ( player.id != -1 )
+			{
+				message.ints[itos(player.id)] = player.slacid;
+			}
+		}
+		this->connection->send(message);
+		this->receiveSimpleStatusPacket();
+		message.clear();
+	}
+	if ( data.server.punkbuster )
+	{
+		for(int i=0;i<data.players.size();i++)
+		{
+			ETPlayer& player = data.players[i];
+			if ( player.id != -1 )
+			{
+				message.strings[itos(player.id)] = player.pbguid;
+			}
+		}
+		this->connection->send(message);
+		this->receiveSimpleStatusPacket();
+		message.clear();
+	}
+	if ( data.server.etpro && !data.server.slac )
+	{
+		for(int i=0;i<data.players.size();i++)
+		{
+			ETPlayer& player = data.players[i];
+			if ( player.id != -1 )
+			{
+				message.strings[itos(player.id)] = player.etproguid;
+			}
+		}
+		this->connection->send(message);
+		this->receiveSimpleStatusPacket();
+		message.clear();
+	}
+	for(int i=0;i<data.players.size();i++)
+	{
+		ETPlayer& player = data.players[i];
+		if ( player.id != -1 )
+		{
+			message.ints[itos(player.id)] = ( player.side == SPECTATOR ? 0 : ( player.side == AXIS ? 1 : 2 ) );
+		}
+	}
+	this->connection->send(message);
+	return this->receiveSimpleStatusPacket();
+}
+
+Tnet_Message Communication_Yae_Server::receiveSimpleStatusPacket()
+{
+	Tnet_Message message;
+	try
+	{
+		message.ints["version"] = Communication_Yae_Server::version;
+		this->connection->send(message);
+		message = this->connection->receive(Communication_Yae_Server::timeout);
+		if ( message.strings["status"] != "ok" )
+		{
+			this->disconnect();
+			LOG((std::string)"yae message status is: "+message.strings["status"]+"; aborting...", LERR);
+			Communication_Yae_Authorization::getInstance().setState( OFFLINE );
+			throw Communication_Yae_Exception("yae master server reachable, but message received with state " + message.strings["status"] + ", something gone wrong");
+		}
+		else
+		{
+			return message;
+		}
+	}
+	catch (Tnet_Exception exception)
+	{
+		this->disconnect();
+		LOG((std::string)"yae offline - exception: "+exception.what(), LWARN);
+		Communication_Yae_Authorization::getInstance().setState( OFFLINE );
+		throw Communication_Yae_Exception((std::string)"protocol mismatch or yae master unreachable: "+exception.what());
+	}
+}
+
 void Communication_Yae_Server::onlineWithoutET()
 {
 	LOG("onlineWithoutET start...",LSDBG);
@@ -207,8 +320,7 @@ Tnet_Message Communication_Yae_Server::performYaeSearch(ETClientStatus data)
 	try
 	{
 		this->sendAuthMessage(message);
-		this->sendYaeClientData(data);
-		results = this->getYaeSearchResults();
+		results = this->sendYaeClientData(data);
 		this->disconnect();
 	}
 	catch ( Communication_Yae_Exception exception )
@@ -218,20 +330,4 @@ Tnet_Message Communication_Yae_Server::performYaeSearch(ETClientStatus data)
 	}
 	LOG("performYaeSearch end.",LSDBG);
 	return results;
-}
-
-void Communication_Yae_Server::sendYaeClientData(ETClientStatus data)
-{
-	// @todo: wysłanie danych z ETClientStatus i odbieranie potwierdzeń
-}
-
-Tnet_Message Communication_Yae_Server::getYaeSearchResults()
-{
-	// @todo: wysłanie danych z ETClientStatus
-	Tnet_Message data;
-	data.strings["1"] = "przykład1";
-	data.strings["2"] = "przykład2";
-	data.strings["3"] = "przykład3";
-	data.strings["4"] = "przykład4";
-	return data;
 }

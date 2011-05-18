@@ -8,6 +8,7 @@
 #include <utils.h>
 #include <indent.h>
 #include <iomanip>
+#include <sstream>
 
 template<typename T> std::ostream& operator <<(std::ostream& stream, std::map<std::string, T> const &map)
 {
@@ -109,4 +110,22 @@ std::wstring atow(std::string string)
 	wchar_t* wstr  = new wchar_t[strlen(str) + 1];
 	mbstowcs( wstr, str, strlen(str) );
 	return wstr;
+}
+
+std::string itos(int number)
+{
+	std::stringstream ss;
+	std::string str;
+	ss << number;
+	ss >> str;
+	return str;
+}
+
+std::string itos(unsigned int number)
+{
+	std::stringstream ss;
+	std::string str;
+	ss << number;
+	ss >> str;
+	return str;
 }
