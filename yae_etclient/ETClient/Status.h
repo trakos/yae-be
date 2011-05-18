@@ -14,6 +14,8 @@
 #include <vector>
 #include <iostream>
 
+#define ET_CLIENT_STATUS_MAXPLAYERS 64;
+
 enum team { AXIS, ALLIES, SPECTATOR };
 
 struct ETServerW
@@ -69,20 +71,24 @@ struct ETPlayer
 typedef std::vector<ETPlayerW> ETPlayersW;
 typedef std::vector<ETPlayer> ETPlayers;
 
-struct ETClientStatusW
+class ETClientStatusW
 {
-	bool isPlaying;
-	ETServerW server;
-	ETPlayerW client;
-	ETPlayersW players;
+	public:
+		ETClientStatusW();
+		bool isPlaying;
+		ETServerW server;
+		ETPlayerW client;
+		ETPlayersW players;
 };
 
-struct ETClientStatus
+class ETClientStatus
 {
-	bool isPlaying;
-	ETServer server;
-	ETPlayer client;
-	ETPlayers players;
+	public:
+		ETClientStatus();
+		bool isPlaying;
+		ETServer server;
+		ETPlayer client;
+		ETPlayers players;
 };
 
 std::ostream& operator <<(std::ostream& stream, ETClientStatus const &status);

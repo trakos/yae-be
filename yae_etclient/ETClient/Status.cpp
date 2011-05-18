@@ -13,7 +13,33 @@
 #include <indent.h>
 #include <Logger/Logger.h>
 
+ETClientStatus::ETClientStatus()
+{
+	ETPlayer empty;
+	empty.id = -1;
+	empty.etproguid = "";
+	empty.nick = "";
+	empty.pbguid = "";
+	empty.side = SPECTATOR;
+	empty.slacid = 0;
+	int k=0;
+	int MAXPLAYERS = ET_CLIENT_STATUS_MAXPLAYERS;
+	this->players = ETPlayers(MAXPLAYERS+1,empty);
+}
 
+ETClientStatusW::ETClientStatusW()
+{
+	ETPlayerW empty;
+	empty.id = -1;
+	empty.etproguid = L"";
+	empty.nick = L"";
+	empty.pbguid = L"";
+	empty.side = SPECTATOR;
+	empty.slacid = 0;
+	int k=0;
+	int MAXPLAYERS = ET_CLIENT_STATUS_MAXPLAYERS;
+	this->players = ETPlayersW(MAXPLAYERS+1,empty);
+}
 
 std::ostream& operator <<(std::ostream& stream, ETClientStatus const &status)
 {

@@ -6,11 +6,36 @@
  */
 
 #include <Window/AuthDialog.h>
+#include <Logger/Logger.h>
 #include <string>
 
 Window_AuthDialog Window_AuthDialog::instance = Window_AuthDialog();
 
-Window_AuthDialog::Window_AuthDialog(){}
+Window_AuthDialog::Window_AuthDialog()
+{
+	const char g_szClassName[] = "authDialog";
+	HBRUSH hBrush = CreateSolidBrush(RGB(208,208,208));
+	WNDCLASSEX wc;
+	HINSTANCE hInstance = GetModuleHandle(NULL);
+	wc.cbSize = sizeof(WNDCLASSEX);
+	wc.style = 0;
+	wc.lpfnWndProc = Window_AuthDialog::WndProc;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = 0;
+	wc.hInstance = hInstance;
+	wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hbrBackground = hBrush;//16);
+	wc.lpszMenuName = NULL;
+	wc.lpszClassName = g_szClassName;
+	wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+
+	if (!RegisterClassEx(&wc))
+	{
+		LOG("Window Registration Failed!",LERR);
+		MessageBox(NULL, "Window Registration Failed!", "Error!", MB_ICONEXCLAMATION | MB_OK);
+	}
+}
 
 Window_AuthDialog& Window_AuthDialog::getInstance()
 {
@@ -31,27 +56,6 @@ Window_AuthDialogReturn Window_AuthDialog::ask(std::string title)
 
 	HBRUSH hBrush = CreateSolidBrush(RGB(208,208,208));
 
-
-	//Step 1: Registering the Window Class
-	wc.cbSize = sizeof(WNDCLASSEX);
-	wc.style = 0;
-	wc.lpfnWndProc = Window_AuthDialog::WndProc;
-	wc.cbClsExtra = 0;
-	wc.cbWndExtra = 0;
-	wc.hInstance = hInstance;
-	wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = hBrush;//16);
-	wc.lpszMenuName = NULL;
-	wc.lpszClassName = g_szClassName;
-	wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
-
-	if (!RegisterClassEx(&wc))
-	{
-		MessageBox(NULL, "Window Registration Failed!", "Error!", MB_ICONEXCLAMATION | MB_OK);
-		return returnData;
-	}
-
 	// Step 2: Creating the Window
 	if ( title == "" )
 	{
@@ -66,9 +70,9 @@ Window_AuthDialogReturn Window_AuthDialog::ask(std::string title)
 
 	if (this->hWindow == NULL)
 	{
-		MessageBox(NULL, "Window Creation Failed!", "Error!",
-				MB_ICONEXCLAMATION | MB_OK);
-		return returnData;
+		LOG("Window Creation Failed!",LERR);
+		MessageBox(NULL, "Window Creation Failed!", "Error!",MB_ICONEXCLAMATION | MB_OK);
+		//return returnData;
 	}
 
 	this->hLogin = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", "", WS_CHILD | WS_VISIBLE, 20, 10, 200, 20, this->hWindow, NULL, GetModuleHandle(NULL), NULL);
@@ -79,7 +83,9 @@ Window_AuthDialogReturn Window_AuthDialog::ask(std::string title)
 
 	if (this->hLogin == NULL || this->hPassword == NULL || this->hButton == NULL)
 	{
+		LOG("Could not create edit box or button.",LERR);
 		MessageBox(this->hWindow, "Could not create edit box or button.", "Error", MB_OK | MB_ICONERROR);
+		//return returnData;
 	}
 
 	hfDefault = (HFONT) GetStockObject(DEFAULT_GUI_FONT);
@@ -128,7 +134,14 @@ Window_AuthDialogReturn Window_AuthDialog::ask(std::string title)
 		returnData.password = password;
 		returnData.success = true;
 	}
+	DestroyWindow(this->hButton);
+	DestroyWindow(this->hLogin);
+	DestroyWindow(this->hPassword);
 	DestroyWindow(this->hWindow);
+	while (PeekMessage(&message, NULL, 0, 0, 0))
+	{
+		GetMessage(&message, NULL, 0, 0);
+	}
 	return returnData;
 }
 
@@ -149,7 +162,7 @@ LRESULT CALLBACK Window_AuthDialog::WndProc(HWND hwnd, UINT msg, WPARAM wParam, 
 			{
 				case EN_KILLFOCUS:
 					Window_AuthDialog::getInstance().currentFocus = -1;
-					break;
+					return DefWindowProc(hwnd, msg, wParam, lParam);
 				case EN_SETFOCUS:
 					for( int k = 0; k < Window_AuthDialog::getInstance().editForm.size(); k++ )
 					{
@@ -160,13 +173,13 @@ LRESULT CALLBACK Window_AuthDialog::WndProc(HWND hwnd, UINT msg, WPARAM wParam, 
 							break;
 						}
 					}
-					break;
+					return DefWindowProc(hwnd, msg, wParam, lParam);
 				case BN_CLICKED:
 					if ( Window_AuthDialog::getInstance().isHButton((HWND)lParam) )
 					{
 						Window_AuthDialog::getInstance().buttonClicked = true;
 					}
-					break;
+					return DefWindowProc(hwnd, msg, wParam, lParam);
 			}
 			break;
 

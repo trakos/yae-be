@@ -77,7 +77,7 @@ int ETClient::mainLoop()
 		this->iteration = 0;
 		while(!ETClientConsole::getInstance().isConsoleAttached())
 		{
-			if ( this->iteration == 5 )
+			if ( this->iteration == 1 )
 			{
 				Communication_Yae_Server::getInstance().onlineWithoutET();
 			}
@@ -85,8 +85,11 @@ int ETClient::mainLoop()
 			{
 				this->iteration = 0;
 			}
-			ETClientConsole::getInstance().attachConsole();
-			fflush(stdout);
+			if ( this->iteration%5 == 0 )
+			{
+				ETClientConsole::getInstance().attachConsole();
+				fflush(stdout);
+			}
 			Sleep(1000);
 			this->iteration++;
 		}
@@ -94,6 +97,14 @@ int ETClient::mainLoop()
 		this->iteration = 0;
 		while(ETClientConsole::getInstance().isConsoleAttached())
 		{
+			if ( this->iteration == 1 )
+			{
+				this->onlineWithET();
+			}
+			else if ( this->iteration == 120 )
+			{
+				this->iteration = 0;
+			}
 			std::string str = ETClientListener::getInstance().getCommand();
 			if(str!="")
 			{
@@ -106,6 +117,8 @@ int ETClient::mainLoop()
 					std::cout << '"' << str << '"' << std::endl;
 				}
 			}
+			Sleep(1000);
+			this->iteration++;
 		}
 	}
 	return 1;

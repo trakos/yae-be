@@ -49,11 +49,12 @@ Communication_Yae_Credentials Communication_Yae_Authorization::getCurrentCredent
 {
 	if ( this->currentState == NOCREDENTIALS || this->currentState == OFFLINE )
 	{
+		bool first = true;
 		while ( 1 )
 		{
 			if ( this->currentState == NOCREDENTIALS )
 			{
-				Window_AuthDialogReturn authData = Window_AuthDialog::getInstance().ask();
+				Window_AuthDialogReturn authData = Window_AuthDialog::getInstance().ask(first ? "" : "login or password incorrect");
 				if ( authData.success == false )
 				{
 					this->setState(NO);
@@ -63,13 +64,14 @@ Communication_Yae_Credentials Communication_Yae_Authorization::getCurrentCredent
 				this->currentCredentials.password = wtoa(authData.password);
 			}
 			Communication_Yae_CredentialsCorrectness state = Communication_Yae_Server::getInstance().areCredentialsCorrect(this->currentCredentials.login, this->currentCredentials.password);
-			if ( this->currentState != NO )
+			if ( state == YES || state == OFFLINE )
 			{
 				// OFFLINE or YES (i.e. good credentials) - nothing more to do.
 				this->setState(state);
 				return this->currentCredentials;
 			}
 			// NO - try again! here we go loop!
+			first = false;
 		}
 	}
 	// YES - good credentials.
