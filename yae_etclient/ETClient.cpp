@@ -114,40 +114,5 @@ int ETClient::mainLoop()
 void ETClient::printServerStatus()
 {
 	ETClientStatus status = ETClientInfo::getInstance().getStatus(true);
-	if(!status.isPlaying)
-	{
-		std::cout << "not on a server" << std::endl;
-	}
-	else
-	{
-		for(int i=0;i<status.players.size();i++)
-		{
-			if ( status.players[i].id == -1 )
-			{
-				continue;
-			}
-			std::cout << status.players[i].id << ":" << std::endl;
-			if ( status.players[i].id == status.client.id )
-			{
-				std::cout << "\tPLAYER" << std::endl;
-			}
-			std::cout << "\tnick:" << status.players[i].nick << std::endl;
-			std::cout << "\tetpro:" << status.players[i].etproguid << std::endl;
-			std::cout << "\tpbguid:" << status.players[i].pbguid << std::endl;
-			std::cout << "\tslacid:" << status.players[i].slacid << std::endl;
-			std::cout << "\tside:" << (status.players[i].side==SPECTATOR?"spectator":(status.players[i].side==AXIS?"axis":"allies")) << std::endl;
-		}
-		std::cout << "server data" << std::endl;
-		std::cout << "\tetpro:" << ( status.server.etpro ? "yes" : "no" ) << std::endl;
-		std::cout << "\tgametype:" << status.server.gametype << std::endl;
-		std::cout << "\tip:" << status.server.ip << std::endl;
-		std::cout << "\tmap:" << status.server.map << std::endl;
-		std::cout << "\tmaxClients:" << status.server.maxClients << std::endl;
-		std::cout << "\tmod:" << status.server.mod << std::endl;
-		std::cout << "\tname:" << status.server.name << std::endl;
-		std::cout << "\tpassword:" << status.server.password << std::endl;
-		std::cout << "\tport:" << status.server.port << std::endl;
-		std::cout << "\tpunkbuster:" << ( status.server.punkbuster ? "yes" : "no" ) << std::endl;
-		std::cout << "\tslac:" << ( status.server.slac ? "yes" : "no" ) << std::endl;
-	}
+	std::cout << status;
 }

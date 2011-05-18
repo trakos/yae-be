@@ -19,5 +19,6 @@ int main()
 	IndentFacet::initialize();
 	LOG.couting = LSDBG;
 	ETClientConsole::getInstance().toggleWindow(true);
+	//ETClient::getInstance().printServerStatus();
 	return ETClient::getInstance().mainLoop();
 }
