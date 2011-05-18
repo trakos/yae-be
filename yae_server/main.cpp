@@ -6,8 +6,8 @@
 #include <Tnet/Server.h>
 #include <Tnet/Client.h>
 #include <Tnet/Message.h>
-#include <Logger/Logger.h>
-#include <ETClient/Status.h>
+#include <Tlogger/Front.h>
+#include <ET/Client/Status.h>
 #include <indent.h>
 #include <YaeMaster/Database.h>
 #include <YaeMaster/Protocol.h>
