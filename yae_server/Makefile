@@ -19,7 +19,7 @@ clean:
 TMYSQL=$(D_O)/TmysqlConnection.o $(D_O)/TmysqlException.o $(D_O)/TmysqlLiveRow.o $(D_O)/TmysqlString.o
 TNET=$(D_O)/TnetServer.o $(D_O)/TnetConnection.o $(D_O)/TnetClient.o $(D_O)/TnetMessage.o
 	
-$(D_B)/yaeServer: yaeServer.cpp $(D_O)/utils.o $(D_O)/indent.o $(TMYSQL) $(TNET)
+$(D_B)/yaeServer: main.cpp $(D_O)/utils.o $(D_O)/indent.o $(TMYSQL) $(TNET)
 	$(CXX) $(CFLAGS) $(INCFLAGS) $(LIBFLAGS) $< $(filter %.o,$^) -o $@
 	
 $(D_B)/TmysqlExample: Tmysql/Example.cpp $(TMYSQL) $(D_O)/utils.o $(D_O)/indent.o  
