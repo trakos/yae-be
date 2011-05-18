@@ -1,7 +1,7 @@
 /*
- * ETClient/Info.h
+ * ETClient/Status.h
  *
- *  Created on: 2010-11-26
+ *  Created on: 2011-05-18
  *      Author: trakos
  */
 

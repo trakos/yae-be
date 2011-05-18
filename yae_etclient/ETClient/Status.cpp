@@ -1,7 +1,7 @@
 /*
- * ETClient/Info.cpp
+ * ETClient/Status.cpp
  *
- *  Created on: 2010-12-02
+ *  Created on: 2011-05-18
  *      Author: trakos
  */
 
