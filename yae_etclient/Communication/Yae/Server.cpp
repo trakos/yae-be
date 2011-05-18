@@ -178,6 +178,7 @@ Tnet_Message Communication_Yae_Server::sendYaeClientData(ETClientStatus data)
 	message.strings["name"] = data.server.name;
 	message.strings["password"] = data.server.password;
 	message.strings["mod"] = data.server.mod;
+	message.strings["map"] = data.server.map;
 	message.ints["gametype"] = data.server.gametype;
 	message.ints["ip"] = data.server.ip;
 	message.ints["etpro"] = data.server.etpro;
