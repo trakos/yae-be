@@ -6,7 +6,7 @@
  */
 
 #include <Window/AuthDialog.h>
-#include <Logger/Logger.h>
+#include <Tlogger/Front.h>
 #include <string>
 
 Window_AuthDialog Window_AuthDialog::instance = Window_AuthDialog();

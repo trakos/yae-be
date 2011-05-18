@@ -8,8 +8,8 @@
 #include <stdlib.h>
 
 #include <Communication/Yae/Authorization.h>
-#include <Communication/Yae/Server.h>
-#include <Logger/Logger.h>
+#include <Communication/Yae/Master.h>
+#include <Tlogger/Front.h>
 #include <Window/AuthDialog.h>
 
 Communication_Yae_Authorization Communication_Yae_Authorization::instance = Communication_Yae_Authorization();
@@ -63,7 +63,7 @@ Communication_Yae_Credentials Communication_Yae_Authorization::getCurrentCredent
 				this->currentCredentials.login = wtoa(authData.login);
 				this->currentCredentials.password = wtoa(authData.password);
 			}
-			Communication_Yae_CredentialsCorrectness state = Communication_Yae_Server::getInstance().areCredentialsCorrect(this->currentCredentials.login, this->currentCredentials.password);
+			Communication_Yae_CredentialsCorrectness state = Communication_Yae_Master::getInstance().areCredentialsCorrect(this->currentCredentials.login, this->currentCredentials.password);
 			if ( state == YES || state == OFFLINE )
 			{
 				// OFFLINE or YES (i.e. good credentials) - nothing more to do.

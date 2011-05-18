@@ -8,8 +8,8 @@
 
 #include <utils.h>
 #include <indent.h>
-#include <ETClient/Console.h>
-#include <Logger/Logger.h>
+#include <ET/Client/Console.h>
+#include <Tlogger/Front.h>
 #include <ETClient.h>
 
 
@@ -18,7 +18,7 @@ int main()
 
 	IndentFacet::initialize();
 	LOG.couting = LSDBG;
-	ETClientConsole::getInstance().toggleWindow(true);
+	ET_Client_Console::getInstance().toggleWindow(true);
 	//ETClient::getInstance().printServerStatus();
 	return ETClient::getInstance().mainLoop();
 }

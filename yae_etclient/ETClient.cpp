@@ -7,11 +7,11 @@
 
 #include <ETClient.h>
 #include <Tnet/Message.h>
-#include <ETClient/Info.h>
-#include <ETClient/Input.h>
-#include <ETClient/Console.h>
-#include <ETClient/Listener.h>
-#include <Communication/Yae/Server.h>
+#include <ET/Client/Info.h>
+#include <ET/Client/Input.h>
+#include <ET/Client/Console.h>
+#include <ET/Client/Listener.h>
+#include <Communication/Yae/Master.h>
 
 #include <fstream>
 #include <iostream>
@@ -31,42 +31,42 @@ ETClient& ETClient::getInstance()
 
 void ETClient::onlineWithoutET()
 {
-	Communication_Yae_Server::getInstance().onlineWithoutET();
+	Communication_Yae_Master::getInstance().onlineWithoutET();
 }
 
 void ETClient::onlineWithET()
 {
-	ETClientStatus status = ETClientInfo::getInstance().getStatus(false);
-	Communication_Yae_Server::getInstance().onlineWithET(status);
+	ET_Client_Status status = ET_Client_Info::getInstance().getStatus(false);
+	Communication_Yae_Master::getInstance().onlineWithET(status);
 }
 
 void ETClient::performYaeSearch()
 {
 	try
 	{
-		ETClientStatus status = ETClientInfo::getInstance().getStatus(true);
-		if ( !status.isPlaying )
+		ET_Client_Status status = ET_Client_Info::getInstance().getStatus(true);
+		if ( !status.online )
 		{
-			ETClientInput::getInstance().shortMessage("not on a server! or is it a bug? let me know!");
+			ET_Client_Input::getInstance().shortMessage("not on a server! or is it a bug? let me know!");
 		}
 		else
 		{
-			ETClientInput::getInstance().shortMessage("sending search request...");
-			Tnet_Message searchResults = Communication_Yae_Server::getInstance().performYaeSearch(status);
-			ETClientInput::getInstance().shortMessage("results:");
+			ET_Client_Input::getInstance().shortMessage("sending search request...");
+			Tnet_Message searchResults = Communication_Yae_Master::getInstance().performYaeSearch(status);
+			ET_Client_Input::getInstance().shortMessage("results:");
 			for(int i=0;i<status.players.size();i++)
 			{
-				ETPlayer& player = status.players[i];
+				ET_Client_Status_Player& player = status.players[i];
 				if ( player.id != -1 )
 				{
-					ETClientInput::getInstance().shortMessage("player "+player.nick+" results: [" + searchResults.strings[""+player.id] + '^' + ETClientInput::color + ']' );
+					ET_Client_Input::getInstance().shortMessage("player "+player.nick+" results: [" + searchResults.strings[""+player.id] + '^' + ET_Client_Input::color + ']' );
 				}
 			}
 		}
 	}
 	catch ( Communication_Yae_Exception exception )
 	{
-		ETClientInput::getInstance().shortMessage("unfortunately we couldn't fetch search results from YAE master server right now! Try again?");
+		ET_Client_Input::getInstance().shortMessage("unfortunately we couldn't fetch search results from YAE master server right now! Try again?");
 	}
 }
 
@@ -75,11 +75,11 @@ int ETClient::mainLoop()
 	while( 1 )
 	{
 		this->iteration = 0;
-		while(!ETClientConsole::getInstance().isConsoleAttached())
+		while(!ET_Client_Console::getInstance().isConsoleAttached())
 		{
 			if ( this->iteration == 1 )
 			{
-				Communication_Yae_Server::getInstance().onlineWithoutET();
+				Communication_Yae_Master::getInstance().onlineWithoutET();
 			}
 			else if ( this->iteration == 120 )
 			{
@@ -87,15 +87,15 @@ int ETClient::mainLoop()
 			}
 			if ( this->iteration%5 == 0 )
 			{
-				ETClientConsole::getInstance().attachConsole();
+				ET_Client_Console::getInstance().attachConsole();
 				fflush(stdout);
 			}
 			Sleep(1000);
 			this->iteration++;
 		}
-		ETClientConsole::getInstance().moveToTheEnd();
+		ET_Client_Console::getInstance().moveToTheEnd();
 		this->iteration = 0;
-		while(ETClientConsole::getInstance().isConsoleAttached())
+		while(ET_Client_Console::getInstance().isConsoleAttached())
 		{
 			if ( this->iteration == 1 )
 			{
@@ -105,7 +105,7 @@ int ETClient::mainLoop()
 			{
 				this->iteration = 0;
 			}
-			std::string str = ETClientListener::getInstance().getCommand();
+			std::string str = ET_Client_Listener::getInstance().getCommand();
 			if(str!="")
 			{
 				if ( str == "yae" )
@@ -126,6 +126,6 @@ int ETClient::mainLoop()
 
 void ETClient::printServerStatus()
 {
-	ETClientStatus status = ETClientInfo::getInstance().getStatus(true);
+	ET_Client_Status status = ET_Client_Info::getInstance().getStatus(true);
 	std::cout << status;
 }
