@@ -16,7 +16,7 @@ ifeq ($(UNAME), Linux)
   CFLAGS=-g -D debug -fPIC -I.
   LIBPREFIX=lib
   LIBSUFFIX=a
-  OSTARGETS=$(D_B)/$(LIBPREFIX)tmysql.$(LIBSUFFIX)
+  OSTARGETS=$(D_B)/$(LIBPREFIX)tmysql.$(LIBSUFFIX) $(D_B)/tmysqlExample
 endif
 
 
@@ -63,6 +63,9 @@ $(D_B)/$(LIBPREFIX)utils.$(LIBSUFFIX): $(D_O)/utils.o
 	$(AR) rcs $@ $^
 $(D_B)/$(LIBPREFIX)indent.$(LIBSUFFIX): $(D_O)/indent.o
 	$(AR) rcs $@ $^
+# EXAMPLES
+$(D_B)/tmysqlExample: Tmysql/Example.cpp $(D_B)/$(LIBPREFIX)tmysql.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)indent.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)utils.$(LIBSUFFIX)
+	$(CXX) $(CFLAGS) $(INCFLAGS) $(LIBFLAGS) $< $(filter %.o,$^) -o $@
 
 all: $(MAINTARGETS) $(OSTARGETS)
 
