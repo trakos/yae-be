@@ -31,17 +31,17 @@ void YaeMaster_Database::userOnlineWithoutET(Tmysql_LiveRow& user)
 	// @todo: save
 }
 
-void YaeMaster_Database::userOnlineWithET(Tmysql_LiveRow& user, ETClientStatus& status)
+void YaeMaster_Database::userOnlineWithET(Tmysql_LiveRow& user, ET_Client_Status& status)
 {
 	// @todo: save & get server status data !
 }
 
-Tnet_Message YaeMaster_Database::performYaeSearch(ETClientStatus& status)
+Tnet_Message YaeMaster_Database::performYaeSearch(ET_Client_Status& status)
 {
 	Tnet_Message result;
 	for(int i=0;i<status.players.size();i++)
 	{
-		ETPlayer& player = status.players[i];
+		ET_Client_Status_Player& player = status.players[i];
 		if ( player.id != -1 )
 		{
 			// @todo: search

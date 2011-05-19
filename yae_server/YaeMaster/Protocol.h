@@ -10,7 +10,7 @@
 
 #include <string>
 
-#include <ETClient/Status.h>
+#include <ET/Client/Status.h>
 #include <Tnet/Connection.h>
 #include <YaeMaster/Exception.h>
 
@@ -24,7 +24,7 @@ class YaeMaster_Protocol
 		static unsigned int timeout;
 	public:
 		static YaeMaster_Protocol& getInstance();
-		ETClientStatus receiveETClientStatus( Tnet_Connection* connection );
+		ET_Client_Status receiveETClientStatus( Tnet_Connection* connection );
 		YaeMaster_Protocol_Action getAction(std::string actionName);
 		void sendSimpleStatus(Tnet_Connection* connection,std::string status="ok");
 };

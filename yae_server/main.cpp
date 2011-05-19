@@ -50,7 +50,7 @@ void* processClient( void *data )
 				case YAE_SEARCH:
 				{
 					yaeClient->send(message);
-					ETClientStatus status = YaeMaster_Protocol::getInstance().receiveETClientStatus(yaeClient);
+					ET_Client_Status status = YaeMaster_Protocol::getInstance().receiveETClientStatus(yaeClient);
 					switch(action)
 					{
 						case ONLINE_WITH_ET:

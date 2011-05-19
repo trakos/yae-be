@@ -48,10 +48,10 @@ void YaeMaster_Protocol::sendSimpleStatus(Tnet_Connection* connection,std::strin
 	connection->send(message);
 }
 
-ETClientStatus YaeMaster_Protocol::receiveETClientStatus( Tnet_Connection* connection )
+ET_Client_Status YaeMaster_Protocol::receiveETClientStatus( Tnet_Connection* connection )
 {
-	ETClientStatus status;
-	status.isPlaying = true;
+	ET_Client_Status status;
+	status.online = true;
 	Tnet_Message message = connection->receive(YaeMaster_Protocol::timeout);
 	status.server.name = message.strings["name"];
 	status.server.password = message.strings["password"];

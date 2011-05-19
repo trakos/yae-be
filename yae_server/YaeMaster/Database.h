@@ -10,7 +10,7 @@
 
 #include <string>
 #include <YaeMaster/Exception.h>
-#include <ETClient/Status.h>
+#include <ET/Client/Status.h>
 #include <Tmysql/LiveRow.h>
 #include <Tnet/Message.h>
 
@@ -23,8 +23,8 @@ class YaeMaster_Database
 		static YaeMaster_Database& getInstance();
 		Tmysql_LiveRow authenticate(std::string login, std::string password);
 		void userOnlineWithoutET(Tmysql_LiveRow& user);
-		void userOnlineWithET(Tmysql_LiveRow& user, ETClientStatus& status);
-		Tnet_Message performYaeSearch(ETClientStatus& status);
+		void userOnlineWithET(Tmysql_LiveRow& user, ET_Client_Status& status);
+		Tnet_Message performYaeSearch(ET_Client_Status& status);
 };
 
 
