@@ -8,9 +8,12 @@
 #include <ET/Client/Console.h>
 #include <ET/Client/Input.h>
 #include <ET/Client/Info.h>
-#include <boost/foreach.hpp>
-#include <vector>
 #include <utils.h>
+
+#include <vector>
+#ifdef __unix__
+	#define Sleep usleep
+#endif
 
 
 ET_Client_Input ET_Client_Input::instance = ET_Client_Input();

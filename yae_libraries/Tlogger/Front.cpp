@@ -40,7 +40,7 @@ void Tlogger_Front::operator() ( wstring wmsg, Tlogger_Front_Priority prior )
 	return;
 }
 
-#ifdef debug
+#ifdef __debug__
 	#include <vector>
 	vector<std::string> split(std::string string, std::string character)
 	{
@@ -86,7 +86,7 @@ void Tlogger_Front::operator() ( std::string msg, Tlogger_Front_Priority prior )
 		default: errortype=""; break;
 	}
 	// formatujemy log
-#ifdef debug
+#ifdef __debug__
 	string classname="",function;
 	vector<string> splitted = split(this->instanceInvokeFunction,"(");
 	function = splitted.front();

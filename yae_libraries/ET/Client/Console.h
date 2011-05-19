@@ -8,16 +8,21 @@
 #ifndef ET_CLIENT_CONSOLE_H_
 #define ET_CLIENT_CONSOLE_H_
 
-#include <Windows.h>
+#ifndef __unix__
+	#include <Windows.h>
+#endif
 #include <string>
 
 
 class ET_Client_Console
 {
 	protected:
+#ifndef __unix__
 		HWND hConWin;
 		HWND hWriteCmd;
 		HWND hReadCmd;
+#else
+#endif
 		int charConsolePointer;
 		unsigned long processId;
 		static ET_Client_Console instance;

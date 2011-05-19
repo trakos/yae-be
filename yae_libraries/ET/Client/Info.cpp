@@ -7,8 +7,14 @@
 
 #include <string>
 #include <stdlib.h>
-#include <boost/foreach.hpp>
 #include <sstream>
+#ifdef __unix__
+	#define Sleep usleep
+	#include <netinet/in.h>
+	#include <netdb.h>
+	#include <arpa/inet.h>
+	#include <unistd.h>
+#endif
 
 #include <ET/Client/Info.h>
 #include <ET/Client/Console.h>

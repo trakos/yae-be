@@ -1,6 +1,6 @@
 D_O = build/obj
 D_B = build/bin
-CFLAGS=-g -Wl,--enable-auto-import -D debug -I.
+CFLAGS=-g -Wl,--enable-auto-import -D __debug__ -I.
 INCFLAGS=-IK:\\Program\ Files\\Boost-1.41.0\\include\\boost-1_41\\ -I.
 TARGET=$(D_B)/${LIB}.lib
 AR=ar
@@ -13,7 +13,7 @@ UNAME := $(shell uname)
 ifeq ($(UNAME), Linux)
   TARGET=$(D_B)/lib${LIB}.a
   CXX=gcc44
-  CFLAGS=-g -D debug -fPIC -I.
+  CFLAGS=-g -D __debug__ -fPIC -I. -std=c++0x
   LIBPREFIX=lib
   LIBSUFFIX=a
   OSTARGETS=$(D_B)/$(LIBPREFIX)tmysql.$(LIBSUFFIX) $(D_B)/tmysqlExample
@@ -64,8 +64,8 @@ $(D_B)/$(LIBPREFIX)utils.$(LIBSUFFIX): $(D_O)/utils.o
 $(D_B)/$(LIBPREFIX)indent.$(LIBSUFFIX): $(D_O)/indent.o
 	$(AR) rcs $@ $^
 # EXAMPLES
-$(D_B)/tmysqlExample: Tmysql/Example.cpp $(D_B)/$(LIBPREFIX)tmysql.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)indent.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)utils.$(LIBSUFFIX)
-	$(CXX) $(CFLAGS) $(INCFLAGS) $(LIBFLAGS) $< $(filter %.o,$^) -o $@
+$(D_B)/tmysqlExample: Examples/Tmysql.cpp $(D_B)/$(LIBPREFIX)tlogger.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)tmysql.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)indent.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)utils.$(LIBSUFFIX)
+	$(CXX) $(CFLAGS) $(INCFLAGS) $< -L$(D_B) -ltmysql -ltlogger -lindent -lutils -lmysqlclient_r -lm -L/usr/lib64/mysql $(filter %.o,$^) -o $@
 
 all: $(MAINTARGETS) $(OSTARGETS)
 

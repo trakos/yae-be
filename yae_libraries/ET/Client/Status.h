@@ -14,7 +14,7 @@
 #include <vector>
 #include <iostream>
 
-#define ET_CLIENT_STATUS_MAXPLAYERS 64;
+#define ET_CLIENT_STATUS_MAXPLAYERS 64
 
 enum team { AXIS, ALLIES, SPECTATOR };
 

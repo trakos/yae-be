@@ -24,7 +24,7 @@ int main()
 	std::cout << "p" << someString << "e" << std::endl;
 	std::cout << someString << std::endl;
 	std::cout << Tmysql_Connection::getInstance("trakos").escape(someString) << std::endl;
-	std::vector<std::string> arguments = { "arg1", "arg2" };
+	Tmysql_Arguments arguments = { "arg1", "arg2" };
 	std::string query = "SELECT * FROM tableName WHERE a1=? OR a2=?";
 	std::cout << Tmysql_Connection::getInstance("trakos").getQueryString(query, arguments) << std::endl;
 

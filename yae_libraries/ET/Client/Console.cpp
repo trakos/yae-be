@@ -5,7 +5,9 @@
  *      Author: trakos
  */
 
-#include <Windows.h>
+#ifndef __unix__
+	#include <windows.h>
+#endif
 #include <ET/Client/Console.h>
 #include <Tlogger/Front.h>
 #include <utils.h>
@@ -14,17 +16,24 @@ ET_Client_Console ET_Client_Console::instance = ET_Client_Console();
 
 void ET_Client_Console::toggleWindow(bool show)
 {
+#ifndef __unix__
 	LOG(show?"true":"false",LNOTE);
 	this->showWindow = show;
 	if(this->isConsoleAttached())
 	{
-		ShowWindow(this->hConWin,show?SW_SHOW:SW_HIDE);
+
+			ShowWindow(this->hConWin,show?SW_SHOW:SW_HIDE);
+
 	}
 	return;
+#else
+	return;
+#endif
 }
 
 bool ET_Client_Console::attachConsole()
 {
+#ifndef __unix__
 	this->hConWin = FindWindowEx(NULL, NULL, NULL, "ET Console");
 	if(this->hConWin == NULL)
 	{
@@ -46,6 +55,9 @@ bool ET_Client_Console::attachConsole()
 	this->processId = GetWindowThreadProcessId( this->hConWin, NULL );
 	LOG(" done, all ok",LDBG);
 	return true;
+#else
+	return false;
+#endif
 }
 
 ET_Client_Console::ET_Client_Console(): charConsolePointer(0),processId(0)
@@ -60,6 +72,7 @@ bool ET_Client_Console::sendMessage(std::wstring text)
 		LOG("console not attached...",LNOTE);
 		return false;
 	}
+#ifndef __unix__
 	// save what's written now
 	int length = (int)SendMessageW(this->hWriteCmd, WM_GETTEXTLENGTH, (WPARAM)NULL, (LPARAM)NULL);
 	wchar_t buffer[length+1];
@@ -75,6 +88,9 @@ bool ET_Client_Console::sendMessage(std::wstring text)
 	SendMessageW( this->hWriteCmd, WM_SETTEXT, (WPARAM)NULL, (LPARAM)buffer);
 	LOG(L"sent: '"+text+L"'",LNOTE);
 	return success;
+#else
+	return false;
+#endif
 }
 
 /**
@@ -82,6 +98,7 @@ bool ET_Client_Console::sendMessage(std::wstring text)
  */
 std::wstring ET_Client_Console::getLastLine()
 {
+#ifndef __unix__
 	const wchar_t* charPointer = L"";
 	if (!this->isConsoleAttached())
 	{
@@ -117,6 +134,9 @@ std::wstring ET_Client_Console::getLastLine()
 		this->charConsolePointer+=lineLength;
 	}
 	return (std::wstring)charPointer;
+#else
+	return false;
+#endif
 }
 
 void ET_Client_Console::moveToTheEnd()
@@ -129,6 +149,7 @@ void ET_Client_Console::moveToTheEnd()
 
 bool ET_Client_Console::isConsoleAttached()
 {
+#ifndef __unix__
 	if (this->processId && IsWindow(this->hConWin) && GetWindowThreadProcessId(this->hConWin,NULL) == this->processId && GetWindowThreadProcessId(this->hReadCmd,NULL) == this->processId && GetWindowThreadProcessId(this->hWriteCmd,NULL) == this->processId)
 	{
 		return true;
@@ -138,6 +159,9 @@ bool ET_Client_Console::isConsoleAttached()
 		LOG((std::string)"Process does exist, but windows seem to be having wrong pid: "+this->processId+", "+GetWindowThreadProcessId(this->hConWin,NULL)+", "+GetWindowThreadProcessId(this->hReadCmd,NULL)+", "+GetWindowThreadProcessId(this->hWriteCmd,NULL),LNOTE);
 	}
 	return this->attachConsole();
+#else
+	return false;
+#endif
 }
 
 ET_Client_Console& ET_Client_Console::getInstance()

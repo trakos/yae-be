@@ -1,5 +1,5 @@
-#ifndef _LOGGER_H_
-#define _LOGGER_H_
+#ifndef _TLOGGER_FRONT_H
+#define _TLOGGER_FRONT_H
 #include <string>
 #include <iomanip>
 #include <cstdio>
@@ -45,4 +45,4 @@ class Tlogger_Front
 #define LDBG LOG_DEBUG
 #define LSDBG LOG_SUPERDEBUG
 
-#endif //_LOGGER_H_
+#endif //_TLOGGER_FRONT_H
