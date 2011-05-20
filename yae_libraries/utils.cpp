@@ -108,6 +108,7 @@ std::string wtoa(std::wstring string)
 	const wchar_t* wstr = string.c_str();
 	char* ascii = new char[wcslen(wstr) + 1];
 	wcstombs( ascii, wstr, wcslen(wstr) );
+	ascii[wcslen(wstr)] = '\0';
 	return ascii;
 }
 
