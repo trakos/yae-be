@@ -8,6 +8,8 @@
 #include <YaeMaster/Database.h>
 #include <Tmysql/Connection.h>
 #include <utils.h>
+#include <algorithm>
+#include <base64.h>
 
 YaeMaster_Database YaeMaster_Database::instance = YaeMaster_Database();
 
@@ -22,8 +24,14 @@ Tmysql_LiveRow YaeMaster_Database::authenticate(std::string login, std::string p
 {
 	//md5(base64_encode('***REMOVED***'.sha1( strrev($password).'***REMOVED***' ).'***REMOVED***').'***REMOVED***')
 	//@todo: password encode
-	Tmysql_Arguments args = {login,password};
-	return Tmysql_Connection::getInstance("dawn").fetchLiveRow("users", "WHERE username=? AND password=MD5(?)", args);
+	reverse(password.begin(),password.end());
+	password = password + "***REMOVED***";
+	Tmysql_Arguments args = {password};
+	Tmysql_Row row = Tmysql_Connection::getInstance("dawn").fetchRow("SELECT SHA1(?) AS p", args);
+	password = row["p"];
+	password = encodeBase64("***REMOVED***" + password + "***REMOVED***") + "***REMOVED***";
+	Tmysql_Arguments args2 = {login,password};
+	return Tmysql_Connection::getInstance("dawn").fetchLiveRow("users", "WHERE username=? AND password=MD5(?)", args2);
 }
 
 void YaeMaster_Database::userOnlineWithoutET(Tmysql_LiveRow& user)
