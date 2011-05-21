@@ -20,7 +20,7 @@
 
 #include <string>
 
-Tnet_Connection::Tnet_Connection(int _clientSocket, std::string _ip, int _port)
+Tnet_Connection::Tnet_Connection(int _clientSocket, std::string _ip, unsigned int _port, sockaddr_in _peer)
 {
 	#ifndef __unix__
 		this->wsInitialized = false;
@@ -32,7 +32,7 @@ Tnet_Connection::Tnet_Connection(int _clientSocket, std::string _ip, int _port)
 		}
 		this->wsInitialized = true;
 	#endif
-	this->initialize(_clientSocket,_ip,_port);
+	this->initialize(_clientSocket,_ip,_port,_peer);
 }
 
 Tnet_Connection::Tnet_Connection()
@@ -49,7 +49,7 @@ Tnet_Connection::Tnet_Connection()
 	#endif
 }
 
-void Tnet_Connection::initialize(int _clientSocket, std::string _ip, int _port)
+void Tnet_Connection::initialize(int _clientSocket, std::string _ip, unsigned int _port, sockaddr_in _peer)
 {
 	this->clientSocket = _clientSocket;
 	this->ip = _ip;
@@ -62,6 +62,7 @@ void Tnet_Connection::initialize(int _clientSocket, std::string _ip, int _port)
 	this->intReceivedStatus.started = false;
 	this->stringReceivedStatus.started = false;
 	this->bufferedAction = TNET_NONE;
+	this->peer = _peer;
 	this->socketMode(true);
 }
 
@@ -70,9 +71,30 @@ std::string Tnet_Connection::getIp()
 	return this->ip;
 }
 
-int Tnet_Connection::getPort()
+unsigned int Tnet_Connection::getPort()
 {
 	return this->port;
+}
+
+unsigned int Tnet_Connection::getIpFromString(std::string hostString)
+{
+	const char* host =  hostString.c_str();
+	struct  hostent *hp;
+	unsigned int hostIp;
+	hostIp = inet_addr(host);
+	if(hostIp == INADDR_NONE)
+	{
+		hp = gethostbyname(host);
+		if (!hp)
+		{
+			throw new Tnet_Exception("unable to resolv hostname "+hostString);
+		}
+		else
+		{
+			hostIp = *(u_int *)(hp->h_addr);
+		}
+	}
+	return hostIp;
 }
 
 Tnet_Connection::~Tnet_Connection()
@@ -347,7 +369,23 @@ int Tnet_Connection::receiveInt( unsigned int timeout )
 	return this->intReceivedStatus.value;
 }
 
-const char* Tnet_Connection::simpleReceive( unsigned int sizeToReceive, unsigned int timeout )
+/**
+ * When using this method don't use the other, higher-lever ones (receive, receiveString etc).
+ *
+ * Managed connection means that it will return only when all data (i.e. sizeToReceive bytes) are received, otherwise
+ * managed connection will throw timeout exception, and buffer all that it managed to receive, and in subsequent calls
+ * it will use the data in the buffer first.
+ *
+ * Unmanaged will use the data that is already buffered, but if not enough data will be received within timeout,
+ * it will just return whatever it managed to gather.
+ *
+ * Thus, simpleReceive( MAX_UNSIGNED_INT, 0, false) would return all the data that was already buffered,
+ * and all that it can receive at one batch, and clear the buffer - however, don't use it,
+ * as it will first allocate buffer of MAX_UNSIGNED_INT size.
+ *
+ * timeout is in (1/10) seconds, i.e. timeout==10 means 1 second
+ */
+const char* Tnet_Connection::simpleReceive( unsigned int sizeToReceive, unsigned int timeout, bool managedConnection )
 {
 	this->bufferedAction = TNET_NONE;
 	if ( sizeToReceive > 32767 )
@@ -380,16 +418,20 @@ const char* Tnet_Connection::simpleReceive( unsigned int sizeToReceive, unsigned
 		// then we sleep for a second and start receiving again
 		do
 		{
-			ret = recv(this->clientSocket, this->buffer+this->bufferPosition, sizeToReceive - this->bufferPosition, 0);
-			if ( ret > 0 )
+			ret = this->coreReceive(sizeToReceive);
+			if (ret > 0)
 			{
 				this->bufferPosition += ret;
 			}
-		} while( sizeToReceive - this->bufferPosition > 0 && ( ret != -1 || getNetErrno() == EWOULDBLOCK ) && currentTime++ != timeout && this->sleepForTenthSecond() );
+		}
+		while (sizeToReceive - this->bufferPosition > 0 && ( ret != -1 || getNetErrno() == EWOULDBLOCK ) && currentTime++ != timeout && this->sleepForTenthSecond() );
 		// otherwise, check why did we drop from that loop
 		if ( ret == -1 && getNetErrno() == EWOULDBLOCK )
 		{
-			throw Tnet_TimeoutException();
+			if( managedConnection )
+			{
+				throw Tnet_TimeoutException();
+			}
 		}
 		else if ( ret == -1 )
 		{
@@ -401,7 +443,10 @@ const char* Tnet_Connection::simpleReceive( unsigned int sizeToReceive, unsigned
 		}
 		else if ( sizeToReceive - this->bufferPosition > 0 )
 		{
-			throw Tnet_TimeoutException();
+			if( managedConnection )
+			{
+				throw Tnet_TimeoutException();
+			}
 		}
 		this->timeTakenOnLastOperation = currentTime;
 	}
@@ -409,10 +454,11 @@ const char* Tnet_Connection::simpleReceive( unsigned int sizeToReceive, unsigned
 	{
 		delete[] this->returnBuffer;
 	}
-	this->returnBuffer = new char[sizeToReceive+1];
-	memcpy(this->returnBuffer, this->buffer, sizeToReceive );
-	this->returnBuffer[sizeToReceive] = '\0';
-	this->bufferPosition-= sizeToReceive;
+	unsigned int lengthToReturn = this->bufferPosition > sizeToReceive ? sizeToReceive : this->bufferPosition;
+	this->returnBuffer = new char[lengthToReturn+1];
+	memcpy(this->returnBuffer, this->buffer, lengthToReturn );
+	this->returnBuffer[lengthToReturn] = '\0';
+	this->bufferPosition-= lengthToReturn;
 	if ( this->bufferPosition > 0 )
 	{
 		memcpy(this->buffer, this->buffer+this->bufferPosition, this->bufferPosition);
@@ -429,7 +475,7 @@ int Tnet_Connection::simpleReceiveInt( unsigned int timeout )
 
 void Tnet_Connection::simpleSend(std::string message )
 {
-	unsigned int ret = ::send(this->clientSocket, message.c_str(), message.length(), 0);
+	unsigned int ret = this->coreSend(message.c_str(), message.length());
 	if (ret == -1)
 	{
 		this->sendError("send");
@@ -439,9 +485,19 @@ void Tnet_Connection::simpleSend(std::string message )
 void Tnet_Connection::simpleSend(int number)
 {
 	const int networkOrder = htonl(number);
-	unsigned int ret = ::send(this->clientSocket, reinterpret_cast<const char *>(&networkOrder), sizeof(int), 0);
+	unsigned int ret = this->coreSend(reinterpret_cast<const char *>(&networkOrder), sizeof(int));
 	if (ret == -1)
 	{
 		this->sendError("send");
 	}
+}
+
+ssize_t Tnet_Connection::coreReceive(unsigned int sizeToReceive)
+{
+	return recv(this->clientSocket, this->buffer+this->bufferPosition, sizeToReceive - this->bufferPosition, 0);
+}
+
+ssize_t Tnet_Connection::coreSend(const char* buffer, size_t len)
+{
+	return ::send(this->clientSocket, buffer, len, 0);
 }

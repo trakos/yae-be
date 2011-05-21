@@ -22,7 +22,7 @@ Tnet_Client::Tnet_Client(std::string ip, int port) : Tnet_Connection()
 	struct sockaddr_in address;
 	address.sin_family = AF_INET;
 	address.sin_port = htons(port);
-	address.sin_addr.s_addr = inet_addr(ip.c_str());
+	address.sin_addr.s_addr = this->getIpFromString(ip);
 	memset(address.sin_zero, '\0', sizeof(address));
 	int socketid = socket(AF_INET, SOCK_STREAM, PF_UNSPEC );
 	if ( socketid == -1 )
@@ -34,5 +34,5 @@ Tnet_Client::Tnet_Client(std::string ip, int port) : Tnet_Connection()
 	{
 		this->sendError("connect");
 	}
-	this->initialize(socketid, ip, port);
+	this->initialize(socketid, ip, port, address);
 }

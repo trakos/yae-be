@@ -8,7 +8,9 @@
 #ifndef TNET_CONNECTION_H_
 #define TNET_CONNECTION_H_
 
-#ifndef __unix__
+#ifdef __unix__
+	#include <netinet/in.h>
+#else
 	#include <windows.h>
 	#include <winsock.h>
 #endif
@@ -61,30 +63,32 @@ struct Tnet_StringReceivedStatus
 class Tnet_Connection
 {
 	public:
-		Tnet_Connection(int socket, std::string ip, int port);
+		Tnet_Connection(int socket, std::string ip, unsigned int port, sockaddr_in peer);
 		virtual ~Tnet_Connection();
 
-		Tnet_Message receive( unsigned int timeout = 0 );
-		void send(Tnet_Message message);
+		virtual Tnet_Message receive( unsigned int timeout = 0 );
+		virtual void send(Tnet_Message message);
 
-		std::string receiveString( unsigned int timeout = 0 );
-		int receiveInt( unsigned int timeout = 0 );
-		void sendString(std::string);
-		void sendInt(int);
+		virtual std::string receiveString( unsigned int timeout = 0 );
+		virtual int receiveInt( unsigned int timeout = 0 );
+		virtual void sendString(std::string);
+		virtual void sendInt(int);
 
-		int simpleReceiveInt( unsigned int timeout = 0 );
-		const char* simpleReceive(unsigned int sizeToReceive, unsigned int timeout = 0);
-		void simpleSend(std::string);
-		void simpleSend(int);
+		virtual int simpleReceiveInt( unsigned int timeout = 0);
+		virtual const char* simpleReceive(unsigned int sizeToReceive, unsigned int timeout = 0, bool managedConnection=true);
+		virtual void simpleSend(std::string string);
+		virtual void simpleSend(int number);
 
 		std::string getIp();
-		int getPort();
+		unsigned int getPort();
+		unsigned int getIpFromString(std::string hostString);
 
 		unsigned int timeTakenOnLastOperation;
 	protected:
 		std::string ip;
-		int port;
+		unsigned int port;
 		int clientSocket;
+		sockaddr_in peer;
 #ifndef __unix__
 		WSADATA wsData;
 #endif
@@ -102,7 +106,11 @@ class Tnet_Connection
 
 		Tnet_Connection();
 
-		void initialize(int socket, std::string ip, int port);
+		virtual ssize_t coreReceive(unsigned int sizeToReceive);
+		virtual ssize_t coreSend(const char* buffer, size_t len);
+
+
+		void initialize(int socket, std::string ip, unsigned int port, sockaddr_in peer);
 		void socketMode(bool asynchronous);
 		void sendError(std::string functionName);
 		bool sleepForTenthSecond();

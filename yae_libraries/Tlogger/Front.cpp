@@ -42,7 +42,7 @@ void Tlogger_Front::operator() ( wstring wmsg, Tlogger_Front_Priority prior )
 
 #ifdef __debug__
 	#include <vector>
-	vector<std::string> split(std::string string, std::string character)
+	vector<std::string> _debug_split(std::string string, std::string character)
 	{
 		vector<std::string> array;
 		int found;
@@ -88,11 +88,11 @@ void Tlogger_Front::operator() ( std::string msg, Tlogger_Front_Priority prior )
 	// formatujemy log
 #ifdef __debug__
 	string classname="",function;
-	vector<string> splitted = split(this->instanceInvokeFunction,"(");
+	vector<string> splitted = _debug_split(this->instanceInvokeFunction,"(");
 	function = splitted.front();
-	splitted = split(function," ");
+	splitted = _debug_split(function," ");
 	function = splitted.back();
-	splitted = split(function,":");
+	splitted = _debug_split(function,":");
 	if(splitted.size()>1)
 	{
 		classname = splitted[0];
@@ -102,17 +102,17 @@ void Tlogger_Front::operator() ( std::string msg, Tlogger_Front_Priority prior )
 	{
 		classname = "";
 		function = splitted[0];
-		splitted = split(function," ");
+		splitted = _debug_split(function," ");
 		function = splitted[0];
 	}
 	else
 	{
 		classname = splitted[0];
 		function = splitted[1];
-		splitted = split(classname," ");
+		splitted = _debug_split(classname," ");
 		classname = splitted[1];
 	}
-	splitted = split(function,"(");
+	splitted = _debug_split(function,"(");
 	function = splitted[0];*/
 	ss << setw(20) << this->instanceInvokeFilename << ":" << setw(3) << left << this->instanceInvokeLine << "  " << setw(15) << right << classname << "::" << left << setw(15) << function << " [" << setw(12) << left << errortype << "]: " << msg << endl;
 #else

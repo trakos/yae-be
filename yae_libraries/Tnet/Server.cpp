@@ -101,7 +101,7 @@ bool Tnet_Server::isNewConnectionAvailable(unsigned int timeout)
 	{
 		std::string ip = inet_ntoa(*(struct in_addr*)&sock_remote.sin_addr.s_addr);
 		int port = htons(sock_remote.sin_port);
-		this->connectionPending = new Tnet_Connection(connectionSocket, ip, port);
+		this->connectionPending = new Tnet_Connection(connectionSocket, ip, port, sock_remote);
 		return true;
 	}
 }

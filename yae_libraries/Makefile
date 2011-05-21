@@ -13,7 +13,7 @@ UNAME := $(shell uname)
 ifeq ($(UNAME), Linux)
   TARGET=$(D_B)/lib${LIB}.a
   CXX=gcc44
-  CFLAGS=-g -D __debug__ -fPIC -I. -std=c++0x
+  CFLAGS=-g3 -D __debug__ -fPIC -I. -std=c++0x
   LIBPREFIX=lib
   LIBSUFFIX=a
   OSTARGETS=$(D_B)/$(LIBPREFIX)tmysql.$(LIBSUFFIX) $(D_B)/tmysqlExample
@@ -48,14 +48,23 @@ $(D_O)/$(NAME_PREFIX)%.o: $(PATH_PREFIX)/%.cpp $(PATH_PREFIX)/%.h
 $(D_B)/$(LIBPREFIX)$(LIBNAME).$(LIBSUFFIX): ${OBJS}
 	$(AR) rcs $@ $^
 # TNET	
+LIBNAME=tnet
+
 PATH_PREFIX=Tnet
 NAME_PREFIX=Tnet
-LIBNAME=tnet
 OBJS=$(patsubst $(PATH_PREFIX)/%.cpp,$(D_O)/$(NAME_PREFIX)%.o,$(wildcard $(PATH_PREFIX)/*.cpp))
 $(D_O)/$(NAME_PREFIX)%.o: $(PATH_PREFIX)/%.cpp $(PATH_PREFIX)/%.h
 	$(CXX) $(INCFLAGS) $(CFLAGS) -c $< -o $@
-$(D_B)/$(LIBPREFIX)$(LIBNAME).$(LIBSUFFIX): ${OBJS}
+
+UDPPATH_PREFIX=Tnet/UDP
+UDPNAME_PREFIX=TnetUDP
+UDPOBJS=$(patsubst $(UDPPATH_PREFIX)/%.cpp,$(D_O)/$(UDPNAME_PREFIX)%.o,$(wildcard $(UDPPATH_PREFIX)/*.cpp))
+$(D_O)/$(UDPNAME_PREFIX)%.o: $(UDPPATH_PREFIX)/%.cpp $(UDPPATH_PREFIX)/%.h
+	$(CXX) $(INCFLAGS) $(CFLAGS) -c $< -o $@
+	
+$(D_B)/$(LIBPREFIX)$(LIBNAME).$(LIBSUFFIX): ${OBJS} $(UDPOBJS)
 	$(AR) rcs $@ $^
+	
 # UTILS & INDENT
 $(D_O)/%.o: %.cpp %.h
 	$(CXX) $(CFLAGS) $(INCFLAGS) -c $< -o $@

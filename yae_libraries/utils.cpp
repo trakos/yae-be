@@ -97,6 +97,31 @@ std::vector<std::wstring> wsplit(std::wstring string, std::wstring character, in
 	return array;
 }
 
+std::vector<std::string> split(std::string string, std::string character, int limit)
+{
+	std::vector<std::string> array;
+	int found;
+	int k = 0;
+	while ( (found=string.find_first_of(character)) != string.npos)
+	{
+		if(found!=0)
+		{
+			array.push_back(string.substr(0, found));
+			k++;
+		}
+		string = string.substr(found+1);
+		if(limit && k==limit)
+		{
+			break;
+		}
+	}
+	if (string.length() > 0)
+	{
+		array.push_back(string);
+	}
+	return array;
+}
+
 std::wstring rtrim(std::wstring string)
 {
 	boost::algorithm::trim_right(string);
