@@ -6,7 +6,7 @@ TARGET=$(D_B)/${LIB}.lib
 AR=ar
 LIBPREFIX=
 LIBSUFFIX=lib
-MAINTARGETS=$(D_B)/$(LIBPREFIX)etclient.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)tlogger.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)tnet.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)indent.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)utils.$(LIBSUFFIX)
+MAINTARGETS=$(D_B)/$(LIBPREFIX)etserver.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)etstatus.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)etclient.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)tlogger.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)tnet.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)indent.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)utils.$(LIBSUFFIX)
 OSTARGETS=
 
 UNAME := $(shell uname)
@@ -28,6 +28,19 @@ OBJS=$(patsubst $(PATH_PREFIX)/%.cpp,$(D_O)/$(NAME_PREFIX)%.o,$(wildcard $(PATH_
 $(D_O)/$(NAME_PREFIX)%.o: $(PATH_PREFIX)/%.cpp $(PATH_PREFIX)/%.h
 	$(CXX) $(INCFLAGS) $(CFLAGS) -c $< -o $@
 $(D_B)/$(LIBPREFIX)$(LIBNAME).$(LIBSUFFIX): ${OBJS}
+	$(AR) rcs $@ $^
+# ETSTATUS
+PATH_PREFIX=ET
+NAME_PREFIX=ET
+LIBNAME=etstatus
+OBJS=$(patsubst $(PATH_PREFIX)/%.cpp,$(D_O)/$(NAME_PREFIX)%.o,$(wildcard $(PATH_PREFIX)/*.cpp))
+$(D_O)/$(NAME_PREFIX)%.o: $(PATH_PREFIX)/%.cpp $(PATH_PREFIX)/%.h
+	$(CXX) $(INCFLAGS) $(CFLAGS) -c $< -o $@
+LIBNAME=etstatus
+$(D_B)/$(LIBPREFIX)$(LIBNAME).$(LIBSUFFIX): $(D_O)/ETStatus.o
+	$(AR) rcs $@ $^
+LIBNAME=etserver
+$(D_B)/$(LIBPREFIX)$(LIBNAME).$(LIBSUFFIX): $(D_O)/ETServer.o
 	$(AR) rcs $@ $^
 # TLOGGER
 PATH_PREFIX=Tlogger

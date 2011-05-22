@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-Tnet_UDP_Client::Tnet_UDP_Client(std::string ip, int port) : Tnet_UDP_Connection()
+Tnet_UDP_Client::Tnet_UDP_Client(std::string ip, unsigned int port) : Tnet_UDP_Connection()
 {
 	struct sockaddr_in address;
 	address.sin_family = AF_INET;

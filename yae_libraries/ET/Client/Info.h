@@ -12,7 +12,7 @@
 
 #include <string>
 
-#include <ET/Client/Status.h>
+#include <ET/Status.h>
 
 class ET_Client_Info
 {
@@ -20,15 +20,15 @@ class ET_Client_Info
 		ET_Client_Info();
 		static ET_Client_Info instance;
 		std::wstring localPlayerName();
-		ET_Client_Status_Server_W serverInfo();
-		ET_Client_Status_Players_W playersInfo(bool& success,bool& online,bool& slac,bool& etpro,bool& pb);
-		ET_Client_Status_Player ETPlayerWToETPlayer(ET_Client_Status_Player_W etplayerw);
+		ET_Status_Server_W serverInfo();
+		ET_Status_Players_W playersInfo(bool& success,bool& online,bool& slac,bool& etpro,bool& pb);
+		ET_Status_Player ETPlayerWToETPlayer(ET_Status_Player_W etplayerw);
 	public:
 		static ET_Client_Info& getInstance();
 		int waitingForETCommandTime;
 		int pauseAfterCommand;
-		ET_Client_Status getStatus( bool echoProgress=false );
-		ET_Client_Status_W getStatusW( bool echoProgress=false );
+		ET_Status getStatus( bool echoProgress=false );
+		ET_Status_W getStatusW( bool echoProgress=false );
 		bool isPlaying();
 		std::wstring getVariableValue(std::wstring name, bool& success);
 };

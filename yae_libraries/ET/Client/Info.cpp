@@ -69,23 +69,23 @@ std::wstring ET_Client_Info::localPlayerName()
 	return L"";
 }
 
-ET_Client_Status_Players_W ET_Client_Info::playersInfo(bool& success,bool& online,bool& slac,bool& etpro,bool& pb)
+ET_Status_Players_W ET_Client_Info::playersInfo(bool& success,bool& online,bool& slac,bool& etpro,bool& pb)
 {
 	success = false;
 	online = false;
 	slac = false;
 	etpro = false;
 	pb = false;
-	ET_Client_Status_Player_W empty;
+	ET_Status_Player_W empty;
 	empty.id = -1;
 	empty.etproguid = L"";
 	empty.nick = L"";
 	empty.pbguid = L"";
 	empty.side = SPECTATOR;
 	empty.slacid = 0;
-	int MAXPLAYERS = ET_CLIENT_STATUS_MAXPLAYERS;
+	int MAXPLAYERS = ET_STATUS_MAXPLAYERS;
 	int k=0;
-	ET_Client_Status_Players_W players = ET_Client_Status_Players_W(MAXPLAYERS+1,empty);
+	ET_Status_Players_W players = ET_Status_Players_W(MAXPLAYERS+1,empty);
 	if( !ET_Client_Console::getInstance().isConsoleAttached( ))
 	{
 		LOG("not even attached to ET",LNOTE);
@@ -451,9 +451,9 @@ ET_Client_Status_Players_W ET_Client_Info::playersInfo(bool& success,bool& onlin
 	return players;
 }
 
-ET_Client_Status_Server_W ET_Client_Info::serverInfo()
+ET_Status_Server_W ET_Client_Info::serverInfo()
 {
-	ET_Client_Status_Server_W server;
+	ET_Status_Server_W server;
 	server.slac = false;
 	ET_Client_Console::getInstance().moveToTheEnd();
 	ET_Client_Console::getInstance().sendMessage(L"serverstatus");
@@ -524,6 +524,10 @@ ET_Client_Status_Server_W ET_Client_Info::serverInfo()
 	}
 	line = this->getVariableValue(L"password",success);
 	server.password = line;
+	if ( line != L"" )
+	{
+		server.needPass = true;
+	}
 	// PB
 	ET_Client_Console::getInstance().moveToTheEnd();
 	ET_Client_Console::getInstance().sendMessage(L"pb_MsgPrefix");
@@ -573,10 +577,10 @@ std::wstring ET_Client_Info::getVariableValue(std::wstring name, bool& success)
 	return L"";
 }
 
-ET_Client_Status_W ET_Client_Info::getStatusW( bool echoProgress )
+ET_Status_W ET_Client_Info::getStatusW( bool echoProgress )
 {
 	LOG("",LSDBG);
-	ET_Client_Status_W data;
+	ET_Status_W data;
 	//data.online = this->online();
 	bool success,online,slac,etpro,pb;
 	if(echoProgress)
@@ -610,10 +614,10 @@ ET_Client_Status_W ET_Client_Info::getStatusW( bool echoProgress )
 	return data;
 }
 
-ET_Client_Status ET_Client_Info::getStatus( bool echoProgress )
+ET_Status ET_Client_Info::getStatus( bool echoProgress )
 {
-	ET_Client_Status_W dataW = this->getStatusW( echoProgress );
-	ET_Client_Status data;
+	ET_Status_W dataW = this->getStatusW( echoProgress );
+	ET_Status data;
 	data.online = dataW.online;
 	data.client = this->ETPlayerWToETPlayer(dataW.client);
 	for(int i=0;i<dataW.players.size();i++)
@@ -634,9 +638,9 @@ ET_Client_Status ET_Client_Info::getStatus( bool echoProgress )
 	return data;
 }
 
-ET_Client_Status_Player ET_Client_Info::ETPlayerWToETPlayer(ET_Client_Status_Player_W etplayerw)
+ET_Status_Player ET_Client_Info::ETPlayerWToETPlayer(ET_Status_Player_W etplayerw)
 {
-	ET_Client_Status_Player player;
+	ET_Status_Player player;
 	player.etproguid = wtoa(etplayerw.etproguid);
 	player.id = etplayerw.id;
 	player.nick = wtoa(etplayerw.nick);

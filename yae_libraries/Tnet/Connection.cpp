@@ -71,6 +71,11 @@ std::string Tnet_Connection::getIp()
 	return this->ip;
 }
 
+unsigned int Tnet_Connection::getNumericIp()
+{
+	return this->peer.sin_addr.s_addr;
+}
+
 unsigned int Tnet_Connection::getPort()
 {
 	return this->port;

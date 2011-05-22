@@ -79,6 +79,7 @@ class Tnet_Connection
 		virtual void simpleSend(std::string string);
 		virtual void simpleSend(int number);
 
+		unsigned int getNumericIp();
 		std::string getIp();
 		unsigned int getPort();
 		unsigned int getIpFromString(std::string hostString);
