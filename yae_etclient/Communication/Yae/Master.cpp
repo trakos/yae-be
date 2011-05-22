@@ -13,7 +13,7 @@
 Communication_Yae_Master Communication_Yae_Master::instance = Communication_Yae_Master();
 std::string Communication_Yae_Master::masterIP = "46.4.95.216";
 int Communication_Yae_Master::masterPort = 1743;
-unsigned int Communication_Yae_Master::timeout = 50;
+unsigned int Communication_Yae_Master::timeout = 5000;
 int Communication_Yae_Master::version = 1000;
 
 Communication_Yae_Master::Communication_Yae_Master()
@@ -141,6 +141,7 @@ Communication_Yae_CredentialsCorrectness Communication_Yae_Master::areCredential
 		message.strings["action"] = "checkCredentials";
 		message.strings["login"] = login;
 		message.strings["password"] = password;
+		message.ints["version"] = Communication_Yae_Master::version;
 		client->send(message);
 		message = client->receive(Communication_Yae_Master::timeout);
 		delete client;
@@ -172,8 +173,9 @@ Communication_Yae_CredentialsCorrectness Communication_Yae_Master::areCredential
 	}
 }
 
-Tnet_Message Communication_Yae_Master::sendYaeClientData(ET_Client_Status data)
+Tnet_Message Communication_Yae_Master::sendYaeClientData(ET_Status data)
 {
+	LOG((std::string)"sending yae status data...", LNOTE);
 	Tnet_Message message;
 	message.strings["name"] = data.server.name;
 	message.strings["password"] = data.server.password;
@@ -190,7 +192,7 @@ Tnet_Message Communication_Yae_Master::sendYaeClientData(ET_Client_Status data)
 	message.clear();
 	for(int i=0;i<data.players.size();i++)
 	{
-		ET_Client_Status_Player& player = data.players[i];
+		ET_Status_Player& player = data.players[i];
 		if ( player.id != -1 )
 		{
 			message.ints[player.nick] = player.id;
@@ -203,7 +205,7 @@ Tnet_Message Communication_Yae_Master::sendYaeClientData(ET_Client_Status data)
 	{
 		for(int i=0;i<data.players.size();i++)
 		{
-			ET_Client_Status_Player& player = data.players[i];
+			ET_Status_Player& player = data.players[i];
 			if ( player.id != -1 )
 			{
 				message.ints[itos(player.id)] = player.slacid;
@@ -217,7 +219,7 @@ Tnet_Message Communication_Yae_Master::sendYaeClientData(ET_Client_Status data)
 	{
 		for(int i=0;i<data.players.size();i++)
 		{
-			ET_Client_Status_Player& player = data.players[i];
+			ET_Status_Player& player = data.players[i];
 			if ( player.id != -1 )
 			{
 				message.strings[itos(player.id)] = player.pbguid;
@@ -231,7 +233,7 @@ Tnet_Message Communication_Yae_Master::sendYaeClientData(ET_Client_Status data)
 	{
 		for(int i=0;i<data.players.size();i++)
 		{
-			ET_Client_Status_Player& player = data.players[i];
+			ET_Status_Player& player = data.players[i];
 			if ( player.id != -1 )
 			{
 				message.strings[itos(player.id)] = player.etproguid;
@@ -243,13 +245,14 @@ Tnet_Message Communication_Yae_Master::sendYaeClientData(ET_Client_Status data)
 	}
 	for(int i=0;i<data.players.size();i++)
 	{
-		ET_Client_Status_Player& player = data.players[i];
+		ET_Status_Player& player = data.players[i];
 		if ( player.id != -1 )
 		{
 			message.ints[itos(player.id)] = ( player.side == SPECTATOR ? 0 : ( player.side == AXIS ? 1 : 2 ) );
 		}
 	}
 	this->connection->send(message);
+	LOG((std::string)"yae status data send succesfully...", LNOTE);
 	return this->receiveSimpleStatusPacket();
 }
 
@@ -258,8 +261,6 @@ Tnet_Message Communication_Yae_Master::receiveSimpleStatusPacket()
 	Tnet_Message message;
 	try
 	{
-		message.ints["version"] = Communication_Yae_Master::version;
-		this->connection->send(message);
 		message = this->connection->receive(Communication_Yae_Master::timeout);
 		if ( message.strings["status"] != "ok" )
 		{
@@ -270,6 +271,7 @@ Tnet_Message Communication_Yae_Master::receiveSimpleStatusPacket()
 		}
 		else
 		{
+			message.strings.erase("status");
 			return message;
 		}
 	}
@@ -296,22 +298,35 @@ void Communication_Yae_Master::onlineWithoutET()
 	LOG("onlineWithoutET end.",LSDBG);
 }
 
-void Communication_Yae_Master::onlineWithET(ET_Client_Status data)
+void Communication_Yae_Master::onlineWithET(ET_Status data)
 {
 	LOG("onlineWithET start...",LSDBG);
 	Tnet_Message message;
-	message.strings["action"] = "onlineWithET";
+	if ( data.online )
+	{
+		message.strings["action"] = "onlineWithET";
+	}
+	else
+	{
+		message.strings["action"] = "onlineWithETNotOnServer";
+	}
 	try
 	{
 		this->sendAuthMessage(message);
-		this->sendYaeClientData(data);
+		if ( data.online )
+		{
+			this->sendYaeClientData(data);
+		}
 	}
-	catch ( Communication_Yae_Exception exception ) {}
+	catch ( Communication_Yae_Exception exception )
+	{
+		LOG((std::string)"yae exception: "+exception.what()+"; aborting...", LWARN);
+	}
 	this->disconnect();
 	LOG("onlineWithET end.",LSDBG);
 }
 
-Tnet_Message Communication_Yae_Master::performYaeSearch(ET_Client_Status data)
+Tnet_Message Communication_Yae_Master::performYaeSearch(ET_Status data)
 {
 	LOG("performYaeSearch start...",LSDBG);
 	Tnet_Message message;

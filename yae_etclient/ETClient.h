@@ -21,6 +21,7 @@ class ETClient
 		void onlineWithET();
 		void performYaeSearch();
 		void printServerStatus();
+		void forceAuth();
 		int mainLoop();
 };
 

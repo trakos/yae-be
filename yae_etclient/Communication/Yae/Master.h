@@ -12,7 +12,7 @@
 #include<Tnet/Message.h>
 #include<Tnet/Connection.h>
 #include<Communication/Yae/Authorization.h>
-#include<ET/Client/Info.h>
+#include<ET/Status.h>
 
 class Communication_Yae_Master
 {
@@ -30,15 +30,15 @@ class Communication_Yae_Master
 		Tnet_Message receiveSimpleStatusPacket();
 		Tnet_Message sendAuthMessage(Tnet_Message message);
 		Tnet_Message sendMessage(Tnet_Message message);
-		Tnet_Message sendYaeClientData(ET_Client_Status data);
+		Tnet_Message sendYaeClientData(ET_Status data);
 
 	public:
 		static Communication_Yae_Master& getInstance();
 		~Communication_Yae_Master();
 		Communication_Yae_CredentialsCorrectness areCredentialsCorrect(std::string login, std::string password);
-		void onlineWithET(ET_Client_Status data);
+		void onlineWithET(ET_Status data);
 		void onlineWithoutET();
-		Tnet_Message performYaeSearch(ET_Client_Status data);
+		Tnet_Message performYaeSearch(ET_Status data);
 };
 
 #endif /* COMMUNICATION_YAE_MASTER_H_ */

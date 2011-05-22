@@ -12,6 +12,8 @@
 #include <ET/Client/Console.h>
 #include <ET/Client/Listener.h>
 #include <Communication/Yae/Master.h>
+#include <Communication/Yae/Authorization.h>
+#include <Tlogger/Front.h>
 
 #include <fstream>
 #include <iostream>
@@ -36,37 +38,58 @@ void ETClient::onlineWithoutET()
 
 void ETClient::onlineWithET()
 {
-	ET_Client_Status status = ET_Client_Info::getInstance().getStatus(false);
+	ET_Status status = ET_Client_Info::getInstance().getStatus(false);
+	if ( !status.online )
+	{
+		LOG("client with ET, not on a server", LNOTE);
+	}
 	Communication_Yae_Master::getInstance().onlineWithET(status);
+}
+
+void ETClient::forceAuth()
+{
+	Communication_Yae_Authorization::getInstance().getCurrentCredentials();
 }
 
 void ETClient::performYaeSearch()
 {
 	try
 	{
-		ET_Client_Status status = ET_Client_Info::getInstance().getStatus(true);
+		ET_Status status = ET_Client_Info::getInstance().getStatus(true);
 		if ( !status.online )
 		{
-			ET_Client_Input::getInstance().shortMessage("not on a server! or is it a bug? let me know!");
+			ET_Client_Input::getInstance().shortMessage("You are not on a server! It might be a bug...");
 		}
 		else
 		{
-			ET_Client_Input::getInstance().shortMessage("sending search request...");
+			ET_Client_Input::getInstance().shortMessage("Sending search request...");
 			Tnet_Message searchResults = Communication_Yae_Master::getInstance().performYaeSearch(status);
-			ET_Client_Input::getInstance().shortMessage("results:");
+			ET_Client_Input::getInstance().shortMessage("Results:");
 			for(int i=0;i<status.players.size();i++)
 			{
-				ET_Client_Status_Player& player = status.players[i];
+				ET_Status_Player& player = status.players[i];
 				if ( player.id != -1 )
 				{
-					ET_Client_Input::getInstance().shortMessage("player "+player.nick+" results: [" + searchResults.strings[""+player.id] + '^' + ET_Client_Input::color + ']' );
+					if ( !searchResults.strings.count(itos(player.id)) )
+					{
+						LOG((std::string)"No results at all returned for id: "+player.id+"!", LERR);
+					}
+					else
+					{
+						std::vector<std::string> splitted = split(searchResults.strings[itos(player.id)],"\n");
+						ET_Client_Input::getInstance().shortMessage("Player "+player.nick+" results: "+splitted[0]);
+						for (unsigned int i=1; i<splitted.size(); i++)
+						{
+							ET_Client_Input::getInstance().shortMessage("      "+splitted[i]);
+						}
+					}
 				}
 			}
 		}
 	}
 	catch ( Communication_Yae_Exception exception )
 	{
-		ET_Client_Input::getInstance().shortMessage("unfortunately we couldn't fetch search results from YAE master server right now! Try again?");
+		ET_Client_Input::getInstance().shortMessage("Unfortunately we couldn't fetch search results from YAE master server! Try again later?");
 	}
 }
 
@@ -126,6 +149,6 @@ int ETClient::mainLoop()
 
 void ETClient::printServerStatus()
 {
-	ET_Client_Status status = ET_Client_Info::getInstance().getStatus(true);
+	ET_Status status = ET_Client_Info::getInstance().getStatus(true);
 	std::cout << status;
 }

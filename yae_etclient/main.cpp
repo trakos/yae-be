@@ -12,13 +12,12 @@
 #include <Tlogger/Front.h>
 #include <ETClient.h>
 
-
 int main()
 {
-
 	IndentFacet::initialize();
 	LOG.couting = LSDBG;
 	ET_Client_Console::getInstance().toggleWindow(true);
 	//ETClient::getInstance().printServerStatus();
+	ETClient::getInstance().forceAuth();
 	return ETClient::getInstance().mainLoop();
 }
