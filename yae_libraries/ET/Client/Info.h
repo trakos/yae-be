@@ -31,6 +31,7 @@ class ET_Client_Info
 		ET_Status_W getStatusW( bool echoProgress=false );
 		bool isPlaying();
 		std::wstring getVariableValue(std::wstring name, bool& success);
+		ET_Status_Player_W parsePlayersLine(std::wstring line, bool warmup, bool doubleStatus);
 };
 
 #endif /* ET_CLIENT_INFO_H_ */

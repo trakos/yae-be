@@ -73,6 +73,30 @@ std::wstring ET_Client_Info::localPlayerName()
 	return L"";
 }
 
+ET_Status_Player_W ET_Client_Info::parsePlayersLine(std::wstring line, bool warmup, bool doubleStatus)
+{
+	ET_Status_Player_W player;
+	unsigned int movedBy = 0;
+	if ( doubleStatus )
+	{
+		movedBy++;
+	}
+	if ( warmup )
+	{
+		movedBy+=10;
+	}
+	wchar_t status = line[movedBy];
+	// filling values
+	player.nick = rtrim(line.substr(6+movedBy,30));
+	player.id = ::stoi(wtoa(line.substr(1+movedBy,2)));
+	player.side = (status==L'L')?ALLIES:((status==L'X')?AXIS:SPECTATOR);
+	// empty values
+	player.etproguid = L"";
+	player.pbguid = L"";
+	player.slacid = 0;
+	return player;
+}
+
 ET_Status_Players_W ET_Client_Info::playersInfo(bool& success,bool& online,bool& slac,bool& etpro,bool& pb)
 {
 	success = false;
@@ -125,16 +149,15 @@ ET_Status_Players_W ET_Client_Info::playersInfo(bool& success,bool& online,bool&
 		Sleep(this->pauseAfterCommand);
 		return players;
 	}
-	int movedBy = 0;
-	int elementsMovedBy = 0;
-	if(line == L" ID : Player                    Nudge  Rate  MaxPkts  Snaps")
+	bool doubleStatus = false;
+	bool warmup = false;
+	if(line == L"  ID : Player                    Nudge  Rate  MaxPkts  Snaps" || line == L"Status   :  ID : Player                    Nudge  Rate  MaxPkts  Snaps")
 	{
-		movedBy = 1;
+		doubleStatus = true;
 	}
-	else if ( line == L"Status   :  ID : Player                    Nudge  Rate  MaxPkts  Snaps")
+	if ( line == L"Status   :  ID : Player                    Nudge  Rate  MaxPkts  Snaps" || line == L"Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps" )
 	{
-		movedBy = -10;
-		elementsMovedBy = 2;
+		warmup = true;
 	}
 	if((line=ET_Client_Console::getInstance().getLastLine())!=L"[skipnotify]-----------------------------------------------------------" && line!=L"[skipnotify]------------------------------------------------------------" && line!=L"[skipnotify]----------------------------------------------------------------------")
 	{
@@ -151,40 +174,16 @@ ET_Status_Players_W ET_Client_Info::playersInfo(bool& success,bool& online,bool&
 		{
 			line = line.substr(skipNotify.length());
 		}
-		array info = wsplit(line,L" ");
-		for ( int e=0; e<elementsMovedBy; e++ )
+		ET_Status_Player_W player = this->parsePlayersLine(line, warmup, doubleStatus);
+		if ( player.id < 0 || player.id > ET_STATUS_MAXPLAYERS )
 		{
-			info.erase(info.begin());
-		}
-		if( info[1] == L":" )
-		{
-			info.insert(info.begin(),L"S");
-		}
-		if(info.size()<4 || info[1].size()<1)
-		{
-			LOG(L"too few splitted elements or too short id at :"+line,LWARN);
-			Sleep(this->pauseAfterCommand);
-			return players;
-		}
-		int id;
-		std::wistringstream stream(info[1]);
-		stream >> id;
-		if(info[1][0] != L'0' &&  id==0 )
-		{
-			LOG(L"unparseable id: '"+info[1]+L"' at:"+line,LWARN);
-			Sleep(this->pauseAfterCommand);
-			return players;
-		}
-		players[id].id = id;
-		if( movedBy == -10 )
-		{
-			players[id].nick = rtrim(line.substr(7-movedBy,19-movedBy));
+			LOG((std::wstring)L"id ("+player.id+L") out of range - ignoring player from line: "+line, LWARN);
 		}
 		else
 		{
-			players[id].nick = rtrim(line.substr(7-movedBy,26-movedBy));
+			players[ player.id ] = player;
 		}
-		players[id].side = (info[0][0]==L'L')?ALLIES:((info[0][0]==L'X')?AXIS:SPECTATOR);
+		LOG((std::wstring)L"player "+player.id+L": '"+player.nick+L"'"+L"("+(player.side==SPECTATOR?L"spectator":(player.side==AXIS?L"axis":L"allies"))+L")", LDBG);
 	}
 	if(k==MAXPLAYERS)
 	{
@@ -238,7 +237,7 @@ ET_Status_Players_W ET_Client_Info::playersInfo(bool& success,bool& online,bool&
 			return players;
 		}
 		k=0;
-		int slacArgumentsSize = slacFormatVersion==1 ? 3 : 5;
+		int slacArgumentsSize = slacFormatVersion==1 ? 3 : 4; // there can be "normal user" or "donator" in status, so it can be 5, too
 		while( (line=ET_Client_Console::getInstance().getLastLine()) != slacDelimiterLines && k++!=MAXPLAYERS)
 		{
 			array info = wsplit(line,L" ");
@@ -391,63 +390,71 @@ ET_Status_Players_W ET_Client_Info::playersInfo(bool& success,bool& online,bool&
 		// ]pb_plist - skip
 		ET_Client_Console::getInstance().getLastLine();
 		line = ET_Client_Console::getInstance().getLastLine();
-		if( line.size() < prefixLength)
+		if ( line == L"" )
+		{
+			LOG(L"pb_plist timeouted even though prefix was received, assuming pb is off",LWARN);
+			pb = false;
+		}
+		else if( line.size() < prefixLength)
 		{
 			LOG((wstring)L"line too short for pb prefix "+prefixLength+L": '"+line+L"'",LWARN);
 			Sleep(this->pauseAfterCommand);
 			return players;
 		}
-		line = line.substr(prefixLength);
-		if ( line != L"Player List: [Slot #] [GUID] [Status] [Auth Rate] [Recent SS] [Name]" )
+		else
 		{
-			LOG(L"line '"+line+L"', expected: 'Player List: [Slot #]  [...'",LWARN);
-		}
-		while( (line=ET_Client_Console::getInstance().getLastLine()) != L"" && line.find(L"End of Player List", 0) == line.npos)
-		{
-			if( line.size() < prefixLength)
-			{
-				LOG((wstring)L"line too short for pb prefix "+prefixLength+L": '"+line+L"'",LWARN);
-				Sleep(this->pauseAfterCommand);
-				return players;
-			}
 			line = line.substr(prefixLength);
-			array info = wsplit(line,L" ");
-			if(info.size()<3)
+			if ( line != L"Player List: [Slot #] [GUID] [Status] [Auth Rate] [Recent SS] [Name]" )
 			{
-				LOG(L"too few splitted elements at :"+line,LWARN);
+				LOG(L"line '"+line+L"', expected: 'Player List: [Slot #]  [...'",LWARN);
+			}
+			while( (line=ET_Client_Console::getInstance().getLastLine()) != L"" && line.find(L"End of Player List", 0) == line.npos)
+			{
+				if( line.size() < prefixLength)
+				{
+					LOG((wstring)L"line too short for pb prefix "+prefixLength+L": '"+line+L"'",LWARN);
+					Sleep(this->pauseAfterCommand);
+					return players;
+				}
+				line = line.substr(prefixLength);
+				array info = wsplit(line,L" ");
+				if(info.size()<3)
+				{
+					LOG(L"too few splitted elements at :"+line,LWARN);
+					Sleep(this->pauseAfterCommand);
+					return players;
+				}
+				int id;
+				std::wistringstream stream(info[0]);
+				stream >> id;
+				if(id==0)
+				{
+					LOG(L"unparseable id: '"+info[0]+L"' at:"+line,LWARN);
+					Sleep(this->pauseAfterCommand);
+					return players;
+				}
+				id--;
+				if(players[id].id==-1)
+				{
+					LOG(L"unexpected id (not existing at /players): '"+info[0]+L"' at:"+line,LWARN);
+					Sleep(this->pauseAfterCommand);
+					return players;
+				}
+				info = wsplit(info[1],L"(");
+				if(info.size()!=2)
+				{
+					LOG(L"expected pbguid in '"+info[0]+L"' at:"+line,LWARN);
+					Sleep(this->pauseAfterCommand);
+					return players;
+				}
+				players[id].pbguid = info[0];
+			}
+			if(k==MAXPLAYERS)
+			{
+				LOG((std::string)"no ending delimiter after "+MAXPLAYERS+" lines for /pb_plist!",LWARN);
 				Sleep(this->pauseAfterCommand);
 				return players;
 			}
-			int id;
-			std::wistringstream stream(info[0]);
-			stream >> id;
-			if(id==0)
-			{
-				LOG(L"unparseable id: '"+info[0]+L"' at:"+line,LWARN);
-				Sleep(this->pauseAfterCommand);
-				return players;
-			}
-			id--;
-			if(players[id].id==-1)
-			{
-				LOG(L"unexpected id (not existing at /players): '"+info[0]+L"' at:"+line,LWARN);
-				Sleep(this->pauseAfterCommand);
-				return players;
-			}
-			info = wsplit(info[1],L"(");
-			if(info.size()!=2)
-			{
-				LOG(L"expected pbguid in '"+info[0]+L"' at:"+line,LWARN);
-				Sleep(this->pauseAfterCommand);
-				return players;
-			}
-			players[id].pbguid = info[0];
-		}
-		if(k==MAXPLAYERS)
-		{
-			LOG((std::string)"no ending delimiter after "+MAXPLAYERS+" lines for /pb_plist!",LWARN);
-			Sleep(this->pauseAfterCommand);
-			return players;
 		}
 	}
 	Sleep(this->pauseAfterCommand);
@@ -495,6 +502,10 @@ ET_Status_Server_W ET_Client_Info::serverInfo()
 			server.mod = value;
 			server.etpro = ( value == L"etpro" );
 		}
+		else if( variableName == L"g_needpass              " )
+		{
+			server.needPass = true;
+		}
 		else if( variableName == L"sv_hostname             " )
 		{
 			server.name = value;
@@ -528,11 +539,7 @@ ET_Status_Server_W ET_Client_Info::serverInfo()
 	}
 	line = this->getVariableValue(L"password",success);
 	server.password = line;
-	if ( line != L"" )
-	{
-		server.needPass = true;
-	}
-	// PB
+	/*// PB
 	ET_Client_Console::getInstance().moveToTheEnd();
 	ET_Client_Console::getInstance().sendMessage(L"pb_MsgPrefix");
 	Sleep(this->waitingForETCommandTime);
@@ -548,7 +555,7 @@ ET_Status_Server_W ET_Client_Info::serverInfo()
 			server.punkbuster = true;
 		}
 	}
-	Sleep(this->pauseAfterCommand);
+	Sleep(this->pauseAfterCommand);*/
 	return server;
 }
 
@@ -612,6 +619,7 @@ ET_Status_W ET_Client_Info::getStatusW( bool echoProgress )
 		if(echoProgress)
 			ET_Client_Input::getInstance().shortMessageW(L"Fetching server info...");
 		data.server = this->serverInfo();
+		data.server.punkbuster = pb;
 		if(echoProgress)
 			ET_Client_Input::getInstance().shortMessageW(L"All done.");
 	}

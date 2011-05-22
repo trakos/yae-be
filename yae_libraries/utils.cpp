@@ -142,6 +142,7 @@ std::wstring atow(std::string string)
 	const char* str = string.c_str();
 	wchar_t* wstr  = new wchar_t[strlen(str) + 1];
 	mbstowcs( wstr, str, strlen(str) );
+	wstr[strlen(str)] = '\0';
 	return wstr;
 }
 
