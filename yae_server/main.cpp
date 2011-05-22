@@ -7,13 +7,15 @@
 #include <Tnet/Client.h>
 #include <Tnet/Message.h>
 #include <Tlogger/Front.h>
-#include <ET/Client/Status.h>
+#include <ET/Status.h>
+#include <ET/Server.h>
 #include <indent.h>
 #include <YaeMaster/Database.h>
 #include <YaeMaster/Protocol.h>
+#include <YaeMaster.h>
 #include <Tmysql/Connection.h>
 
-#define YAETIMEOUT 50
+#define YAETIMEOUT 5000
 
 using std::cout;
 using std::endl;
@@ -25,12 +27,11 @@ Tnet_Server* yaeServer = NULL;
 void* processClient( void *data )
 {
 	currently_checking++;
-	cout << "checking out new client..." << endl;
-	Tnet_Client* yaeClient = (Tnet_Client*)data;
+	Tnet_Connection* yaeClient = (Tnet_Connection*)data;
+	cout << "checking out new client, "+yaeClient->getIp()+":"+yaeClient->getPort()+"..." << endl;
 	try
 	{
 		Tnet_Message message = yaeClient->receive(YAETIMEOUT);
-		cout << message << endl;
 		YaeMaster_Protocol_Action action = YaeMaster_Protocol::getInstance().getAction(message.strings["action"]);
 		Tmysql_LiveRow user = YaeMaster_Database::getInstance().authenticate(message.strings["login"], message.strings["password"]);
 		if ( !user.isRowNull() )
@@ -41,6 +42,7 @@ void* processClient( void *data )
 			switch(action)
 			{
 				case ONLINE_WITHOUT_ET:
+				case ONLINE_WITH_ET_NOT_ON_SERVER:
 				{
 					YaeMaster_Database::getInstance().userOnlineWithoutET(user);
 					yaeClient->send(message);
@@ -50,7 +52,17 @@ void* processClient( void *data )
 				case YAE_SEARCH:
 				{
 					yaeClient->send(message);
-					ET_Client_Status status = YaeMaster_Protocol::getInstance().receiveETClientStatus(yaeClient);
+					ET_Status status = YaeMaster_Protocol::getInstance().receiveETClientStatus(yaeClient);
+					std::cout << status << std::endl;
+					try
+					{
+						status = YaeMaster::getInstance().verifyData(status);
+					}
+					catch (ET_Server_Exception exception)
+					{
+						YaeMaster_Protocol::getInstance().sendSimpleStatus(yaeClient, "bad");
+						throw exception;
+					}
 					switch(action)
 					{
 						case ONLINE_WITH_ET:
@@ -90,7 +102,6 @@ void* processClient( void *data )
 			message.strings["status"] = "ok";
 			message.strings["authStatus"] = "bad";
 		}
-		cout << message << endl;
 		yaeClient->send(message);
 	}
 	catch (YaeMaster_Exception exception)
@@ -98,10 +109,13 @@ void* processClient( void *data )
 		Tnet_Message message;
 		message.strings["status"] = "error";
 		yaeClient->send(message);
-		cout << message << endl;
 		LOG(exception.what(), LERR);
 	}
 	catch (Tnet_Exception exception)
+	{
+		LOG(exception.what(), LERR);
+	}
+	catch (ET_Server_Exception exception)
 	{
 		LOG(exception.what(), LERR);
 	}
@@ -138,4 +152,14 @@ int main()
 	}
 	pthread_attr_destroy(&attr);
 	pthread_exit(0);
+}
+
+int _main()
+{
+	LOG.couting = LSDBG;
+	IndentFacet::initialize();
+	//ET_Server server("213.108.31.35", 27960);
+	ET_Server server("localhost", 27960);
+	server.getPublicStatus();
+	return 0;
 }

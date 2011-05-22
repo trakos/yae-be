@@ -2,18 +2,19 @@ D_O = build/obj
 D_B = build/bin
 
 CXX=gcc44
-LIBFLAGS=-lmysqlclient_r -lm -lgmpxx -lpthread -L/usr/lib64/mysql -L../yae_libraries/build/bin -ltlogger -ltmysql -ltnet -lindent -lutils -letclient
+LIBFLAGS=-lmysqlclient_r -lm -lgmpxx -lpthread -L/usr/lib64/mysql -L../yae_libraries/build/bin -ltlogger -ltmysql -lindent -lutils -letstatus  -ltnet -letserver -ltnet -letclient
+LIBDEPS=$(wildcard ../yae_libraries/build/bin/lib*.a)
 INCFLAGS=-I../yae_libraries -I.
-CFLAGS=-g -std=c++0x
+CFLAGS=-g3 -std=c++0x
 TARGETS=$(D_B)/yaeServer
 
-all: $(TARGETS) 
+all: $(TARGETS)
 
 clean:
 	$(RM) $(TARGETS)
 	$(RM) $(D_O)/*.o
 
-$(D_B)/yaeServer: main.cpp $(D_O)/YaeMaster.o $(D_O)/YaeMasterDatabase.o $(D_O)/YaeMasterException.o $(D_O)/YaeMasterProtocol.o $(D_O)/base64.o
+$(D_B)/yaeServer: main.cpp $(LIBDEPS) $(D_O)/YaeMaster.o $(D_O)/YaeMasterDatabase.o $(D_O)/YaeMasterException.o $(D_O)/YaeMasterProtocol.o $(D_O)/base64.o
 	$(CXX) $(CFLAGS) $(INCFLAGS) $< $(filter %.o,$^) $(LIBFLAGS) -o $@ 
 
 $(D_O)/YaeMaster.o: YaeMaster.cpp YaeMaster.h

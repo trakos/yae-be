@@ -8,6 +8,8 @@
 #ifndef YAEMASTER_H_
 #define YAEMASTER_H_
 
+#include <ET/Status.h>
+
 class YaeMaster
 {
 	protected:
@@ -15,6 +17,7 @@ class YaeMaster
 		static YaeMaster instance;
 	public:
 		static YaeMaster& getInstance();
+		ET_Status verifyData(ET_Status clientStatus);
 };
 
 

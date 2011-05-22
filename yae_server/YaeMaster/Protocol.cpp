@@ -6,9 +6,10 @@
  */
 
 #include <YaeMaster/Protocol.h>
+#include <Tlogger/Front.h>
 
 YaeMaster_Protocol YaeMaster_Protocol::instance = YaeMaster_Protocol();
-unsigned int YaeMaster_Protocol::timeout = 20;
+unsigned int YaeMaster_Protocol::timeout = 5000;
 
 YaeMaster_Protocol::YaeMaster_Protocol() {};
 
@@ -31,13 +32,18 @@ YaeMaster_Protocol_Action YaeMaster_Protocol::getAction(std::string actionName)
 	{
 		return ONLINE_WITH_ET;
 	}
+	else if ( actionName == "onlineWithETNotOnServer" )
+	{
+		return ONLINE_WITH_ET_NOT_ON_SERVER;
+	}
 	else if ( actionName == "yaeSearch" )
 	{
 		return YAE_SEARCH;
 	}
 	else
 	{
-		throw new YaeMaster_Exception("action "+actionName+" undefined!");
+		LOG("action "+actionName+" undefined!", LWARN);
+		throw YaeMaster_Exception("action "+actionName+" undefined!");
 	}
 }
 
@@ -48,9 +54,9 @@ void YaeMaster_Protocol::sendSimpleStatus(Tnet_Connection* connection,std::strin
 	connection->send(message);
 }
 
-ET_Client_Status YaeMaster_Protocol::receiveETClientStatus( Tnet_Connection* connection )
+ET_Status YaeMaster_Protocol::receiveETClientStatus( Tnet_Connection* connection )
 {
-	ET_Client_Status status;
+	ET_Status status;
 	status.online = true;
 	Tnet_Message message = connection->receive(YaeMaster_Protocol::timeout);
 	status.server.name = message.strings["name"];
@@ -71,11 +77,13 @@ ET_Client_Status YaeMaster_Protocol::receiveETClientStatus( Tnet_Connection* con
 	intMapIterator intsEnd = message.ints.end();
 	for (intMapIterator it = message.ints.begin(); it != intsEnd; ++it)
 	{
-		if ( it->second < 1 || it->second > ET_CLIENT_STATUS_MAXPLAYERS )
+		if ( it->second > ET_STATUS_MAXPLAYERS )
 		{
-			throw new YaeMaster_Exception("number "+itos(it->second)+" out of range!");
+			LOG("number "+itos(it->second)+" out of range!", LWARN);
+			throw YaeMaster_Exception("number "+itos(it->second)+" out of range!");
 		}
 		status.players[it->second].nick = it->first;
+		status.players[it->second].id = it->second;
 		playersCount++;
 	}
 	message.clear();
@@ -88,13 +96,15 @@ ET_Client_Status YaeMaster_Protocol::receiveETClientStatus( Tnet_Connection* con
 		for (intMapIterator it = message.ints.begin(); it != intsEnd; ++it)
 		{
 			unsigned int number = ::stoi(it->first);
-			if ( number < 1 || number > ET_CLIENT_STATUS_MAXPLAYERS )
+			if ( number > ET_STATUS_MAXPLAYERS )
 			{
-				throw new YaeMaster_Exception("number "+it->first+"("+itos(number)+") out of range!");
+				LOG("number "+it->first+"("+itos(number)+") out of range!", LWARN);
+				throw YaeMaster_Exception("number "+it->first+"("+itos(number)+") out of range!");
 			}
 			else if ( status.players[number].id == -1 )
 			{
-				throw new YaeMaster_Exception("player "+it->first+"("+itos(number)+") undefined!");
+				LOG("player "+it->first+"("+itos(number)+") undefined!", LWARN);
+				throw YaeMaster_Exception("player "+it->first+"("+itos(number)+") undefined!");
 			}
 			else
 			{
@@ -104,7 +114,8 @@ ET_Client_Status YaeMaster_Protocol::receiveETClientStatus( Tnet_Connection* con
 		}
 		if ( playersGiven != playersCount )
 		{
-			throw new YaeMaster_Exception("mismatch between number of players while fetching slac data!");
+			LOG("mismatch between number of players while fetching slac data!", LWARN);
+			throw YaeMaster_Exception("mismatch between number of players while fetching slac data!");
 		}
 		message.clear();
 		this->sendSimpleStatus(connection);
@@ -117,13 +128,15 @@ ET_Client_Status YaeMaster_Protocol::receiveETClientStatus( Tnet_Connection* con
 		for (stringMapIterator it = message.strings.begin(); it != stringsEnd; ++it)
 		{
 			unsigned int number = ::stoi(it->first);
-			if ( number < 1 || number > ET_CLIENT_STATUS_MAXPLAYERS )
+			if ( number > ET_STATUS_MAXPLAYERS )
 			{
-				throw new YaeMaster_Exception("number "+it->first+"("+itos(number)+") out of range!");
+				LOG("number "+it->first+"("+itos(number)+") out of range!", LWARN);
+				throw YaeMaster_Exception("number "+it->first+"("+itos(number)+") out of range!");
 			}
 			else if ( status.players[number].id == -1 )
 			{
-				throw new YaeMaster_Exception("player "+it->first+"("+itos(number)+") undefined!");
+				LOG("player "+it->first+"("+itos(number)+") undefined!", LWARN);
+				throw YaeMaster_Exception("player "+it->first+"("+itos(number)+") undefined!");
 			}
 			else
 			{
@@ -133,7 +146,8 @@ ET_Client_Status YaeMaster_Protocol::receiveETClientStatus( Tnet_Connection* con
 		}
 		if ( playersGiven != playersCount )
 		{
-			throw new YaeMaster_Exception("mismatch between number of players while fetching punkbuster data!");
+			LOG("mismatch between number of players while fetching punkbuster data!", LWARN);
+			throw YaeMaster_Exception("mismatch between number of players while fetching punkbuster data!");
 		}
 		message.clear();
 		this->sendSimpleStatus(connection);
@@ -146,13 +160,15 @@ ET_Client_Status YaeMaster_Protocol::receiveETClientStatus( Tnet_Connection* con
 		for (stringMapIterator it = message.strings.begin(); it != stringsEnd; ++it)
 		{
 			unsigned int number = ::stoi(it->first);
-			if ( number < 1 || number > ET_CLIENT_STATUS_MAXPLAYERS )
+			if ( number > ET_STATUS_MAXPLAYERS )
 			{
-				throw new YaeMaster_Exception("number "+it->first+"("+itos(number)+") out of range!");
+				LOG("number "+it->first+"("+itos(number)+") out of range!", LWARN);
+				throw YaeMaster_Exception("number "+it->first+"("+itos(number)+") out of range!");
 			}
 			else if ( status.players[number].id == -1 )
 			{
-				throw new YaeMaster_Exception("player "+it->first+"("+itos(number)+") undefined!");
+				LOG("player "+it->first+"("+itos(number)+") undefined!", LWARN);
+				throw YaeMaster_Exception("player "+it->first+"("+itos(number)+") undefined!");
 			}
 			else
 			{
@@ -162,7 +178,8 @@ ET_Client_Status YaeMaster_Protocol::receiveETClientStatus( Tnet_Connection* con
 		}
 		if ( playersGiven != playersCount )
 		{
-			throw new YaeMaster_Exception("mismatch between number of players while fetching etpro data!");
+			LOG("mismatch between number of players while fetching etpro data!", LWARN);
+			throw YaeMaster_Exception("mismatch between number of players while fetching etpro data!");
 		}
 		message.clear();
 		this->sendSimpleStatus(connection);
@@ -173,13 +190,15 @@ ET_Client_Status YaeMaster_Protocol::receiveETClientStatus( Tnet_Connection* con
 	for (intMapIterator it = message.ints.begin(); it != intsEnd; ++it)
 	{
 		unsigned int number = ::stoi(it->first);
-		if ( number < 1 || number > ET_CLIENT_STATUS_MAXPLAYERS )
+		if ( number > ET_STATUS_MAXPLAYERS )
 		{
-			throw new YaeMaster_Exception("number "+it->first+"("+itos(number)+") out of range!");
+			LOG("number "+it->first+"("+itos(number)+") out of range!", LWARN);
+			throw YaeMaster_Exception("number "+it->first+"("+itos(number)+") out of range!");
 		}
 		else if ( status.players[number].id == -1 )
 		{
-			throw new YaeMaster_Exception("player "+it->first+"("+itos(number)+") undefined!");
+			LOG("player "+it->first+"("+itos(number)+") undefined!", LWARN);
+			throw YaeMaster_Exception("player "+it->first+"("+itos(number)+") undefined!");
 		}
 		else
 		{
@@ -189,7 +208,8 @@ ET_Client_Status YaeMaster_Protocol::receiveETClientStatus( Tnet_Connection* con
 	}
 	if ( playersGiven != playersCount )
 	{
-		throw new YaeMaster_Exception("mismatch between number of players while fetching slac data!");
+		LOG("mismatch between number of players while fetching slac data!", LWARN);
+		throw YaeMaster_Exception("mismatch between number of players while fetching slac data!");
 	}
 	message.clear();
 	return status;
