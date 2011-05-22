@@ -270,6 +270,7 @@ Tnet_Message Tnet_Connection::receive( unsigned int timeout )
 	{
 		std::cout << "<<" << this->messageReceivedStatus.value << std::endl;
 	}
+	this->messageReceivedStatus.started = false;
 	return this->messageReceivedStatus.value;
 }
 
