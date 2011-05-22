@@ -14,7 +14,7 @@ class ET_Client_Listener
 {
 protected:
 	ET_Client_Listener();
-	static ET_Client_Listener instance;
+	static ET_Client_Listener* instance;
 public:
 	static ET_Client_Listener& getInstance();
 	std::wstring getCommandW();

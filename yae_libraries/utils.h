@@ -23,6 +23,8 @@ std::string wtoa(std::wstring string);
 std::wstring atow(std::string string);
 std::string itos(int number);
 std::string itos(unsigned int number);
+std::string itos(long long number);
+std::string itos(unsigned long long number);
 int stoi(std::string string);
 std::string itos(unsigned int number);
 std::wstring operator+(std::wstring aString, int k);

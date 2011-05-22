@@ -28,14 +28,18 @@
 using std::wstring;
 typedef std::vector< wstring > array;
 
-ET_Client_Info ET_Client_Info::instance = ET_Client_Info();
+ET_Client_Info* ET_Client_Info::instance = 0;
 
 ET_Client_Info::ET_Client_Info(): waitingForETCommandTime(300), pauseAfterCommand(700)
 {}
 
 ET_Client_Info& ET_Client_Info::getInstance()
 {
-	return ET_Client_Info::instance;
+	if ( !ET_Client_Info::instance )
+	{
+		ET_Client_Info::instance = new ET_Client_Info();
+	}
+	return *ET_Client_Info::instance;
 }
 
 std::wstring ET_Client_Info::localPlayerName()

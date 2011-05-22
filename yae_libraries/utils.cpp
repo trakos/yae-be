@@ -163,6 +163,24 @@ std::string itos(unsigned int number)
 	return str;
 }
 
+std::string itos(long long number)
+{
+	std::stringstream ss;
+	std::string str;
+	ss << number;
+	ss >> str;
+	return str;
+}
+
+std::string itos(unsigned long long number)
+{
+	std::stringstream ss;
+	std::string str;
+	ss << number;
+	ss >> str;
+	return str;
+}
+
 int stoi(std::string string)
 {
 	std::stringstream ss;

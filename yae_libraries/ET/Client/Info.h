@@ -18,7 +18,7 @@ class ET_Client_Info
 {
 	protected:
 		ET_Client_Info();
-		static ET_Client_Info instance;
+		static ET_Client_Info* instance;
 		std::wstring localPlayerName();
 		ET_Status_Server_W serverInfo();
 		ET_Status_Players_W playersInfo(bool& success,bool& online,bool& slac,bool& etpro,bool& pb);

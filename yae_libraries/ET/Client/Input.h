@@ -14,7 +14,7 @@ class ET_Client_Input
 {
 protected:
 	ET_Client_Input();
-	static ET_Client_Input instance;
+	static ET_Client_Input* instance;
 public:
 	static ET_Client_Input& getInstance();
 	static char color;

@@ -12,7 +12,7 @@
 #include <Tlogger/Front.h>
 #include <utils.h>
 
-ET_Client_Console ET_Client_Console::instance = ET_Client_Console();
+ET_Client_Console* ET_Client_Console::instance = 0;
 
 void ET_Client_Console::toggleWindow(bool show)
 {
@@ -166,5 +166,9 @@ bool ET_Client_Console::isConsoleAttached()
 
 ET_Client_Console& ET_Client_Console::getInstance()
 {
-	return ET_Client_Console::instance;
+	if ( !ET_Client_Console::instance )
+	{
+		ET_Client_Console::instance = new ET_Client_Console();
+	}
+	return *ET_Client_Console::instance;
 }

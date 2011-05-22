@@ -57,10 +57,13 @@ ET_Status ET_Server::getPublicStatus(unsigned int timeout)
 	status.server.punkbuster = dataMap["punkbuster"] == "1" ? 1 : 0;
 	status.server.needPass = 1;
 	status.server.slac = ( dataMap["sl_sv_version"] != "" );
+	std::cout << linesArray << std::endl;
 	for ( unsigned int i = 2; i < linesArray.size(); i++ )
 	{
 		std::vector<std::string> playerData = split(linesArray[i]," ",2);
-		int id = ::stoi(playerData[0]);
+		int xp = ::stoi(playerData[0]);
+		int ping = ::stoi(playerData[1]);
+		int id = i-2;
 		if ( id < 0 || id >= ET_STATUS_MAXPLAYERS )
 		{
 			LOG("id too high or too low: "+playerData[0]+"("+itos(id)+")", LWARN);

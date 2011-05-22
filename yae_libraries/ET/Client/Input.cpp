@@ -16,14 +16,18 @@
 #endif
 
 
-ET_Client_Input ET_Client_Input::instance = ET_Client_Input();
+ET_Client_Input* ET_Client_Input::instance = 0;
 char ET_Client_Input::color = '5';
 
 ET_Client_Input::ET_Client_Input(){}
 
 ET_Client_Input& ET_Client_Input::getInstance()
 {
-	return ET_Client_Input::instance;
+	if ( !ET_Client_Input::instance )
+	{
+		ET_Client_Input::instance = new ET_Client_Input();
+	}
+	return *ET_Client_Input::instance;
 }
 
 bool ET_Client_Input::shortMessageW(std::wstring message,std::wstring nocolor,std::wstring color)

@@ -25,7 +25,7 @@ class ET_Client_Console
 #endif
 		int charConsolePointer;
 		unsigned long processId;
-		static ET_Client_Console instance;
+		static ET_Client_Console* instance;
 		bool showWindow;
 		ET_Client_Console();
 

@@ -74,6 +74,7 @@ std::ostream& operator <<(std::ostream& stream, ET_Status const &status)
 			{
 				std::cout << "\tPLAYER" << std::endl;
 			}
+			stream << "\t" << "[id]" << " " << "=>" << "\t" << status.players[i].id << std::endl;
 			stream << "\t" << "[nick]" << " " << "=>" << "\t" << status.players[i].nick << std::endl;
 			stream << "\t" << "[etpro]" << " " << "=>" << "\t" << status.players[i].etproguid << std::endl;
 			stream << "\t" << "[pbguid]" << " " << "=>" << "\t" << status.players[i].pbguid << std::endl;

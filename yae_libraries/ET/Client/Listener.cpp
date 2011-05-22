@@ -10,13 +10,17 @@
 #include <utils.h>
 #include <string>
 
-ET_Client_Listener ET_Client_Listener::instance = ET_Client_Listener();
+ET_Client_Listener* ET_Client_Listener::instance = 0;
 
 ET_Client_Listener::ET_Client_Listener(){}
 
 ET_Client_Listener& ET_Client_Listener::getInstance()
 {
-	return ET_Client_Listener::instance;
+	if (!ET_Client_Listener::instance)
+	{
+		ET_Client_Listener::instance = new ET_Client_Listener();
+	}
+	return *ET_Client_Listener::instance;;
 }
 
 std::wstring ET_Client_Listener::getCommandW()
