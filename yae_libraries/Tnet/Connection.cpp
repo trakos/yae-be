@@ -1,4 +1,5 @@
 #include <Tnet/Connection.h>
+#include <Tlogger/Front.h>
 
 #ifdef __unix__
 	#include <netinet/in.h>
@@ -19,6 +20,7 @@
 #endif
 
 #include <string>
+#include <iostream>
 
 Tnet_Connection::Tnet_Connection(int _clientSocket, std::string _ip, unsigned int _port, sockaddr_in _peer)
 {
@@ -157,6 +159,10 @@ bool Tnet_Connection::sleepForTenthSecond()
 
 void Tnet_Connection::send(Tnet_Message message)
 {
+	if ( Tlogger_Front::getInstance().couting >= LOG_SUPERDEBUG )
+	{
+		std::cout << ">>" << message << std::endl;
+	}
 	this->simpleSend("m");
 	unsigned int size = message.ints.size();
 	this->sendInt(size);
@@ -260,6 +266,10 @@ Tnet_Message Tnet_Connection::receive( unsigned int timeout )
 		throw e;
 	}
 	this->timeTakenOnLastOperation = timeTaken;
+	if ( Tlogger_Front::getInstance().couting >= LOG_SUPERDEBUG )
+	{
+		std::cout << "<<" << this->messageReceivedStatus.value << std::endl;
+	}
 	return this->messageReceivedStatus.value;
 }
 

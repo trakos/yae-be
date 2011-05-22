@@ -13,6 +13,7 @@
 #else
 	#include <windows.h>
 	#include <winsock.h>
+	#include <sys/types.h>
 #endif
 
 #include <string>

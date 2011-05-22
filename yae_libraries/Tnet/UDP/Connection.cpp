@@ -1,5 +1,9 @@
 #include <Tnet/UDP/Connection.h>
 
+#ifndef __unix__
+	#define socklen_t int
+#endif
+
 Tnet_UDP_Connection::Tnet_UDP_Connection(int _clientSocket, std::string _ip, unsigned int _port, sockaddr_in _peer) : Tnet_Connection(_clientSocket,_ip,_port,_peer)
 {
 }
