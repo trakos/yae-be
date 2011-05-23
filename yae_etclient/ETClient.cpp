@@ -98,6 +98,7 @@ int ETClient::mainLoop()
 	while( 1 )
 	{
 		this->iteration = 0;
+		LOG("entering ET offline loop...", LNOTE);
 		while(!ET_Client_Console::getInstance().isConsoleAttached())
 		{
 			if ( this->iteration == 1 )
@@ -118,6 +119,7 @@ int ETClient::mainLoop()
 		}
 		ET_Client_Console::getInstance().moveToTheEnd();
 		this->iteration = 0;
+		LOG("entering ET online loop...", LNOTE);
 		while(ET_Client_Console::getInstance().isConsoleAttached())
 		{
 			if ( this->iteration == 1 )
