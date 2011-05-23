@@ -1,6 +1,6 @@
 D_O = build/obj
 D_B = build/bin
-CFLAGS=-g -Wl,--enable-auto-import -D __debug__ -I.
+CFLAGS=-g -Wl,--enable-auto-import -D __debug__ -I. -gstabs
 INCFLAGS=-IK:\\Program\ Files\\Boost-1.41.0\\include\\boost-1_41\\ -I.
 TARGET=$(D_B)/${LIB}.lib
 AR=ar

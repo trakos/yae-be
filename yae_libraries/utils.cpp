@@ -134,7 +134,9 @@ std::string wtoa(std::wstring string)
 	char* ascii = new char[wcslen(wstr) + 1];
 	wcstombs( ascii, wstr, wcslen(wstr) );
 	ascii[wcslen(wstr)] = '\0';
-	return ascii;
+	std::string returnBuffer = ascii;
+	delete[] ascii;
+	return returnBuffer;
 }
 
 std::wstring atow(std::string string)
@@ -143,7 +145,9 @@ std::wstring atow(std::string string)
 	wchar_t* wstr  = new wchar_t[strlen(str) + 1];
 	mbstowcs( wstr, str, strlen(str) );
 	wstr[strlen(str)] = '\0';
-	return wstr;
+	std::wstring returnBuffer = wstr;
+	delete[] wstr;
+	return returnBuffer;
 }
 
 std::string itos(int number)

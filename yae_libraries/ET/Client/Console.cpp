@@ -40,7 +40,7 @@ bool ET_Client_Console::attachConsole()
 		this->hWriteCmd = NULL;
 		this->hReadCmd = NULL;
 		this->processId = 0;
-		LOG("not found",LSDBG);
+		//LOG("not found",LSDBG);
 		return false;
 	}
 	ShowWindow(this->hConWin,this->showWindow?SW_SHOW:SW_HIDE);
