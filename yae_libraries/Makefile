@@ -6,7 +6,7 @@ TARGET=$(D_B)/${LIB}.lib
 AR=ar
 LIBPREFIX=
 LIBSUFFIX=lib
-MAINTARGETS=$(D_B)/$(LIBPREFIX)etserver.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)etstatus.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)etclient.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)tlogger.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)tnet.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)indent.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)utils.$(LIBSUFFIX)
+MAINTARGETS=$(D_B)/$(LIBPREFIX)etserver.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)etstatus.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)etclient.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)tlogger.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)tnet.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)tutils.$(LIBSUFFIX)
 OSTARGETS=
 
 UNAME := $(shell uname)
@@ -78,16 +78,18 @@ $(D_O)/$(UDPNAME_PREFIX)%.o: $(UDPPATH_PREFIX)/%.cpp $(UDPPATH_PREFIX)/%.h
 $(D_B)/$(LIBPREFIX)$(LIBNAME).$(LIBSUFFIX): ${OBJS} $(UDPOBJS)
 	$(AR) rcs $@ $^
 	
-# UTILS & INDENT
-$(D_O)/%.o: %.cpp %.h
-	$(CXX) $(CFLAGS) $(INCFLAGS) -c $< -o $@
-$(D_B)/$(LIBPREFIX)utils.$(LIBSUFFIX): $(D_O)/utils.o
-	$(AR) rcs $@ $^
-$(D_B)/$(LIBPREFIX)indent.$(LIBSUFFIX): $(D_O)/indent.o
+# TUTILS	
+PATH_PREFIX=Tutils
+NAME_PREFIX=Tutils
+LIBNAME=tutils
+OBJS=$(patsubst $(PATH_PREFIX)/%.cpp,$(D_O)/$(NAME_PREFIX)%.o,$(wildcard $(PATH_PREFIX)/*.cpp))
+$(D_O)/$(NAME_PREFIX)%.o: $(PATH_PREFIX)/%.cpp $(PATH_PREFIX)/%.h
+	$(CXX) $(INCFLAGS) $(CFLAGS) -c $< -o $@
+$(D_B)/$(LIBPREFIX)$(LIBNAME).$(LIBSUFFIX): ${OBJS}
 	$(AR) rcs $@ $^
 # EXAMPLES
-$(D_B)/tmysqlExample: Examples/Tmysql.cpp $(D_B)/$(LIBPREFIX)tlogger.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)tmysql.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)indent.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)utils.$(LIBSUFFIX)
-	$(CXX) $(CFLAGS) $(INCFLAGS) $< -L$(D_B) -ltmysql -ltlogger -lindent -lutils -lmysqlclient_r -lm -L/usr/lib64/mysql $(filter %.o,$^) -o $@
+$(D_B)/tmysqlExample: Examples/Tmysql.cpp $(D_B)/$(LIBPREFIX)tlogger.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)tmysql.$(LIBSUFFIX) $(D_B)/$(LIBPREFIX)tutils.$(LIBSUFFIX)
+	$(CXX) $(CFLAGS) $(INCFLAGS) $< -L$(D_B) -ltmysql -ltlogger -ltutils -lmysqlclient_r -lm -L/usr/lib64/mysql $(filter %.o,$^) -o $@
 
 all: $(MAINTARGETS) $(OSTARGETS)
 

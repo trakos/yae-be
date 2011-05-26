@@ -6,6 +6,7 @@
  */
 
 #include <Tmysql/Connection.h>
+#include <Tmysql/Exception.h>
 #include <Tlogger/Front.h>
 
 #include <string>
@@ -93,12 +94,12 @@ MYSQL_RES* Tmysql_Connection::getQueryResultBase( std::string query )
 	return mysql_use_result(this->connection);
 }
 
-MYSQL_RES* Tmysql_Connection::getQueryResult( std::string query, std::vector<std::string> &arguments )
+MYSQL_RES* Tmysql_Connection::getQueryResult( std::string query, Tmysql_Arguments &arguments )
 {
 	return this->getQueryResultBase( this->getQueryString(query, arguments) );
 }
 
-std::string Tmysql_Connection::getQueryString( std::string query, std::vector<std::string> &arguments )
+std::string Tmysql_Connection::getQueryString( std::string query, Tmysql_Arguments &arguments )
 {
 	int argumentNumber = 0;
 	int vectorCount = arguments.size();
@@ -110,7 +111,7 @@ std::string Tmysql_Connection::getQueryString( std::string query, std::vector<st
 			LOG("queryArguments number mismatch in "+query, LERR);
 			throw new Tmysql_Exception_QueryArguments( query, arguments );
 		}
-		std::string argument = "'" + this->escape( arguments[argumentNumber] ) + "'";
+		std::string argument = this->escape( arguments[argumentNumber] );
 		query.replace( found, 1, argument );
 		found = query.find_first_of('?', found + argument.length() + 1);
 		argumentNumber++;
@@ -118,20 +119,29 @@ std::string Tmysql_Connection::getQueryString( std::string query, std::vector<st
 	return query;
 }
 
-std::string Tmysql_Connection::escape( std::string value )
+std::string Tmysql_Connection::escape( const Tmysql_String& value )
 {
-	char* buffer = new char[ value.length() * 2 + 1 ];
-	mysql_real_escape_string( this->connection, buffer, value.c_str(), value.length() );
-	return (std::string)buffer;
+	if ( value.doNotEscape() )
+	{
+		return value;
+	}
+	else if ( value.isNull() )
+	{
+		return "NULL";
+	}
+	std::string text = value;
+	char* buffer = new char[ text.length() * 2 + 1 ];
+	mysql_real_escape_string( this->connection, buffer, text.c_str(), text.length() );
+	return (std::string)"'" + buffer + "'";
 }
 
 Tmysql_Row Tmysql_Connection::fetchRow( std::string query )
 {
-	std::vector< std::string > emptyArguments;
+	Tmysql_Arguments emptyArguments;
 	return this->fetchRow(query, emptyArguments);
 }
 
-Tmysql_Row Tmysql_Connection::fetchRow( std::string query, std::vector< std::string > &arguments )
+Tmysql_Row Tmysql_Connection::fetchRow( std::string query, Tmysql_Arguments &arguments )
 {
 	MYSQL_RES* result = this->getQueryResult(query,arguments);
 	mysql_use_result(this->connection);
@@ -161,11 +171,11 @@ Tmysql_Row Tmysql_Connection::fetchRow( std::string query, std::vector< std::str
 
 Tmysql_RowSet Tmysql_Connection::fetchRowSet( std::string query )
 {
-	std::vector< std::string > emptyArguments;
+	Tmysql_Arguments emptyArguments;
 	return this->fetchRowSet(query, emptyArguments);
 }
 
-Tmysql_RowSet Tmysql_Connection::fetchRowSet( std::string query, std::vector< std::string > &arguments )
+Tmysql_RowSet Tmysql_Connection::fetchRowSet( std::string query, Tmysql_Arguments &arguments )
 {
 	MYSQL_RES* result = this->getQueryResult(query,arguments);
 	mysql_use_result(this->connection);
@@ -197,27 +207,27 @@ Tmysql_RowSet Tmysql_Connection::fetchRowSet( std::string query, std::vector< st
 
 Tmysql_LiveRow Tmysql_Connection::fetchLiveRow(  std::string tableName, std::string where )
 {
-	std::vector< std::string > emptyArguments;
+	Tmysql_Arguments emptyArguments;
 	return this->fetchLiveRow(tableName, where, emptyArguments);
 }
 
-Tmysql_LiveRow Tmysql_Connection::fetchLiveRow( std::string tableName, std::string where, std::vector< std::string > &arguments )
+Tmysql_LiveRow Tmysql_Connection::fetchLiveRow( std::string tableName, std::string where, Tmysql_Arguments &arguments )
 {
 	std::string query = "SELECT * FROM `"+tableName+"` " + this->getQueryString(where,arguments);
-	std::vector< std::string > emptyArgs;
+	Tmysql_Arguments emptyArgs;
 	return Tmysql_LiveRow( this->instanceName, tableName, this->fetchRow( query, emptyArgs ) );
 }
 
 Tmysql_LiveRowSet Tmysql_Connection::fetchLiveRowSet( std::string tableName, std::string where )
 {
-	std::vector< std::string > emptyArguments;
+	Tmysql_Arguments emptyArguments;
 	return this->fetchLiveRowSet(tableName, where, emptyArguments);
 }
 
-Tmysql_LiveRowSet Tmysql_Connection::fetchLiveRowSet( std::string tableName, std::string where, std::vector< std::string > &arguments )
+Tmysql_LiveRowSet Tmysql_Connection::fetchLiveRowSet( std::string tableName, std::string where, Tmysql_Arguments &arguments )
 {
 	std::string query = "SELECT * FROM `"+tableName+"` " + this->getQueryString(where,arguments);
-	std::vector< std::string > emptyArgs;
+	Tmysql_Arguments emptyArgs;
 	Tmysql_RowSet trowset = this->fetchRowSet( query, emptyArgs );
 	Tmysql_LiveRowSet lrowset;
 	for ( unsigned long long i=0; i<trowset.size(); i++ )
@@ -252,7 +262,7 @@ unsigned long long Tmysql_Connection::getLastInsertId()
 	return mysql_insert_id(this->connection);
 }
 
-unsigned long long Tmysql_Connection::query( std::string query, std::vector< std::string > &arguments )
+unsigned long long Tmysql_Connection::query( std::string query, Tmysql_Arguments &arguments )
 {
 	MYSQL_RES* result = this->getQueryResult(query,arguments);
 	unsigned long long affected = mysql_affected_rows(this->connection);

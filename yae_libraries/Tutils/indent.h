@@ -1,3 +1,6 @@
+#ifndef TUTILS_INDENT_H_
+#define TUTILS_INDENT_H_
+
 #include <locale>
 #include <algorithm>
 #include <iostream>
@@ -89,4 +92,6 @@ class IndentFacet: public std::codecvt<char,char,std::mbstate_t>
 
 std::ostream& indent(std::ostream& os);
 std::ostream& unindent(std::ostream& os);
+
+#endif /* TUTILS_INDENT_H_ */
 

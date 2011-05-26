@@ -11,6 +11,9 @@
 #include<vector>
 #include<string>
 #include<stdexcept>
+#include<Tmysql/Connection.h>
+
+typedef std::vector<Tmysql_String> Tmysql_Arguments;
 
 class Tmysql_Exception : public std::runtime_error
 {
@@ -35,11 +38,11 @@ class Tmysql_Exception_Connection : public Tmysql_Exception
 class Tmysql_Exception_QueryArguments : public Tmysql_Exception
 {
 	public:
-		Tmysql_Exception_QueryArguments(const std::string &argQuery, std::vector<std::string> &argArguments) : Tmysql_Exception( "query with wrong argument numbers" ), query( argQuery ), arguments( argArguments ) {};
+		Tmysql_Exception_QueryArguments(const std::string &argQuery, Tmysql_Arguments &argArguments) : Tmysql_Exception( "query with wrong argument numbers" ), query( argQuery ), arguments( argArguments ) {};
 		~Tmysql_Exception_QueryArguments() throw() {};
 	protected:
 		std::string query;
-		std::vector<std::string> arguments;
+		Tmysql_Arguments arguments;
 };
 class Tmysql_Exception_Query : public Tmysql_Exception
 {

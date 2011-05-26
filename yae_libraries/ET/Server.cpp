@@ -91,6 +91,13 @@ unsigned int ET_Server::getPort()
 	return this->port;
 }
 
+std::string ET_Server::simplifyNick(std::string name)
+{
+	std::string colorless = ET_Server::colorless(name).substr(0,10);
+	std::transform(colorless.begin(), colorless.end(), colorless.begin(), tolower);
+	return colorless;
+}
+
 std::string ET_Server::colorless(std::string name)
 {
 	for (unsigned int i = 0; i < name.size(); i++)

@@ -11,6 +11,7 @@
 
 #include <Tmysql/LiveRow.h>
 #include <Tmysql/Connection.h>
+#include <Tmysql/Exception.h>
 #include <utils.h>
 
 
@@ -65,7 +66,7 @@ void Tmysql_LiveRow::save()
 	}
 	std::string query = "UPDATE " + this->mysqlTableName + " SET ";
 	bool first = true;
-	std::vector<std::string> arguments;
+	Tmysql_Arguments arguments;
 	for ( Tmysql_Row::const_iterator it = this->rowData.begin(); it != this->rowData.end(); ++it )
 	{
 		std::string key = it->first;

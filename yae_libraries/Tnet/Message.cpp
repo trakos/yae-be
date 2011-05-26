@@ -7,7 +7,6 @@
 
 
 #include <utils.h>
-#include <indent.h>
 #include <Tnet/Message.h>
 
 void Tnet_Message::clear()

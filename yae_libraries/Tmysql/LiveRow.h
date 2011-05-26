@@ -12,8 +12,8 @@
 #include <vector>
 #include <string>
 
-#include <Tmysql/Exception.h>
-#include <Tmysql/String.h>
+
+class Tmysql_String;
 
 typedef std::map<std::string, Tmysql_String> Tmysql_Row;
 typedef std::vector< Tmysql_Row > Tmysql_RowSet;

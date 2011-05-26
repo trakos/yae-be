@@ -94,5 +94,7 @@ class ET_Status
 };
 
 std::ostream& operator <<(std::ostream& stream, ET_Status const &status);
+std::ostream& operator <<(std::ostream& stream, ET_Status_Player const &player);
+std::ostream& operator <<(std::ostream& stream, ET_Status_Server const &player);
 
 #endif /* ET_STATUS_H_ */

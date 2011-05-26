@@ -32,6 +32,7 @@ class ET_Server
 		std::string getIp();
 		unsigned int getPort();
 		static std::string colorless(std::string name);
+		static std::string simplifyNick(std::string name);
 	protected:
 		std::string ip;
 		unsigned int port;

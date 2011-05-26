@@ -11,8 +11,8 @@
 	#include <Tmysql/LiveRow.h>
 	#include <Tmysql/String.h>
 #endif
-#include <utils.h>
-#include <indent.h>
+#include <Tutils/utils.h>
+#include <Tutils/indent.h>
 #include <sstream>
 
 template<typename T> std::ostream& operator <<(std::ostream& stream, std::map<std::string, T> const &map)
