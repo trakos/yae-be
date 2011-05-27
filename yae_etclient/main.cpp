@@ -7,17 +7,18 @@
 
 
 #include <utils.h>
-#include <indent.h>
 #include <ET/Client/Console.h>
 #include <Tlogger/Front.h>
 #include <ETClient.h>
 
-int main()
+int main( int argc, char** argv)
 {
 	IndentFacet::initialize();
 	LOG.couting = LSDBG;
+	if ( argc > 2 )
+		ETClient::getInstance().forceAuth( argv[1], argv[2]);
+	else
+		ETClient::getInstance().forceAuth();
 	ET_Client_Console::getInstance().toggleWindow(true);
-	//ETClient::getInstance().printServerStatus();
-	ETClient::getInstance().forceAuth();
 	return ETClient::getInstance().mainLoop();
 }

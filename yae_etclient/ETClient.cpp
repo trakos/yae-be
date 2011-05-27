@@ -44,21 +44,41 @@ void ETClient::onlineWithET()
 		LOG("client with ET, not on a server", LNOTE);
 	}
 	Communication_Yae_Master::getInstance().onlineWithET(status);
+	this->last_status = status;
 }
 
-void ETClient::forceAuth()
+void ETClient::forceAuth(std::string login, std::string password)
 {
+	if ( login!="" || password!="" )
+	{
+		// it will first check for auth, then ask
+		Communication_Yae_Authorization::getInstance().setState(OFFLINE);
+	}
+	else
+	{
+		// it will ask for new credentials immediately
+		Communication_Yae_Authorization::getInstance().setState(NOCREDENTIALS);
+	}
+	Communication_Yae_Authorization::getInstance().setCredentials(login, password);
 	Communication_Yae_Authorization::getInstance().getCurrentCredentials();
 }
 
-void ETClient::performYaeSearch()
+void ETClient::performYaeSearch(bool forceUpdate)
 {
 	try
 	{
-		ET_Status status = ET_Client_Info::getInstance().getStatus(true);
+		ET_Status status;
+		if ( forceUpdate )
+		{
+			status = ET_Client_Info::getInstance().getStatus(true);
+		}
+		else
+		{
+			status = this->last_status;
+		}
 		if ( !status.online )
 		{
-			ET_Client_Input::getInstance().shortMessage("You are not on a server! It might be a bug...");
+			ET_Client_Input::getInstance().shortMessage(forceUpdate ? "You are not on a server! It might be a bug..." : "Last status was not on a server... try %yaeforce command to refresh it.");
 		}
 		else
 		{
@@ -77,10 +97,10 @@ void ETClient::performYaeSearch()
 					else
 					{
 						std::vector<std::string> splitted = split(searchResults.strings[itos(player.id)],"\n");
-						ET_Client_Input::getInstance().shortMessage("Player "+player.nick+" results: "+splitted[0]);
+						ET_Client_Input::getInstance().shortMessage(splitted[0]);
 						for (unsigned int i=1; i<splitted.size(); i++)
 						{
-							ET_Client_Input::getInstance().shortMessage("      "+splitted[i]);
+							ET_Client_Input::getInstance().shortMessage("              "+splitted[i]);
 						}
 					}
 				}
@@ -135,7 +155,11 @@ int ETClient::mainLoop()
 			{
 				if ( str == "yae" )
 				{
-					this->performYaeSearch();
+					this->performYaeSearch(false);
+				}
+				else if ( str =="yaeforce" || str =="yae_force" )
+				{
+					this->performYaeSearch(true);
 				}
 				else
 				{

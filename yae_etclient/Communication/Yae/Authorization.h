@@ -37,6 +37,7 @@ class Communication_Yae_Authorization
 		static Communication_Yae_Authorization& getInstance();
 		Communication_Yae_CredentialsCorrectness getCurrentState();
 		void setState( Communication_Yae_CredentialsCorrectness state );
+		void setCredentials( std::string login, std::string password );
 		Communication_Yae_Credentials getCurrentCredentials();
 };
 

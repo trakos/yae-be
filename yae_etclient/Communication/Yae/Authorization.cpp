@@ -54,7 +54,8 @@ Communication_Yae_Credentials Communication_Yae_Authorization::getCurrentCredent
 		{
 			if ( this->currentState == NOCREDENTIALS )
 			{
-				Window_AuthDialogReturn authData = Window_AuthDialog::getInstance().ask(first ? "" : "login or password incorrect");
+				Window_AuthDialogReturn authData = Window_AuthDialog::getInstance().ask(first ? "" : "login or password incorrect", this->currentCredentials.login, this->currentCredentials.password);
+				first = false;
 				if ( authData.success == false )
 				{
 					this->setState(NO);
@@ -70,12 +71,21 @@ Communication_Yae_Credentials Communication_Yae_Authorization::getCurrentCredent
 				this->setState(state);
 				return this->currentCredentials;
 			}
+			else if ( state == NO && this->currentState == OFFLINE )
+			{
+				this->setState(NOCREDENTIALS);
+			}
 			// NO - try again! here we go loop!
-			first = false;
 		}
 	}
 	// YES - good credentials.
 	// NO - it' not possible ATM, but anyway, there's nothing to do for this state.
 	return this->currentCredentials;
+}
+
+void Communication_Yae_Authorization::setCredentials( std::string login, std::string password )
+{
+	this->currentCredentials.login = login;
+	this->currentCredentials.password = password;
 }
 

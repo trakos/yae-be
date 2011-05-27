@@ -42,7 +42,7 @@ Window_AuthDialog& Window_AuthDialog::getInstance()
 	return Window_AuthDialog::instance;
 }
 
-Window_AuthDialogReturn Window_AuthDialog::ask(std::string title)
+Window_AuthDialogReturn Window_AuthDialog::ask(std::string title, std::string login, std::string password )
 {
 	Window_AuthDialogReturn returnData;
 	returnData.success = false;
@@ -89,6 +89,8 @@ Window_AuthDialogReturn Window_AuthDialog::ask(std::string title)
 	}
 
 	hfDefault = (HFONT) GetStockObject(DEFAULT_GUI_FONT);
+	SetWindowTextA(this->hLogin, login.c_str());
+	SetWindowTextA(this->hPassword, password.c_str());
 	SendMessage(this->hLogin, WM_SETFONT, (WPARAM) hfDefault, MAKELPARAM(FALSE, 0));
 	SendMessage(this->hPassword, WM_SETFONT, (WPARAM) hfDefault, MAKELPARAM(FALSE, 0));
 	SendMessage(this->hButton, WM_SETFONT, (WPARAM) hfDefault, MAKELPARAM(FALSE, 0));

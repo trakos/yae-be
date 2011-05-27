@@ -13,7 +13,7 @@
 Communication_Yae_Master Communication_Yae_Master::instance = Communication_Yae_Master();
 std::string Communication_Yae_Master::masterIP = "46.4.95.216";
 int Communication_Yae_Master::masterPort = 1743;
-unsigned int Communication_Yae_Master::timeout = 5000;
+unsigned int Communication_Yae_Master::timeout = 500;
 int Communication_Yae_Master::version = 1000;
 
 Communication_Yae_Master::Communication_Yae_Master()
@@ -187,6 +187,8 @@ Tnet_Message Communication_Yae_Master::sendYaeClientData(ET_Status data)
 	message.ints["port"] = data.server.port;
 	message.ints["punkbuster"] = data.server.punkbuster;
 	message.ints["slac"] = data.server.slac;
+	message.ints["clientid"] = data.client.id;
+	message.strings["clientnick"] = data.client.nick;
 	this->connection->send(message);
 	this->receiveSimpleStatusPacket();
 	message.clear();

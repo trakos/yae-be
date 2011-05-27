@@ -33,7 +33,7 @@ class Window_AuthDialog
 	public:
 		static Window_AuthDialog& getInstance();
 		bool isHButton(HWND cmp) { return cmp==this->hButton; }
-		Window_AuthDialogReturn ask( std::string title="" );
+		Window_AuthDialogReturn ask( std::string title="", std::string login="", std::string password="" );
 		int currentFocus;
 		std::vector< HWND > editForm;
 		bool buttonClicked;
