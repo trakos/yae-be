@@ -22,7 +22,7 @@
 #include <string>
 #include <iostream>
 
-Tnet_Connection::Tnet_Connection(int _clientSocket, std::string _ip, unsigned int _port, sockaddr_in _peer)
+Tnet_Connection::Tnet_Connection(int _clientSocket, std::string _ip, unsigned int _port, sockaddr_in _peer) : buffer(NULL), returnBuffer(NULL)
 {
 	#ifndef __unix__
 		this->wsInitialized = false;
@@ -37,7 +37,7 @@ Tnet_Connection::Tnet_Connection(int _clientSocket, std::string _ip, unsigned in
 	this->initialize(_clientSocket,_ip,_port,_peer);
 }
 
-Tnet_Connection::Tnet_Connection()
+Tnet_Connection::Tnet_Connection() : buffer(NULL), returnBuffer(NULL)
 {
 	#ifndef __unix__
 		this->wsInitialized = false;
