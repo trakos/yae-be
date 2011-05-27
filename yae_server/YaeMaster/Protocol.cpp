@@ -70,6 +70,8 @@ ET_Status YaeMaster_Protocol::receiveETClientStatus( Tnet_Connection* connection
 	status.server.port = message.ints["port"];
 	status.server.punkbuster = message.ints["punkbuster"];
 	status.server.slac = message.ints["slac"];
+	status.client.id = message.ints["clientid"];
+	status.client.nick = message.strings["clientnick"];
 	message.clear();
 	this->sendSimpleStatus(connection);
 	unsigned int playersCount=0;

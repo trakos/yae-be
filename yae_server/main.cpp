@@ -9,7 +9,7 @@
 #include <Tlogger/Front.h>
 #include <ET/Status.h>
 #include <ET/Server.h>
-#include <indent.h>
+#include <utils.h>
 #include <YaeMaster/Database.h>
 #include <YaeMaster/Protocol.h>
 #include <YaeMaster.h>
@@ -34,8 +34,15 @@ void* processClient( void *data )
 		Tnet_Message message = yaeClient->receive(YAETIMEOUT);
 		YaeMaster_Protocol_Action action = YaeMaster_Protocol::getInstance().getAction(message.strings["action"]);
 		Tmysql_LiveRow user = YaeMaster_Database::getInstance().authenticate(message.strings["login"], message.strings["password"]);
-		if ( !user.isRowNull() )
+		if ( !user.isRowNull() && action!=CHECK_AUTH && ::stoi(user.get("last_query"))+10 >= time(0) )
 		{
+			user.set("last_query", (unsigned int)time(0));
+			message.clear();
+			message.strings["status"] = "toofast";
+		}
+		else if ( !user.isRowNull() )
+		{
+			user.set("last_query", (unsigned int)time(0));
 			message.clear();
 			message.strings["status"] = "ok";
 			message.strings["authStatus"] = "ok";
@@ -101,6 +108,7 @@ void* processClient( void *data )
 			message.clear();
 			message.strings["status"] = "ok";
 			message.strings["authStatus"] = "bad";
+			sleep(1);
 		}
 		yaeClient->send(message);
 	}
@@ -127,9 +135,10 @@ void* processClient( void *data )
 int main()
 {
 	IndentFacet::initialize();
+	LOG.couting = LSDBG;
+
 	Tmysql_Connection::defineInstance("dawn", "localhost", "dawn", "***REMOVED***", "dawn", 0);
 	Tmysql_Connection::getInstance("dawn").setAutoReconnect(true);
-	LOG.couting = LSDBG;
 	// we are not joining pthreads (i.e. waiting for them)
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);

@@ -113,6 +113,7 @@ ET_Status YaeMaster::verifyData(ET_Status clientStatus)
 	}
 	serverStatus.players = players;
 	serverStatus.server.password = clientStatus.server.password;
+	serverStatus.client = clientStatus.client;
 	std::cout << serverStatus << std::endl;
 	return serverStatus;
 }

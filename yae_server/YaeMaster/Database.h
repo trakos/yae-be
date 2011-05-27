@@ -19,6 +19,7 @@ class YaeMaster_Database
 	protected:
 		YaeMaster_Database();
 		static YaeMaster_Database instance;
+		Tmysql_LiveRow getYaetUser(Tmysql_LiveRow& user);
 	public:
 		static YaeMaster_Database& getInstance();
 		Tmysql_LiveRow authenticate(std::string login, std::string password);
