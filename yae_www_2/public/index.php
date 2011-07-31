@@ -27,7 +27,7 @@
 		}
 		else
 		{
-			throw new Lib_PHPErrorException($errstr, 0, $errno, $errfile, $errline);
+			throw new Lib_Mvc_PHPErrorException($errstr, 0, $errno, $errfile, $errline);
 		}
 	}
 	function printError($msg)
@@ -57,13 +57,14 @@
 	{
 		try
 		{
-			Lib_FrontController::getInstance()->perform();
+			Lib_Mvc_FrontController::getInstance()->perform();
 		}
 		// debug catch
 		catch(Exception $e)
 		{
 			if ( !defined("T_DEBUG") || !T_DEBUG )
 			{
+				ob_end_clean();
 				throw $e;
 			}
 			?>
@@ -82,9 +83,12 @@
 					foreach ( $trace as $k => $tracePoint )
 					{
 						$args = "";
-						foreach ( $tracePoint['args'] as $arg )
+						if ( isset($tracePoint['args']) )
 						{
-							$args.= json_encode($arg).",";
+							foreach ( $tracePoint['args'] as $arg )
+							{
+								$args.= json_encode($arg).",";
+							}	
 						}
 						$function = isset($tracePoint['class']) ? $tracePoint['class'].$tracePoint['type'].$tracePoint['function'] : $tracePoint['function'];
 						$line = $tracePoint['line'];
@@ -102,7 +106,7 @@
 	{
 		printError($e->getMessage());
 	}
-	catch(Lib_ControllerException $e)
+	catch(Lib_Mvc_ControllerException $e)
 	{
 		header("HTTP/1.0 404 Not Found");
 		printError("404 not found");
@@ -115,9 +119,9 @@
 	{
 		printError($e->getUserMessage());
 	}
-	catch(Exception $e)
+	/*catch(Exception $e)
 	{
 		printError("Internal error occurred.");
-	}
+	}*/
 	
 	

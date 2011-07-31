@@ -1,5 +1,5 @@
 <?php
-class Controller_Index extends Lib_Controller
+class Controller_Index extends Lib_Yae_Controller
 {
 	protected $_requiredUserLevel = LEVEL_UNLOGGED;
 	

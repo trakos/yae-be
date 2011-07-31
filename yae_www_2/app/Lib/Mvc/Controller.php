@@ -2,18 +2,18 @@
 /**
  * Klasa podstawowa kontrolera
  */
-class Lib_Controller
+abstract class Lib_Mvc_Controller
 {
 	/**
 	 * Widok
-	 * @var Lib_View
+	 * @var Lib_Mvc_View
 	 */
 	public $view;
 	
 	/**
 	 * Jaki poziom użytkownika jest wymagany, aby miał dostęp do tego kontrolera (najbezpieczniej najwyższy jako wartość domyślny).
 	 */
-	protected $_requiredUserLevel = LEVEL_SUPERADMIN;
+	protected $_requiredUserLevel = 99999;
 	
 	/**
 	 * Sprawdzenie, czy obecnie zalogowany użytkownik ma wystarczający poziom, żeby mieć dostęp do tego kontrolera.
@@ -29,7 +29,7 @@ class Lib_Controller
 	 */
 	public function __construct()
 	{
-		$this->view = Lib_View::getInstance();
+		$this->view = Lib_Mvc_View::getInstance();
 		$this->init();
 	}
 	
@@ -38,7 +38,7 @@ class Lib_Controller
 	 */
 	public function addJavascript($path)
 	{
-		Lib_Includer_Javascript::getInstance()->addFile($path);
+		Lib_Mvc_Includer_Javascript::getInstance()->addFile($path);
 	}
 	
 	/**
@@ -46,7 +46,7 @@ class Lib_Controller
 	 */
 	public function addStyle($path)
 	{
-		Lib_Includer_Css::getInstance()->addFile($path);
+		Lib_Mvc_Includer_Css::getInstance()->addFile($path);
 	}
 	
 	/**
@@ -56,7 +56,7 @@ class Lib_Controller
 	 */
 	public function addJavascriptVariable($name,$value)
 	{
-		Lib_Includer_Javascript::getInstance()->addScriptText("var ".$name." = ".json_encode($value).";\n");
+		Lib_Mvc_Includer_Javascript::getInstance()->addScriptText("var ".$name." = ".json_encode($value).";\n");
 	}
 	
 	/**
@@ -67,7 +67,7 @@ class Lib_Controller
 	 */
 	protected function _redirect($controller,$action='Index',$arguments=array())
 	{
-		$url = Lib_View::getInstance()->link($controller,$action,$arguments,false);
+		$url = Lib_Mvc_View::getInstance()->link($controller,$action,$arguments,false);
 		header( "Location: ".$url );
 		die();
 	}
@@ -89,27 +89,9 @@ class Lib_Controller
 	/**
 	 * Inicjalizacja obiektu
 	 */
-	public function init()
-	{
-		$this->addStyle("style.css");
-		$this->addStyle("1/layout.css");
-		$this->addStyle("style.css");
-	}
-	
+	abstract public function init();
 	/**
 	 * Inicjalizacja obiektu zachodząca tuż przed wywołaniem widoku, już po wywołaniu akcji
 	 */
-	public function initView()
-	{
-		$isLogged = Model_Auth::getInstance()->isLogged();
-		$userNameAndSurname = $isLogged ? Model_Auth::getInstance()->get("imie")." ".Model_Auth::getInstance()->get("nazwisko") : "";
-		$userLogin = $isLogged ? Model_Auth::getInstance()->getUserId() : "";
-		$userLevel = Model_Auth::getInstance()->getUserLevel();
-		$userLevelName = $isLogged ? Model_Mysql::getConnection()->getOne("SELECT nazwa FROM nazwy_poziomow WHERE poziom=?", $userLevel ) : "niezalogowany";
-		$this->view->assign("isLogged", $isLogged );
-		$this->view->assign("userNameAndSurname", $userNameAndSurname );
-		$this->view->assign("userLogin", $userLogin );
-		$this->view->assign("userLevel", $userLevel );
-		$this->view->assign("userLevelName", $userLevelName );
-	}
+	abstract public function initView();
 };

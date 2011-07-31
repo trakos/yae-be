@@ -13,7 +13,7 @@
  * @version 1.0
  * 
  */
-class Lib_PHPErrorException extends Exception
+class Lib_Mvc_PHPErrorException extends Exception
 {
 	/**
 	 * Rodzaj błędu (patrz też: stałe zdefiniowane przez php zacztynające się na E_)

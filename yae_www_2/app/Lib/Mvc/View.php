@@ -11,10 +11,10 @@
  * @version 1.0
  * 
  */
-class Lib_View
+class Lib_Mvc_View
 {
 	/**
-	 * @var Lib_View
+	 * @var Lib_Mvc_View
 	 */
 	static protected $instance;
 	/**
@@ -42,13 +42,13 @@ class Lib_View
 	protected $stackOfViewVariablesState=array();
 	/**
 	 * Pobranie singletonowej instancji View
-	 * @return Lib_View
+	 * @return Lib_Mvc_View
 	 */
 	static public function getInstance()
 	{
 		if(!self::$instance)
 		{
-			self::$instance = new Lib_View();
+			self::$instance = new Lib_Mvc_View();
 		}
 		return self::$instance;
 	}

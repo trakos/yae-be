@@ -12,22 +12,22 @@
  * @version 1.0
  * 
  */
-class Lib_FrontController
+class Lib_Mvc_FrontController
 {
 	/**
-	 * @var Lib_FrontController
+	 * @var Lib_Mvc_FrontController
 	 */
 	static protected $instance;
 	/**
 	 * Pobranie singletonowej instancji FrontControllera
-	 * @throws Lib_ControllerException
-	 * @return Lib_FrontController
+	 * @throws Lib_Mvc_ControllerException
+	 * @return Lib_Mvc_FrontController
 	 */
 	static public function getInstance()
 	{
 		if(!self::$instance)
 		{
-			self::$instance = new Lib_FrontController();
+			self::$instance = new Lib_Mvc_FrontController();
 		}
 		return self::$instance;
 	}
@@ -48,7 +48,7 @@ class Lib_FrontController
 	 * 
 	 * Konstruktor, inicjalizacja - wybór kontrolera/akcji
 	 * 
-	 * @throws Lib_FrontControllerException
+	 * @throws Lib_Mvc_FrontControllerException
 	 * 
 	 */
 	protected function __construct()
@@ -60,7 +60,7 @@ class Lib_FrontController
 	/**
 	 * Na podstawie danych użytkownika, wybierz obecny kontroler
 	 * 
-	 * @throws Lib_ControllerException
+	 * @throws Lib_Mvc_ControllerException
 	 * @return void
 	 */
 	protected function chooseController()
@@ -78,19 +78,19 @@ class Lib_FrontController
 		{
 			if(!class_exists('Controller_'.$this->controller,true))
 			{
-				throw new Lib_ControllerException(E_CONTROLLER_DOESNT_EXIST, "Kontroler ".$this->controller." nie istnieje!");
+				throw new Lib_Mvc_ControllerException(E_CONTROLLER_DOESNT_EXIST, "Kontroler ".$this->controller." nie istnieje!");
 			}
 		}
 		catch(Exception $e)
 		{
-			throw new Lib_ControllerException(E_CONTROLLER_DOESNT_EXIST, "Kontroler ".$this->controller." nie istnieje!");
+			throw new Lib_Mvc_ControllerException(E_CONTROLLER_DOESNT_EXIST, "Kontroler ".$this->controller." nie istnieje!");
 		}
 	}
 	
 	/**
 	 * Na podstawie danych użytkownika, wybierz akcję
 	 * 
-	 * @throws Lib_ControllerException
+	 * @throws Lib_Mvc_ControllerException
 	 * @return void
 	 */
 	protected function chooseAction()
@@ -106,13 +106,13 @@ class Lib_FrontController
 		}
 		if(!method_exists('Controller_'.$this->controller,$this->action.'Action'))
 		{
-			throw new Lib_ControllerException(E_ACTION_DOESNT_EXIST, "Akcja ".$this->action." nie istnieje w kontrolerze ".$this->controller.".");
+			throw new Lib_Mvc_ControllerException(E_ACTION_DOESNT_EXIST, "Akcja ".$this->action." nie istnieje w kontrolerze ".$this->controller.".");
 		}
 	}
 	
 	/**
 	 * Wywołanie akcji wynikającej z danych wejściowych i wywołanie widoku
-	 * @throws Lib_ControllerException
+	 * @throws Lib_Mvc_ControllerException
 	 * @return void
 	 */
 	public function perform()
@@ -127,23 +127,23 @@ class Lib_FrontController
 	 * @param string $controller
 	 * @param string $action
 	 * @param array $additionalData
-	 * @throws Lib_ControllerException
+	 * @throws Lib_Mvc_ControllerException
 	 * @return void
 	 */
 	public function performControllerAction($controllerString,$actionString,$additionalData=array())
 	{
 		if(!class_exists('Controller_'.$controllerString,true))
 		{
-			throw new Lib_ControllerException(E_CONTROLLER_DOESNT_EXIST, "Kontroler $controllerString nie istnieje!");
+			throw new Lib_Mvc_ControllerException(E_CONTROLLER_DOESNT_EXIST, "Kontroler $controllerString nie istnieje!");
 		}
 		if(!method_exists('Controller_'.$controllerString,$actionString.'Action'))
 		{
-			throw new Lib_ControllerException(E_ACTION_DOESNT_EXIST, "Akcja $actionString nie istnieje!");
+			throw new Lib_Mvc_ControllerException(E_ACTION_DOESNT_EXIST, "Akcja $actionString nie istnieje!");
 		}
 		$controllerName = 'Controller_'.$controllerString;
 		/**
-		 * Z założenia obiekt ten przeciąża Lib_Controller.
-		 * @var $controller Lib_Controller
+		 * Z założenia obiekt ten przeciąża Lib_Mvc_Controller.
+		 * @var $controller Lib_Mvc_Controller
 		 */
 		$controller = new $controllerName();
 		if ( ! $controller->canCurrentUserAccess() )
@@ -157,9 +157,9 @@ class Lib_FrontController
 				throw new Model_Auth_Exception(E_INSUFFICIENT_PRIVILEGES, "Do obejrzenia tej podstrony musisz być zalogowany.");
 			}
 		}
-		Lib_View::setAction($controllerString, $actionString);
+		Lib_Mvc_View::setAction($controllerString, $actionString);
 		$data = $controller->{$actionString."Action"}();
 		$controller->initView();
-		Lib_View::getInstance()->renderPage();
+		Lib_Mvc_View::getInstance()->renderPage();
 	}
 };

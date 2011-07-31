@@ -1,113 +1,43 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="pl" dir="ltr">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta http-equiv="Content-Language" content="pl"/>
-<link rel="stylesheet" href="css/style.css" type="text/css"/>
-<title>system callcenter</title>
-<?php Lib_Includer_Javascript::getInstance()->output(); ?>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8"/>
+	<meta http-equiv="Content-Language" content="en" />
+	<meta http-equiv="Description" content="YAE - you are exposed - yawn replacement for enemy territory - pbguid/etproguid/ip/nick matcher" />
+	<meta http-equiv="Keywords" content="et, enemy territory, yae, you are exposed, crossfire, yawn, wolfenstein, rtcw, return to castle wolfenstein, pbguid, ip, matches, anticheat, cheaters, trakos" />
+	<meta http-equiv="Robots" content="all" />
+	<meta name="google-site-verification" content="CUFrM0HOx5Zh6Hd_KCcKXGVGeBmQI8QguMfbp62NWPs" />
+	<link rel="icon" type="image/png" href="favicon.ico"/>
+	<title>You Are Exposed - <?=$siteTitle ?></title>
+	<?php Lib_Mvc_Includer_Javascript::getInstance()->output(); ?>
+	<?php Lib_Mvc_Includer_Css::getInstance()->output(); ?>
+	<!-- Piwik -->
+	<script type="text/javascript">
+		var pkBaseURL = (("https:" == document.location.protocol) ? "https://piwik.s2.trakos.pl/" : "http://piwik.s2.trakos.pl/");
+		document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+	</script>
+	<script type="text/javascript">
+	try 
+	{
+		var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 2);
+		piwikTracker.trackPageView();
+		piwikTracker.enableLinkTracking();
+	}
+	catch( err ) 
+	{
+	}
+	</script>
+	<!-- End Piwik Tracking Code -->
 </head>
 <body>
-<div id="leftBar">
-	<div id="topStatusInfo">
-		<table>
-			<tr>
-				<th>Data:</th>
-				<td><?php echo date("Y.m.d H:m"); ?></td>
-			</tr>
-			<tr>
-				<th>Zalogowany:</th>
-				<td>
-					<?php if ( !$isLogged ) { ?>
-						nie
-					<?php } else { ?>
-						<?php echo $userNameAndSurname; ?>
-					<?php } ?>
-				</td>
-			</tr>
-			<tr>
-				<th>Poziom:</th>
-				<td><?php echo $userLevelName; ?></td>
-			</tr>
-		</table>
+	<noscript><p><img src="http://piwik.s2.trakos.pl/piwik.php?idsite=2" style="border:0" alt="" /></p></noscript>
+	<a href="index.php"><h1 class="top">YAE - you are exposed</h1></a>
+	<div id="menu-l"><div id="menu-r"><div id="menu">
+		<?php $this->render("blocks/menu"); ?>
+	</div></div></div>
+	<div id="content">
+		<?php $this->render($controller . "/" . $action); ?>
 	</div>
-	<ul id="menu">
-		<?php $k = 1;?>
-		<?php if ( $isLogged ) { ?>
-			<?php if ( $userLevel >= LEVEL_MANAGER ) { ?>
-				<li>
-					<a href="<?php echo $this->link("Deliverers","index"); ?>">
-						<span>0<?php echo $k++; ?></span>
-						Zleceniodawcy
-					</a>
-				</li>
-			<?php } ?>
-			<?php if ( $userLevel >= LEVEL_SUPERVISOR ) { ?>
-				<li>
-					<a href="<?php echo $this->link("Campaigns","index"); ?>">
-						<span>0<?php echo $k++; ?></span>
-						Kampanie
-					</a>
-				</li>
-				<li>
-					<a href="<?php echo $this->link("Forms","index"); ?>">
-						<span>0<?php echo $k++; ?></span>
-						Formularze
-					</a>
-				</li>
-				<li>
-					<a href="<?php echo $this->link("Statuses","index"); ?>">
-						<span>0<?php echo $k++; ?></span>
-						Słownik statusów
-					</a>
-				</li>
-				<li>
-					<a href="<?php echo $this->link("Users","index"); ?>">
-						<span>0<?php echo $k++; ?></span>
-						Użytkownicy
-					</a>
-				</li>
-			<?php } ?>
-			<?php if ( $userLevel == LEVEL_AGENT ) { ?>
-				<li>
-					<a href="<?php echo $this->link("FormShow","index"); ?>">
-						<span>0<?php echo $k++; ?></span>
-						Prowadzenie ankiety
-					</a>
-				</li>
-			<?php } ?>
-			<li>
-				<a href="<?php echo $this->link("Reports","index"); ?>">
-					<span>0<?php echo $k++; ?></span>
-					Statystyki
-				</a>
-			</li>
-			<li>
-				<a href="<?php echo $this->link("Index","changepassword"); ?>">
-					<span>0<?php echo $k++; ?></span>
-					Zmień hasło
-				</a>
-			</li>
-			<li>
-				<a href="<?php echo $this->link("Index","logout"); ?>">
-					<span>0<?php echo $k++; ?></span>
-					Wyloguj
-				</a>
-			</li>
-		<?php } else { ?>
-			<li>
-				<a href="<?php echo $this->link("Index","index"); ?>">
-					<span>0<?php echo $k++; ?></span>
-					Zaloguj
-				</a>
-			</li>
-		<?php } ?>
-	</ul>
-</div>
-<div id="content">
-	<?php $this->render($controller . "/" . $action); ?>
-</div>
-<div style="clear:both;"></div>
-<div id="footer">Copyright © 2011. Wszelkie prawa zastrzeżone.</div>
+	<div id="footer">by trakos, 2010 </div>
 </body>
 </html>

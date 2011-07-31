@@ -1,5 +1,5 @@
 <?php
-abstract class Lib_Includer_Abstract
+abstract class Lib_Mvc_Includer_Abstract
 {
 	protected $_files = array();
 	protected $_systemPath = null;
@@ -19,7 +19,7 @@ abstract class Lib_Includer_Abstract
 	
 	/**
 	 * Get instance.
-	 * @return Lib_Includer_Abstract
+	 * @return Lib_Mvc_Includer_Abstract
 	 */
 	public static function getInstance()
 	{

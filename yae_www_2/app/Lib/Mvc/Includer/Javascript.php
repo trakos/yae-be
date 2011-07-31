@@ -1,5 +1,5 @@
 <?php
-class Lib_Includer_Javascript extends Lib_Includer_Abstract
+class Lib_Mvc_Includer_Javascript extends Lib_Mvc_Includer_Abstract
 {
 	protected $_files = array();
 	protected $_systemPath = SRC_PATH_JS;

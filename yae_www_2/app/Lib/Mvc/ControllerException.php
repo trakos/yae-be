@@ -10,7 +10,7 @@
  * Wyjątek wyrzucany przez kontrolery i FrontController
  *
  */
-class Lib_ControllerException extends Exception
+class Lib_Mvc_ControllerException extends Exception
 {
 	/**
 	 * Konstruktor wyjątku 
