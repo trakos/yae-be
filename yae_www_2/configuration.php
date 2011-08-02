@@ -19,10 +19,10 @@
 	define('WWW_PATH_JS',WWW_PATH_MAIN.'/js/');
 	define('WWW_PATH_CSS',WWW_PATH_MAIN.'/css/');
 	/* baza danych */
-	define('DB_HOST',"localhost");
-	define('DB_USER',"root");
-	define('DB_PASSWORD',"");
-	define('DB_DATABASE',"system_callcenter");
+	define('DB_HOST','localhost');
+	define('DB_USER', 'dawn');
+	define('DB_PASSWORD',"***REMOVED***");
+	define('DB_DATABASE','dawn');
 	/* poziomy */
 	define('LEVEL_UNLOGGED', 0);
 	define('LEVEL_USER', 10);

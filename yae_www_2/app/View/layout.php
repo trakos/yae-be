@@ -9,8 +9,8 @@
 	<meta name="google-site-verification" content="CUFrM0HOx5Zh6Hd_KCcKXGVGeBmQI8QguMfbp62NWPs" />
 	<link rel="icon" type="image/png" href="favicon.ico"/>
 	<title>You Are Exposed - <?=$siteTitle ?></title>
-	<?php Lib_Mvc_Includer_Javascript::getInstance()->output(); ?>
-	<?php Lib_Mvc_Includer_Css::getInstance()->output(); ?>
+	<?php Lib_Mvc_View_Includer_Javascript::getInstance()->output(); ?>
+	<?php Lib_Mvc_View_Includer_Css::getInstance()->output(); ?>
 	<!-- Piwik -->
 	<script type="text/javascript">
 		var pkBaseURL = (("https:" == document.location.protocol) ? "https://piwik.s2.trakos.pl/" : "http://piwik.s2.trakos.pl/");

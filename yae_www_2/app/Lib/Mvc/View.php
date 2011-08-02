@@ -6,7 +6,7 @@
  */
 
 /**
- * Klasa singletonowa obiektu widoku, który odpowiada za renderowanie widoków.
+ * Singleton class of a view, which renders content.
  * 
  * @version 1.0
  * 
@@ -18,30 +18,30 @@ class Lib_Mvc_View
 	 */
 	static protected $instance;
 	/**
-	 * Aktualne zmienne przekazywane do wywoływanych widoków
+	 * Current variables which will be given to the rendered view.
 	 * @var array
 	 */
 	protected $viewVariables=array();
 	/**
-	 * Nazwa aktualnie wywoływanego kontrolera
+	 * Name of a currently called controller.
 	 * @var string
 	 */
 	static protected $controllerName;
 	/**
-	 * Nazwa aktualnie wywoływanej akcji
+	 * Name of an currently called action.
 	 * @var string
 	 */
 	static protected $actionName;
 	/**
-	 * Stos stanów zmiennych widoku, tak, żeby każdy subrender (render z wewnątrz widoku)
-	 * miał zmienne wyassignowane w tym widoku i wszystkie które miał ten widok,
-	 * ale nie te assignowane przed poprzednim subrenderem.
+	 * Stack of view variables, each subrender (render called from within other render)
+	 * will have all variables assigned in a parent view plus all variables that the parent view could access,
+	 * but without variables assigned before other subrender calls.
 	 * 
 	 * @var array
 	 */
 	protected $stackOfViewVariablesState=array();
 	/**
-	 * Pobranie singletonowej instancji View
+	 * Returns instance of a current object.
 	 * @return Lib_Mvc_View
 	 */
 	static public function getInstance()
@@ -54,7 +54,7 @@ class Lib_Mvc_View
 	}
 	
 	/**
-	 * Konstruktor protected, korzystać z getInstance.
+	 * Protected constructor, use getInstance.
 	 */
 	protected function __construct()
 	{
@@ -62,7 +62,7 @@ class Lib_Mvc_View
 	}
 	
 	/**
-	 * Pobiera wartość z już zassignowanej wartości, zwraca NULL jeśli nie znajdzie takiej
+	 * Returns value of an already assigned values, NULL if not set.
 	 * @param string name
 	 */
 	public function getAssignedValue($name)
@@ -78,7 +78,7 @@ class Lib_Mvc_View
 	}
 	
 	/**
-	 * Przypisuje wartość $value pod nazwę $name do zmiennych widoku
+	 * Assign $value under name $name.
 	 * @param string $name
 	 * @param string $value
 	 */
@@ -87,7 +87,7 @@ class Lib_Mvc_View
 		$this->viewVariables[$name] = $value;
 	}
 	/**
-	 * Przypisuje wszystkie wartości spod $array pod ich klucze w tablicy jako nazwy do zmiennych widoku.
+	 * Assigns all values from $array under their corresponding key.
 	 * @param array $array
 	 */
 	public function assignArray($array)
@@ -98,7 +98,7 @@ class Lib_Mvc_View
 		}
 	}
 	/**
-	 * Ustawia akcję i kontroler
+	 * Sets controller and action.
 	 * @param string $controller
 	 * @param string $action
 	 */
@@ -109,7 +109,7 @@ class Lib_Mvc_View
 	}	
 	
 	/**
-	 * Renderuje layout.
+	 * Renders layout.
 	 */
 	public function renderPage()
 	{
@@ -119,7 +119,7 @@ class Lib_Mvc_View
 	}
 
 	/**
-	 * Renderuje widok $viewName.
+	 * Renders view $viewName.
 	 * @param string $viewName
 	 */
 	public function render($viewName)
@@ -146,7 +146,7 @@ class Lib_Mvc_View
 		}
 	}
 	
-	public function link ($controller,$action,$arguments=array(),$onlyArguments=false,$encodeAmp=false)
+	public function link($controller,$action,$arguments=array(),$onlyArguments=false,$encodeAmp=false)
 	{
 		$arguments['c'] = $controller?$controller:self::$controllerName;
 		$arguments['a'] = $action?$action:self::$actionName;

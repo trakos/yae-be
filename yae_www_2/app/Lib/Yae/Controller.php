@@ -2,7 +2,7 @@
 /**
  * Klasa podstawowa kontrolera
  */
-class Lib_Yae_Controller extends Lib_Mvc_Controller
+class Lib_Yae_Controller extends Lib_Mvc_Controller_Abstract
 {
 	/**
 	 * Jaki poziom użytkownika jest wymagany, aby miał dostęp do tego kontrolera (najbezpieczniej najwyższy jako wartość domyślny).
@@ -23,10 +23,10 @@ class Lib_Yae_Controller extends Lib_Mvc_Controller
 	 */
 	public function initView()
 	{
-		$isLogged = Model_Auth::getInstance()->isLogged();
-		$userLogin = $isLogged ? Model_Auth::getInstance()->getUserId() : "";
-		$userLevel = Model_Auth::getInstance()->getUserLevel();
-		$userNameAndSurname = $isLogged ? Model_Auth::getInstance()->get("imie")." ".Model_Auth::getInstance()->get("nazwisko") : "guest";
+		$isLogged = Lib_Mvc_Model_Auth::getInstance()->isLogged();
+		$userLogin = $isLogged ? Lib_Mvc_Model_Auth::getInstance()->getUserId() : "";
+		$userLevel = Lib_Mvc_Model_Auth::getInstance()->getUserLevel();
+		$userNameAndSurname = $isLogged ? Lib_Mvc_Model_Auth::getInstance()->get("imie")." ".Lib_Mvc_Model_Auth::getInstance()->get("nazwisko") : "guest";
 		$this->view->assign("siteTitle", "TODO" );
 		$this->view->assign("isLogged", $isLogged );
 		$this->view->assign("userLogin", $userLogin );

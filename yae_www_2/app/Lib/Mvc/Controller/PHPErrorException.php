@@ -1,34 +1,28 @@
 <?php
 /**
- * Plik z klasą PHPErrorHandler
  * @package Lib
  * @category Lib
- * @version 1.0
  */
 
 /**
- * Klasa wyjątku wyrzucanego, gdy wystąpi standardowy phpowy error/warning/notice, 
- * poprzez przeciążenie error handlera w indexie.
- * 
- * @version 1.0
- * 
+ * Class of an exception, which can be thrown when standard php error (or warning/notice etc.) occurs. *
  */
-class Lib_Mvc_PHPErrorException extends Exception
+class Lib_Mvc_Controller_PHPErrorException extends Exception
 {
 	/**
-	 * Rodzaj błędu (patrz też: stałe zdefiniowane przez php zacztynające się na E_)
+	 * Error type (value of one of the php constatns E_*)
 	 * @var int
 	 */
     protected $severity;
     
     /**
-     * Zachowany prawdziwy tekst błędu zwrócony przez PHP.
+     * Text error given by php.
      * @var string
      */
     protected $realMessage;
    
     /**
-     * Konstruktor błędu wyrzucanego gdy wystąpi phpowy błąd.
+     * Exception constructor.
      * @param string $message
      * @param integer $code
      * @param integer $severity
@@ -38,7 +32,7 @@ class Lib_Mvc_PHPErrorException extends Exception
     public function __construct($message, $code, $severity, $filename, $lineno)
     {
         $this->realMessage = $message;
-        $this->message = "Wystąpił błąd wewnętrzny systemu.";
+        $this->message = "Internal system error occurs.";
         $this->code = $code;
         $this->severity = $severity;
         $this->file = $filename;
@@ -46,7 +40,7 @@ class Lib_Mvc_PHPErrorException extends Exception
     }
    
     /**
-     * Pobiera rodzaj błędu.
+     * Gets severity of an error (value of one of the php constatns E_*).
      */
     public function getSeverity()
     {
@@ -54,7 +48,7 @@ class Lib_Mvc_PHPErrorException extends Exception
     }
     
     /**
-     * Pobiera prawdziwą wiadomość błędu zwróconą przez PHP.
+     * Returns original php error text.
      */
     public function getRealMessage()
     {

@@ -1,5 +1,5 @@
 <?php
-abstract class Lib_Mvc_Includer_Abstract
+abstract class Lib_Mvc_View_Includer_Abstract
 {
 	protected $_files = array();
 	protected $_systemPath = null;

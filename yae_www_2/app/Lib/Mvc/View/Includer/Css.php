@@ -1,5 +1,5 @@
 <?php
-class Lib_Mvc_Includer_Css extends Lib_Mvc_Includer_Abstract
+class Lib_Mvc_View_Includer_Css extends Lib_Mvc_View_Includer_Abstract
 {
 	protected $_files = array();
 	protected $_systemPath = SRC_PATH_CSS;

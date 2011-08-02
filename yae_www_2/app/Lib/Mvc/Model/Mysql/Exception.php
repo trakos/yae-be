@@ -1,6 +1,6 @@
 <?php
 
-class Model_Mysql_Exception extends Exception
+class Lib_Mvc_Model_Mysql_Exception extends Exception
 {
 	protected $errno;
 	protected $query;

@@ -2,43 +2,38 @@
 /**
  * @package Lib
  * @category Lib
- * @version 1.0
  */
 
 /**
- * Klasa singletonowa głównego kontrolera, który na podstawie przesłanych danych
- * decyduje, zawartość której strony wyświetlamy użytkownikowi
- * 
- * @version 1.0
- * 
+ * Singleton class of front controller, which decides what content show to user based on a data sent.
  */
-class Lib_Mvc_FrontController
+class Lib_Mvc_Controller_Front
 {
 	/**
-	 * @var Lib_Mvc_FrontController
+	 * @var Lib_Mvc_Controller_Front
 	 */
 	static protected $instance;
 	/**
-	 * Pobranie singletonowej instancji FrontControllera
-	 * @throws Lib_Mvc_ControllerException
-	 * @return Lib_Mvc_FrontController
+	 * Fetch instance of front controller.
+	 * @throws Lib_Mvc_Controller_Exception
+	 * @return Lib_Mvc_Controller_Front
 	 */
 	static public function getInstance()
 	{
 		if(!self::$instance)
 		{
-			self::$instance = new Lib_Mvc_FrontController();
+			self::$instance = new static();
 		}
 		return self::$instance;
 	}
 	/**
-	 * Aktualna akcja kontrolera
+	 * Current controller action.
 	 * 
 	 * @var string
 	 */
 	protected $action;
 	/** 
-	 * Aktualny kontroler
+	 * Current controiller.
 	 * 
 	 * @var string
 	 */
@@ -46,9 +41,9 @@ class Lib_Mvc_FrontController
 	
 	/**
 	 * 
-	 * Konstruktor, inicjalizacja - wybór kontrolera/akcji
+	 * Constructor, choosing controller and action.
 	 * 
-	 * @throws Lib_Mvc_FrontControllerException
+	 * @throws Lib_Mvc_Controller_Exception
 	 * 
 	 */
 	protected function __construct()
@@ -58,9 +53,9 @@ class Lib_Mvc_FrontController
 	}
 	
 	/**
-	 * Na podstawie danych użytkownika, wybierz obecny kontroler
+	 * Decide which controller to use.
 	 * 
-	 * @throws Lib_Mvc_ControllerException
+	 * @throws Lib_Mvc_Controller_Exception
 	 * @return void
 	 */
 	protected function chooseController()
@@ -78,19 +73,19 @@ class Lib_Mvc_FrontController
 		{
 			if(!class_exists('Controller_'.$this->controller,true))
 			{
-				throw new Lib_Mvc_ControllerException(E_CONTROLLER_DOESNT_EXIST, "Kontroler ".$this->controller." nie istnieje!");
+				throw new Lib_Mvc_Controller_Exception(E_CONTROLLER_DOESNT_EXIST, "Controller ".$this->controller." does not exist!");
 			}
 		}
 		catch(Exception $e)
 		{
-			throw new Lib_Mvc_ControllerException(E_CONTROLLER_DOESNT_EXIST, "Kontroler ".$this->controller." nie istnieje!");
+			throw new Lib_Mvc_Controller_Exception(E_CONTROLLER_DOESNT_EXIST, "Controller ".$this->controller." does not exist!");
 		}
 	}
 	
 	/**
-	 * Na podstawie danych użytkownika, wybierz akcję
+	 * Decide which controiller action to call.
 	 * 
-	 * @throws Lib_Mvc_ControllerException
+	 * @throws Lib_Mvc_Controller_Exception
 	 * @return void
 	 */
 	protected function chooseAction()
@@ -106,13 +101,13 @@ class Lib_Mvc_FrontController
 		}
 		if(!method_exists('Controller_'.$this->controller,$this->action.'Action'))
 		{
-			throw new Lib_Mvc_ControllerException(E_ACTION_DOESNT_EXIST, "Akcja ".$this->action." nie istnieje w kontrolerze ".$this->controller.".");
+			throw new Lib_Mvc_Controller_Exception(E_ACTION_DOESNT_EXIST, "Action ".$this->action." does not exist in controller ".$this->controller.".");
 		}
 	}
 	
 	/**
-	 * Wywołanie akcji wynikającej z danych wejściowych i wywołanie widoku
-	 * @throws Lib_Mvc_ControllerException
+	 * Call previously chosend action and render the view.
+	 * @throws Lib_Mvc_Controller_Exception
 	 * @return void
 	 */
 	public function perform()
@@ -121,8 +116,7 @@ class Lib_Mvc_FrontController
 	}
 	
 	/**
-	 * Wywołanie konkretnej akcji konkretnego kontrolera, niezależnie od danych
-	 * wejściowych wykrytych przez samego FrontControllera.
+	 * Call explicitly givcen action of an explicitly given controller.
 	 * 
 	 * @param string $controller
 	 * @param string $action
@@ -134,27 +128,27 @@ class Lib_Mvc_FrontController
 	{
 		if(!class_exists('Controller_'.$controllerString,true))
 		{
-			throw new Lib_Mvc_ControllerException(E_CONTROLLER_DOESNT_EXIST, "Kontroler $controllerString nie istnieje!");
+			throw new Lib_Mvc_Controller_Exception(E_CONTROLLER_DOESNT_EXIST, "Controller $controllerString does not exist!");
 		}
 		if(!method_exists('Controller_'.$controllerString,$actionString.'Action'))
 		{
-			throw new Lib_Mvc_ControllerException(E_ACTION_DOESNT_EXIST, "Akcja $actionString nie istnieje!");
+			throw new Lib_Mvc_Controller_Exception(E_ACTION_DOESNT_EXIST, "Action $actionString doest not exist!");
 		}
 		$controllerName = 'Controller_'.$controllerString;
 		/**
-		 * Z założenia obiekt ten przeciąża Lib_Mvc_Controller.
-		 * @var $controller Lib_Mvc_Controller
+		 * This object should extend Lib_Mvc_Controller_Abstract
+		 * @var $controller Lib_Mvc_Controller_Abstract
 		 */
 		$controller = new $controllerName();
 		if ( ! $controller->canCurrentUserAccess() )
 		{
 			if ( Model_Auth::getInstance()->isLogged() )
 			{
-				throw new Model_Auth_Exception(E_INSUFFICIENT_PRIVILEGES, "Niewystarczający poziom dostępu użytkownika!");
+				throw new Model_Auth_Exception(E_INSUFFICIENT_PRIVILEGES, "Insufficient privileges!");
 			}
 			else
 			{
-				throw new Model_Auth_Exception(E_INSUFFICIENT_PRIVILEGES, "Do obejrzenia tej podstrony musisz być zalogowany.");
+				throw new Model_Auth_Exception(E_INSUFFICIENT_PRIVILEGES, "You must be logged in to see this page.");
 			}
 		}
 		Lib_Mvc_View::setAction($controllerString, $actionString);

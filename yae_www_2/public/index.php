@@ -27,7 +27,7 @@
 		}
 		else
 		{
-			throw new Lib_Mvc_PHPErrorException($errstr, 0, $errno, $errfile, $errline);
+			throw new Lib_Mvc_Controller_PHPErrorException($errstr, 0, $errno, $errfile, $errline);
 		}
 	}
 	function printError($msg)
@@ -52,12 +52,14 @@
 	set_error_handler("errorHandler");
 	// buforowanie outputu
 	ob_start();
+	// bootstrapowanie pożadanych instancji obiektów
+	Lib_Yae_Model_Auth::getInstance();
 	// wywołanie strony i obsługa jej ewentualnych błędów
 	try
 	{
 		try
 		{
-			Lib_Mvc_FrontController::getInstance()->perform();
+			Lib_Mvc_Controller_Front::getInstance()->perform();
 		}
 		// debug catch
 		catch(Exception $e)
@@ -102,7 +104,7 @@
 		}
 	}
 	// non-debug catches
-	catch(Model_Auth_Exception $e)
+	catch(Lib_Mvc_Model_Auth_Exception $e)
 	{
 		printError($e->getMessage());
 	}
@@ -111,13 +113,9 @@
 		header("HTTP/1.0 404 Not Found");
 		printError("404 not found");
 	}
-	catch(Model_Mysql_Exception $e)
+	catch(Lib_Mvc_Model_Mysql_Exception $e)
 	{
 		printError("There was a problem accessing the database.");
-	}
-	catch(Model_CSV_Exception $e)
-	{
-		printError($e->getUserMessage());
 	}
 	/*catch(Exception $e)
 	{
