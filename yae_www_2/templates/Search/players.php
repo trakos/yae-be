@@ -16,25 +16,33 @@
 			<tr>
 				<td>
 					<a rel="nofollow" href="<?= $this->link("Search","players", array('nick'=>$player['nick'])) ?>">
-						<?=$player['nick']; ?>
+						<?=View_Yae::formatValue('nick', $player['nick'], 'player') ?>
 					</a>
 				</td>
 				<td>
-					<a rel="nofollow" href="?show=players&amp;ip=<?=urlencode($player['ip']) ?>">
-						<img alt="be" src="images/flags/be.png" /> <?=$player['ip'] ?>
+					<a rel="nofollow" href="<?= $this->link("Search","players", array('ip'=>$player['ip'])) ?>">
+						<?=View_Yae::formatValue('ip', $player['realip'], 'player') ?>
 					</a>
 				</td>
 				<td>
-					<a rel="nofollow" href="?show=players&amp;pbguid=<?=urlencode($player['pbguid']) ?>"><?=$player['pbguid']; ?></a>
+					<a rel="nofollow" href="<?= $this->link("Search","players", array('pbguid'=>$player['pbguid'])) ?>">
+						<?=View_Yae::formatValue('pbguid', $player['pbguid'], 'player') ?>
+					</a>
 				</td>
 				<td>
-					<a rel="nofollow" href="?show=players&amp;etproguid=<?=urlencode($player['etproguid']) ?>"><?=$player['etproguid']; ?></a>
+					<a rel="nofollow" href="<?= $this->link("Search","players", array('etproguid'=>$player['etproguid'])) ?>">
+						<?=View_Yae::formatValue('etproguid', $player['etproguid'], 'player') ?>
+					</a>
 				</td>
 				<td>
-					<a rel="nofollow" href="?show=players&amp;slacnick=<?=urlencode($player['slacnick']) ?>"><?=$player['slacnick']; ?></a>
+					<a rel="nofollow" href="<?= $this->link("Search","players", array('slacnick'=>$player['slacnick'])) ?>">
+						<?=View_Yae::formatValue('slacnick', $player['slacnick'], 'player') ?>
+					</a>
 				</td>
 				<td>
-					<a rel="nofollow" href="?show=players&amp;slacid=<?=urlencode($player['slacid']) ?>"><?=$player['slacid']; ?></a>
+					<a rel="nofollow" href="<?= $this->link("Search","players", array('slacid'=>$player['slacid'])) ?>">
+						<?=View_Yae::formatValue('slacid', $player['slacid'], 'player') ?>
+					</a>
 				</td>
 				<td>
 					<a rel="nofollow" href="?show=player&amp;id=<?=urlencode($player['id']) ?>">»</a>
@@ -42,5 +50,5 @@
 			</tr>
 		<? } ?>
 	</table>
+	<?=$this->paginator($page, $limit, $count, "Search", "players", $playersForm->getValues(), "page") ?>
 <? } ?>
-<p class="note">Generated in 0.1699 seconds with use of 2 queries which took 0.1601 seconds</p></div>

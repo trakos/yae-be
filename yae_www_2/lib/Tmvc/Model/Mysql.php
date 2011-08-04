@@ -358,6 +358,11 @@ class Tmvc_Model_Mysql extends mysqli
 			return $query;
 		}
 	}
+	
+	public function getCountCalcRows()
+	{
+		return $this->getOne("SELECT FOUND_ROWS()");
+	}
 
 	public function getTimeSpentOnQueries( ) { return $this->timer->getTotal(); }
 	public function getNumOfQueries( ) { return $this->timer->count(); }

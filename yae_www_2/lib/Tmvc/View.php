@@ -178,5 +178,28 @@ class Tmvc_View
 		$string.= "<div style='margin: 0 0 -2px 0px; height: ${height}px; width: ${bgWidth}px; background: #cfcfcf; display: inline-block;'></div>";
 		return $string;
 	}
+		
+	public function paginator($page,$limit,$count,$controller,$action, $arguments, $pageArgument)
+	{
+		if ( !$count || $count <= $limit )
+		{
+			return;
+		}
+		$lastPage = ceil($count/$limit);
+		echo "<div id='pages'>";
+		for( $i=1; $i<=$lastPage; $i++ )
+		{
+			if( $i != $page )
+			{
+				$arguments[$pageArgument] = $i;
+				echo "<a href='".$this->link($controller,$action,$arguments)."' rel='nofollow'>$i</a> ";
+			}
+			else
+			{
+				echo "<span>$i</span> ";
+			}
+		}
+		echo "</div>";
+	}
 };
 ?>

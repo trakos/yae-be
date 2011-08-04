@@ -13,6 +13,9 @@ class Tmvc_Model_Mysql_BaseSelect
 	protected $_orderArguments = array();
 	protected $_limitOffset = 0;
 	protected $_limitSize = 0;
+	/**
+	 * @var Tmvc_Model_Mysql
+	 */
 	protected $_dbInstance = null;
 	
 	public function __construct( Tmvc_Model_Mysql $dbInstance, $queryBase = '', $selectArguments = array(), $groupArguments = array() )
@@ -78,7 +81,7 @@ class Tmvc_Model_Mysql_BaseSelect
 		$this->_orderArguments = array();
 	}
 	
-	public function __toString()
+	public function toString()
 	{
 		if ( empty($this->_queryBase) )
 		{
@@ -95,27 +98,27 @@ class Tmvc_Model_Mysql_BaseSelect
 	
 	public function getAll()
 	{
-		return $this->_dbInstance->getAll((string)$this);
+		return $this->_dbInstance->getAll($this->toString());
 	}
 	
 	public function getAllEnumerate()
 	{
-		return $this->_dbInstance->getAllEnumerate((string)$this);
+		return $this->_dbInstance->getAllEnumerate($this->toString());
 	}
 	
 	public function getCol()
 	{
-		return $this->_dbInstance->getCol((string)$this);
+		return $this->_dbInstance->getCol($this->toString());
 	}
 	
 	public function getOne()
 	{
-		return $this->_dbInstance->getOne((string)$this);
+		return $this->_dbInstance->getOne($this->toString());
 	}
 	
 	public function getRow()
 	{
-		return $this->_dbInstance->getRow((string)$this);
+		return $this->_dbInstance->getRow($this->toString());
 	}
 	
 	protected function _getWhere()

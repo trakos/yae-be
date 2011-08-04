@@ -37,6 +37,8 @@
 	</div></div></div>
 	<div id="content">
 		<?php $this->render($controller . "/" . $action); ?>
+		<? $GLOBALS['globalTimer']->stop(); ?>
+		"<p class='note'>Generated in <?=$GLOBALS['globalTimer']->getTotal() ?> seconds with use of <?=Tmvc_Model_Mysql::getConnection()->getNumOfQueries() ?> queries which took <?=Tmvc_Model_Mysql::getConnection()->getTimeSpentOnQueries() ?> seconds</p>";
 	</div>
 	<div id="footer">by trakos, 2010 - 2011</div>
 </body>

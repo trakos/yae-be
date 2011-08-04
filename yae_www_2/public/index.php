@@ -1,4 +1,4 @@
-<?php 
+<?php
 	// require_once('firebug.php');
 	// wydłużenie maksymalnego czasu wykonywania
 	set_time_limit(120);
@@ -50,6 +50,8 @@
 		<?php
 	}
 	set_error_handler("errorHandler");
+	// start timera
+	$globalTimer = new Tmvc_Model_Timer();
 	// buforowanie outputu
 	ob_start();
 	// bootstrapowanie pożadanych instancji obiektów
@@ -80,6 +82,11 @@
 				<body>
 				<?php
 					echo $e->getMessage();
+					if ( $e instanceof Tmvc_Controller_PHPErrorException )
+					{
+						echo "<br>";
+						echo $e->getRealMessage();
+					}
 					echo '<pre>';
 					$trace = $e->getTrace();
 					foreach ( $trace as $k => $tracePoint )
