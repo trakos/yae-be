@@ -27,7 +27,7 @@
 		}
 		else
 		{
-			throw new Lib_Mvc_Controller_PHPErrorException($errstr, 0, $errno, $errfile, $errline);
+			throw new Tmvc_Controller_PHPErrorException($errstr, 0, $errno, $errfile, $errline);
 		}
 	}
 	function printError($msg)
@@ -39,7 +39,7 @@
 			<head>
 			<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 			<meta http-equiv="Content-Language" content="pl"/>
-			<title>system callcenter - błąd</title>
+			<title>You Are Exposed - Error</title>
 			</head>
 			<body>
 			<?php
@@ -53,13 +53,13 @@
 	// buforowanie outputu
 	ob_start();
 	// bootstrapowanie pożadanych instancji obiektów
-	Lib_Yae_Model_Auth::getInstance();
+	Model_Auth::getInstance();
 	// wywołanie strony i obsługa jej ewentualnych błędów
 	try
 	{
 		try
 		{
-			Lib_Mvc_Controller_Front::getInstance()->perform();
+			Tmvc_Controller_Front::getInstance()->perform();
 		}
 		// debug catch
 		catch(Exception $e)
@@ -75,7 +75,7 @@
 				<head>
 				<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 				<meta http-equiv="Content-Language" content="pl"/>
-				<title>system callcenter - błąd</title>
+				<title>YAE system exception</title>
 				</head>
 				<body>
 				<?php
@@ -104,16 +104,16 @@
 		}
 	}
 	// non-debug catches
-	catch(Lib_Mvc_Model_Auth_Exception $e)
+	catch(Tmvc_Model_Auth_Exception $e)
 	{
 		printError($e->getMessage());
 	}
-	catch(Lib_Mvc_ControllerException $e)
+	catch(Tmvc_ControllerException $e)
 	{
 		header("HTTP/1.0 404 Not Found");
 		printError("404 not found");
 	}
-	catch(Lib_Mvc_Model_Mysql_Exception $e)
+	catch(Tmvc_Model_Mysql_Exception $e)
 	{
 		printError("There was a problem accessing the database.");
 	}

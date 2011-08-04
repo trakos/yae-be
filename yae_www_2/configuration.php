@@ -7,9 +7,9 @@
  */
 	define('T_DEBUG', 1);
 	/* sciezki systemowe */
-	define('SRC_PATH_MAIN','../app');
-	define('SRC_PATH_APP',SRC_PATH_MAIN);
-	define('SRC_PATH_VIEW',SRC_PATH_APP.'/View');
+	define('SRC_PATH_MAIN','..');
+	define('SRC_PATH_APP',SRC_PATH_MAIN.'/app');
+	define('SRC_PATH_VIEW',SRC_PATH_MAIN.'/templates');
 	define('SRC_PATH_JS', './js/');
 	define('SRC_PATH_JS_CACHE', '/cache/');
 	define('SRC_PATH_CSS', './css/');
@@ -37,3 +37,4 @@
 	define('E_INI_PARSING_ERROR', 151);
 	define('E_INI_INVALID_SECTION_OR_VALUE',152);
 	define('E_MYSQL',153);
+	define('E_FORM_NO_SECTION_ADDED',170);
