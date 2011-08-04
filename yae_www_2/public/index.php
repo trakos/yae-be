@@ -7,7 +7,7 @@
 	// includowanie rzeczy koniecznych do rozpoczęcia działania
 	require_once('../configuration.php');
 	// autoincludowanie plików zgodnie z nazwami klas
-	set_include_path( get_include_path() . PATH_SEPARATOR . SRC_PATH_APP . PATH_SEPARATOR . SRC_PATH_APP . '/Controller' );
+	set_include_path( get_include_path() . PATH_SEPARATOR . SRC_PATH_LIB . PATH_SEPARATOR . SRC_PATH_APP . PATH_SEPARATOR . SRC_PATH_APP . '/Controller' );
 	function autoload($class) 
 	{
 		$file = str_replace('_', '/', $class); 

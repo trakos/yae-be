@@ -8,6 +8,7 @@
 	define('T_DEBUG', 1);
 	/* sciezki systemowe */
 	define('SRC_PATH_MAIN','..');
+	define('SRC_PATH_LIB',SRC_PATH_MAIN.'/lib');
 	define('SRC_PATH_APP',SRC_PATH_MAIN.'/app');
 	define('SRC_PATH_VIEW',SRC_PATH_MAIN.'/templates');
 	define('SRC_PATH_JS', './js/');
