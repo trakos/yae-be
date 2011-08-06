@@ -186,19 +186,19 @@
 						<?=View_Yae::formatValue('etproguid', $entry['etproguid'], 'player') ?>
 					</a>
 				</td>
-			<? } ?>
-			<? if ( $currentType == "pbmonth" || $currentType == "pball" ) { ?>
-				<td>
-					<a class="important_link details_stats" rel="nofollow"href="<?=$this->link("Search","players", array('pbguid'=>$entry['pbguid'])) ?>">
-						player entries »
-					</a>
-				</td>
-			<? } else if ( $currentType == "slacmonth" || $currentType == "slacall" ) { ?>
-				<td>
-					<a class="important_link details_stats" rel="nofollow"href="<?=$this->link("Search","players", array('slacid'=>$entry['slacid'])) ?>">
-						player entries »
-					</a>
-				</td>
+				<? if ( $currentType == "pbmonth" || $currentType == "pball" ) { ?>
+					<td>
+						<a class="important_link details_stats" rel="nofollow"href="<?=$this->link("Search","showPlayer", array('id_type'=>'pbguid','player_id'=>$entry['pbguid'])) ?>">
+							player stats »
+						</a>
+					</td>
+				<? } else if ( $currentType == "slacmonth" || $currentType == "slacall" ) { ?>
+					<td>
+						<a class="important_link details_stats" rel="nofollow"href="<?=$this->link("Search","showPlayer", array('id_type'=>'slacid','player_id'=>$entry['slacid'])) ?>">
+							player stats »
+						</a>
+					</td>
+				<? } ?>
 			<? } ?>
 		<? } ?>
 	</tr>
