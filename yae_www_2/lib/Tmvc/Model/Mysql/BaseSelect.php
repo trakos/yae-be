@@ -26,59 +26,108 @@ class Tmvc_Model_Mysql_BaseSelect
 		$this->_groupArguments = $groupArguments;
 	}
 	
+	/**
+	 * @param string $queryBase
+	 * @param array $selectArguments
+	 * @param array $groupArguments
+	 * @return Tmvc_Model_Mysql_BaseSelect
+	 */
 	public function setQueryBase( $queryBase, $selectArguments = array(), $groupArguments = array() )
 	{
 		$this->_queryBase = $queryBase;
 		$this->_selectArguments = $selectArguments;
 		$this->_groupArguments = $groupArguments;
+		return $this;
 	}
 	
+	/**
+	 * @param string $where
+	 * @param array $arguments
+	 * @return Tmvc_Model_Mysql_BaseSelect
+	 */
 	public function where($where, $arguments = array())
 	{
 		$this->_wheres[] = $where;
 		$this->_whereArguments = array_merge($this->_whereArguments, $arguments);
+		return $this;
 	}
 	
+	/**
+	 * @return Tmvc_Model_Mysql_BaseSelect
+	 */
 	public function resetWhere()
 	{
 		$this->_wheres = array();
 		$this->_whereArguments = array();
+		return $this;
 	}
 	
+	/**
+	 * @param string $having
+	 * @param array $arguments
+	 * @return Tmvc_Model_Mysql_BaseSelect
+	 */
 	public function having($having, $arguments = array())
 	{
 		$this->_havings[] = $having;
 		$this->_havingArguments = array_merge($this->_havingArguments, $arguments);
+		return $this;
 	}
 	
+	/**
+	 * @return Tmvc_Model_Mysql_BaseSelect
+	 */
 	public function resetHaving()
 	{
 		$this->_havings = array();
 		$this->_havingArguments = array();
+		return $this;
 	}
 	
+	/**
+	 * @param string $order
+	 * @param array $arguments
+	 * @return Tmvc_Model_Mysql_BaseSelect
+	 */
 	public function order($order, $arguments = array())
 	{
 		$this->_orders[] = $order;
 		$this->_orderArguments = array_merge($this->_orderArguments, $arguments);
+		return $this;
 	}
 	
+	/**
+	 * @param int $offset
+	 * @param int $size
+	 * @return Tmvc_Model_Mysql_BaseSelect
+	 */
 	public function limit($offset, $size)
 	{
 		$this->_limitOffset = $offset;
 		$this->_limitSize = $size;
+		return $this;
 	}
 	
+	/**
+	 * @param int $number
+	 * @param int $perPage
+	 * @return Tmvc_Model_Mysql_BaseSelect
+	 */
 	public function page($number, $perPage)
 	{
 		$this->_limitOffset = $perPage*($number-1);
 		$this->_limitSize = $perPage;
+		return $this;
 	}
 	
+	/**
+	 * @return Tmvc_Model_Mysql_BaseSelect
+	 */
 	public function resetOrder()
 	{
 		$this->_orders = array();
 		$this->_orderArguments = array();
+		return $this;
 	}
 	
 	public function toString()

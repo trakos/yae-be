@@ -39,6 +39,7 @@
 				$sectionKey = array_pop(array_keys($this->_sectionsNames));
 			}
 			$this->_inputSections[$sectionKey][] = $input;
+			return $input;
 		}
 		
 		public function addButton( Tmvc_View_Form_Button_Abstract $button, $sectionKey=null )
@@ -71,13 +72,26 @@
 		public function render()
 		{
 			echo "<form action='$this->_action' method='$this->_method' id='$this->_id'>";
+			foreach ( $this->_inputSections as $key => $inputs )
+			{
+				foreach ( $inputs as $input )
+				{
+					if ( $input instanceof Tmvc_View_Form_Input_Hidden )
+					{
+						$input->render($this->_id);
+					}
+				}
+			}
 			echo "<table class='$this->_cssClass'>";
 			foreach ( $this->_inputSections as $key => $inputs )
 			{
 				$this->_renderSectionStart($key, $this->_sectionsNames[$key]);
 				foreach ( $inputs as $input )
 				{
-					$input->render($this->_id);
+					if ( !$input instanceof Tmvc_View_Form_Input_Hidden )
+					{
+						$input->render($this->_id);
+					}
 				}
 				if ( !empty($this->_buttonSections[$key]) )
 				{

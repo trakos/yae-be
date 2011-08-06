@@ -7,7 +7,11 @@ class Controller_Index extends Lib_Controller
 	{
 		$this->view->assign('siteTitle', "Home");
 		
-		$this->view->assign('playersForm', new View_Form_SearchPlayers());
-		$this->view->assign('serversForm', new View_Form_SearchServers());
+		$playersForm = new View_Form_SearchPlayers();
+		$playersForm->setCssClass("yae");
+		$serversForm = new View_Form_SearchServers();
+		$serversForm->setCssClass("yae");
+		$this->view->assign('playersForm', $playersForm);
+		$this->view->assign('serversForm', $serversForm);
 	}
 };

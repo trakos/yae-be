@@ -7,6 +7,12 @@
 			(
 				array
 				(
+					'title' => "Stats!",
+					'date'	=> "10.08.2011",
+					'text'	=> "<p>During a past weeks, entire website had been rewritten from scratch. It was done mostly to allow new changes, but for now not much have changes. As a little surface change of a big underground changes, statistics were being added in a few places. I find them quite fun to browse through.</p>"
+				),
+				array
+				(
 					'title' => "YAE alive!",
 					'date'	=> "05.05.2011",
 					'text'	=> "<p>After a half a year of downtime (without few days) YAE comes back. For now it does it without core features: registration and update. However, the search within past results works fine.</p><p>Time will show whether it came back it in vain.</p>"

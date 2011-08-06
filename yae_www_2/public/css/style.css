@@ -72,18 +72,19 @@ div.news
 		text-align:	justify;
 		font-size:	12px;
 	}
-#content table
+	
+#content table.yae
 {
 	border:         1px dotted #afafaf;
 	padding:        0;
 	margin:         20px auto;
 }
-	#content table tr td, table tr th
+	#content table.yae tr td, table.yae tr th
 	{
 		background:     url(images/table_bg.png);
 		padding:        5px;
 	}
-	#content  table tr th
+	#content  table.yae tr th
 	{
 		background:     url(images/header_bg.png);
 		font-weight:    bold;
@@ -95,23 +96,105 @@ div.news
 		text-align:     center;
 	}
 
-#content table.search_form, #content table.result_description
+#content table.form, #content table.result_description
 {
 	float:		left;
-	width:		250px;
+	width:		350px;
 	margin:		20px 0;
 	padding:	0;
 }
 
-	/*table.search_form tr td, table.result_description tr td
+	#content table.form tr th
+	{
+		padding:		4px 0 15px 0;
+	}
+		
+	#content table.form tr td.label
+	{
+		text-align:		left;
+	}
+	
+
+	/*table.form tr td, table.result_description tr td
 	{
 		background:	#e0f0f0;
 	}
-	table.search_form tr th, table.result_description tr th
+	table.form tr th, table.result_description tr th
         {
                 background:     #a0c0c0;
                 color:          #000000;
         }*/
+ 
+	#content table.result.wrap
+	{
+		padding:        0;
+		margin:         20px auto;
+		border-collapse:collapse;
+	}
+	
+		#content table.result.wrap table
+		{
+			margin:			0;
+		}
+		
+		#content table.result .tab
+		{
+			font-weight:	normal;
+			padding:		0 10px;
+			margin:			0 5px;	
+			float:			left;
+			display:		block;
+			line-height:	20px;
+			background:     url(images/header_bg.png);
+			border:			1px solid #ccc;
+			border-bottom:	none;
+			color:			#333;
+			-webkit-border-top-left-radius: 10px;
+			-webkit-border-top-right-radius: 10px;
+			-moz-border-radius-topleft: 10px;
+			-moz-border-radius-topright: 10px;
+			border-top-left-radius: 10px;
+			border-top-right-radius: 10px;
+		}
+		
+		#content table.result .tab.selected
+		{
+			background:     url(images/table_bg.png);
+		}
+		
+		#content table.result a.tab:hover
+		{
+			color:			#000;
+			background:     url(images/table_bg.png);
+		}
+		
+	#content tr.tabs td
+	{
+		background:		transparent;
+		border:			none;
+	}
+	
+	#content table.submenu a, #content table.submenu td.selected p
+	{
+		display:		block;
+		width:			100%;
+		color:			#000;
+		border:  		none;
+		font-weight:	normal;
+		text-align:		left;
+	}
+	
+	#content table.statsmenu a,#content table.statsmenu span 
+	{
+		display:		block;
+		width:			100%;
+		border:  		none;
+		text-align:		left;
+	}
+	
+	#content table.submenu td.selected
+	{
+	}
 
 #content input
 {
@@ -151,9 +234,22 @@ a
 	{
 		border:         none;
 	}
+	
+	a.important_link
+	{
+		color:		#f00;
+		border-bottom:  1px dotted #f00;
+		font-weight: normal;
+	}
+	
 	a:hover
 	{
 		background:     url(images/input_bg.png);
+	}
+	
+	a.important_link:hover
+	{
+		background:		#fdd;
 	}
 
 #pages

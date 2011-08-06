@@ -60,6 +60,9 @@
 			return $select;
 		}
 		
+		/**
+		 * @return Tmvc_Model_Mysql_BaseSelect
+		 */
 		public static function getExactTimesPlayersSelect()
 		{
 			$select = Tmvc_Model_Mysql::getConnection()->getBaseSelect("SELECT SQL_CALC_FOUND_ROWS UNIX_TIMESTAMP(playedfrom) AS playedfrom, UNIX_TIMESTAMP(playedto) AS playedto, nick, SUBSTR(pbguid,32-7,8) AS pbguid, SUBSTR(etproguid,40-9,10) AS etproguid, slacnick, IF(slacid=0,'',slacid) AS slacid, CONCAT(TRIM( TRAILING '0' FROM INET_NTOA(players.ip & 4294967040) ), '*') AS ip, INET_NTOA(players.ip) AS realip, players.id as playerid, serverid from servers JOIN times ON servers.id = serverid JOIN players ON playerid = players.id %s");
@@ -67,6 +70,9 @@
 			return $select;	
 		}
 		
+		/**
+		 * @return Tmvc_Model_Mysql_BaseSelect
+		 */
 		public static function getAllPlayersTimeSelect()
 		{
 			$select = Tmvc_Model_Mysql::getConnection()->getBaseSelect("SELECT SQL_CALC_FOUND_ROWS SUM((UNIX_TIMESTAMP(playedto)-UNIX_TIMESTAMP(playedfrom))/60) AS minutesplayed, nick, SUBSTR(pbguid,32-7,8) AS pbguid, SUBSTR(etproguid,40-9,10) AS etproguid, slacnick, IF(slacid=0,'',slacid) AS slacid, CONCAT(TRIM( TRAILING '0' FROM INET_NTOA(players.ip & 4294967040) ), '*') AS ip, INET_NTOA(players.ip) AS realip, players.id as playerid, serverid from servers JOIN times ON servers.id = serverid JOIN players ON playerid = players.id %s GROUP BY playerid");
@@ -74,10 +80,13 @@
 			return $select;	
 		}
 		
+		/**
+		 * @return Tmvc_Model_Mysql_BaseSelect
+		 */
 		public static function getLastMonthPlayersSelect()
 		{
 			$select = self::getAllPlayersTimeSelect();
-			$select->where("AND ( MONTH(playedfrom)=MONTH(NOW()) OR ( MONTH(playedfrom) = MONTH(NOW()-1) AND DAY(playedfrom) > DAY(NOW()) ) )");
+			$select->where("AND playedfrom > NOW() - INTERVAL 30 DAY");
 			return $select;	
 		}
 	}	

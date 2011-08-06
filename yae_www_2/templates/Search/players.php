@@ -2,7 +2,7 @@
 <? if( empty($players) ) { ?>
 	<p class="error">no matches</p>
 <? } else { ?>
-	<table class="result">
+	<table class="result yae">
 		<tr>
 			<th>nick</th>
 			<th>ip</th>
@@ -45,7 +45,9 @@
 					</a>
 				</td>
 				<td>
-					<a rel="nofollow" href="?show=player&amp;id=<?=urlencode($player['id']) ?>">»</a>
+					<a class="important_link details_stats" rel="nofollow" href="<?= $this->link("Search","showPlayer", array("player_id"=>$player['id'])) ?>">
+						player stats »
+					</a>
 				</td>
 			</tr>
 		<? } ?>

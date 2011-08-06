@@ -50,7 +50,27 @@
 			{
 				$show_value = self::etColorize($value);
 			}
-			else if($key == "played to" || $key == "played from" || $key == "last online" )
+			else if($key == "minutesplayed" )
+			{
+				$show_value = "";
+				if( $value >= (240*60) )
+				{
+					$days = floor($value/(24*60));
+					$show_value.= $days." days ";
+					$value-= ($days*24*60);
+				}
+				if( $value >= 60 )
+				{
+					$minutes = floor($value/60);
+					$show_value.= $minutes." hours ";
+					$value-= ($minutes*60);
+				}
+				if ( round($value) > 0 )
+				{
+					$show_value.= round($value)." minutes";
+				}
+			}
+			else if($key == "playedto" || $key == "playedfrom" || $key == "lastonline" )
 			{
 				if( $value > time() || ( $type == "server" && $value > time()-600 ) )
 				{

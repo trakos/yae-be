@@ -146,11 +146,11 @@ class Tmvc_View
 		}
 	}
 	
-	public function link($controller,$action,$arguments=array(),$onlyArguments=false,$encodeAmp=false)
+	public function link($controller,$action,$arguments=array(),$onlyArguments=false,$encode=true)
 	{
 		$arguments['c'] = $controller?$controller:self::$controllerName;
 		$arguments['a'] = $action?$action:self::$actionName;
-		$url = '?'.http_build_query($arguments,'_',$encodeAmp?'&amp;':'&');
+		$url = '?'.http_build_query($arguments,'_',$encode?'&amp;':'&');
 		if ( $onlyArguments )
 		{
 			return $url;
@@ -189,6 +189,13 @@ class Tmvc_View
 		echo "<div id='pages'>";
 		for( $i=1; $i<=$lastPage; $i++ )
 		{
+			if ( $lastPage > 100 )
+			{
+				if ( abs($page-$i) >= 100 && ($i%100)!=0 )
+				{
+					continue;
+				}
+			}
 			if( $i != $page )
 			{
 				$arguments[$pageArgument] = $i;
