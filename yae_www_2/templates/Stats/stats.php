@@ -61,12 +61,31 @@
 			<th>name</th>
 		<? } else { ?>
 			<th>times spent on all servers (sum)</th>
-			<th>nick</th>
-			<th>ip</th>
-			<th>pbguid</th>
-			<th>etproguid</th>
-			<th>slacnick</th>
-			<th>slacid</th>
+			<? if ( $currentType == "plrsall" || $currentType == "plrsmonth" ) { ?>
+				<th>nick</th>
+				<th>ip</th>
+				<th>pbguid</th>
+				<th>etproguid</th>
+				<th>slacnick</th>
+				<th>slacid</th>
+			<? } else if ( $currentType == "pbmonth" || $currentType == "pball" ) { ?>
+				<th>pbguid</th>
+				<th>nicks count</th>
+				<th>example</th>
+				<th>ip adresses count</th>
+				<th>example</th>
+				<th>etproguids count</th>
+				<th>example</th>
+			<? } else if ( $currentType == "slacmonth" || $currentType == "slacall" ) { ?>
+				<th>slacnick</th>
+				<th>slacid</th>
+				<th>nicks count</th>
+				<th>example</th>
+				<th>ip adresses count</th>
+				<th>example</th>
+				<th>etproguids count</th>
+				<th>example</th>
+			<? } ?>
 		<? } ?>
 		<th></th>
 	</tr>
@@ -88,41 +107,99 @@
 				</a>
 			</td>
 		<? } else { ?>
-			<td>
-				<a rel="nofollow" href="<?= $this->link("Search","players", array('nick'=>$entry['nick'])) ?>">
-					<?=View_Yae::formatValue('nick', $entry['nick'], 'player') ?>
-				</a>
-			</td>
-			<td>
-				<a rel="nofollow" href="<?= $this->link("Search","players", array('ip'=>$entry['ip'])) ?>">
-					<?=View_Yae::formatValue('ip', $entry['realip'], 'player') ?>
-				</a>
-			</td>
-			<td>
-				<a rel="nofollow" href="<?= $this->link("Search","players", array('pbguid'=>$entry['pbguid'])) ?>">
-					<?=View_Yae::formatValue('pbguid', $entry['pbguid'], 'player') ?>
-				</a>
-			</td>
-			<td>
-				<a rel="nofollow" href="<?= $this->link("Search","players", array('etproguid'=>$entry['etproguid'])) ?>">
-					<?=View_Yae::formatValue('etproguid', $entry['etproguid'], 'player') ?>
-				</a>
-			</td>
-			<td>
-				<a rel="nofollow" href="<?= $this->link("Search","players", array('slacnick'=>$entry['slacnick'])) ?>">
-					<?=View_Yae::formatValue('slacnick', $entry['slacnick'], 'player') ?>
-				</a>
-			</td>
-			<td>
-				<a rel="nofollow" href="<?= $this->link("Search","players", array('slacid'=>$entry['slacid'])) ?>">
-					<?=View_Yae::formatValue('slacid', $entry['slacid'], 'player') ?>
-				</a>
-			</td>
-			<td>
-				<a class="important_link details_stats" rel="nofollow"href="<?= $this->link("Search","showPlayer", array("player_id"=>$entry['playerid'])) ?>">
-					player stats »
-				</a>
-			</td>
+			<? if ( $currentType == "plrsall" || $currentType == "plrsmonth" ) { ?>
+				<td>
+					<a rel="nofollow" href="<?= $this->link("Search","players", array('nick'=>$entry['nick'])) ?>">
+						<?=View_Yae::formatValue('nick', $entry['nick'], 'player') ?>
+					</a>
+				</td>
+				<td>
+					<a rel="nofollow" href="<?= $this->link("Search","players", array('ip'=>$entry['ip'])) ?>">
+						<?=View_Yae::formatValue('ip', $entry['realip'], 'player') ?>
+					</a>
+				</td>
+				<td>
+					<a rel="nofollow" href="<?= $this->link("Search","players", array('pbguid'=>$entry['pbguid'])) ?>">
+						<?=View_Yae::formatValue('pbguid', $entry['pbguid'], 'player') ?>
+					</a>
+				</td>
+				<td>
+					<a rel="nofollow" href="<?= $this->link("Search","players", array('etproguid'=>$entry['etproguid'])) ?>">
+						<?=View_Yae::formatValue('etproguid', $entry['etproguid'], 'player') ?>
+					</a>
+				</td>
+				<td>
+					<a rel="nofollow" href="<?= $this->link("Search","players", array('slacnick'=>$entry['slacnick'])) ?>">
+						<?=View_Yae::formatValue('slacnick', $entry['slacnick'], 'player') ?>
+					</a>
+				</td>
+				<td>
+					<a rel="nofollow" href="<?= $this->link("Search","players", array('slacid'=>$entry['slacid'])) ?>">
+						<?=View_Yae::formatValue('slacid', $entry['slacid'], 'player') ?>
+					</a>
+				</td>
+				<td>
+					<a class="important_link details_stats" rel="nofollow"href="<?= $this->link("Search","showPlayer", array("player_id"=>$entry['playerid'])) ?>">
+						player stats »
+					</a>
+				</td>
+			<? } else if ( $currentType == "pbmonth" || $currentType == "pball" ) { ?>
+				<td>
+					<a rel="nofollow" href="<?= $this->link("Search","players", array('pbguid'=>$entry['pbguid'])) ?>">
+						<?=View_Yae::formatValue('pbguid', $entry['pbguid'], 'player') ?>
+					</a>
+				</td>
+			<? } else if ( $currentType == "slacmonth" || $currentType == "slacall" ) { ?>
+				<td>
+					<a rel="nofollow" href="<?= $this->link("Search","players", array('slacnick'=>$entry['slacnick'])) ?>">
+						<?=View_Yae::formatValue('slacnick', $entry['slacnick'], 'player') ?>
+					</a>
+				</td>
+				<td>
+					<a rel="nofollow" href="<?= $this->link("Search","players", array('slacid'=>$entry['slacid'])) ?>">
+						<?=View_Yae::formatValue('slacid', $entry['slacid'], 'player') ?>
+					</a>
+				</td>
+			<? } ?>
+			<? if ( $currentType == "pbmonth" || $currentType == "pball" || $currentType == "slacmonth" || $currentType == "slacall" ) { ?>
+				<td>
+					<?= $entry['nick_count'] ?>
+				</td>
+				<td>
+					<a rel="nofollow" href="<?= $this->link("Search","players", array('nick'=>$entry['nick'])) ?>">
+						<?=View_Yae::formatValue('nick', $entry['nick'], 'player') ?>
+					</a>
+				</td>
+				<td>
+					<?= $entry['ip_count'] ?>
+				</td>
+				<td>
+					<a rel="nofollow" href="<?= $this->link("Search","players", array('ip'=>$entry['ip'])) ?>">
+						<?=View_Yae::formatValue('ip', $entry['realip'], 'player') ?>
+					</a>
+				</td>
+				<td>
+					<?= $entry['etproguid_count'] ?>
+				</td>
+				<td>
+					<a rel="nofollow" href="<?= $this->link("Search","players", array('etproguid'=>$entry['etproguid'])) ?>">
+						<?=View_Yae::formatValue('etproguid', $entry['etproguid'], 'player') ?>
+					</a>
+				</td>
+			<? } ?>
+			<? if ( $currentType == "pbmonth" || $currentType == "pball" ) { ?>
+				<td>
+					<a class="important_link details_stats" rel="nofollow"href="<?=$this->link("Search","players", array('pbguid'=>$entry['pbguid'])) ?>">
+						player entries »
+					</a>
+				</td>
+			<? } else if ( $currentType == "slacmonth" || $currentType == "slacall" ) { ?>
+				<td>
+					<a class="important_link details_stats" rel="nofollow"href="<?=$this->link("Search","players", array('slacid'=>$entry['slacid'])) ?>">
+						player entries »
+					</a>
+				</td>
+			<? } ?>
 		<? } ?>
 	</tr>
 	<? } ?>

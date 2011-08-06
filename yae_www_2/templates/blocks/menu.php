@@ -1,7 +1,7 @@
 <?php
 	$first = true;
 	$k = 1;
-	$menuPages = array("Search" => array("Index","index"), "Stats" => array("Stats", "stats"), "News" => array("News","index"), "Server list" => array("Search","servers"));
+	$menuPages = array("Search" => array("Index","index"), "Stats" => array("Stats", "stats"), "News" => array("News","index"));
 	if($isLogged)
 	{
 		$menuPages = array_merge($menuPages, array("Add server" => array("user","addserver"),"Log out from ".$login->getUsername() => array("auth","logout") ) );

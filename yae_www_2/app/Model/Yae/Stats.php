@@ -12,13 +12,14 @@
 				SELECT SQL_CALC_FOUND_ROWS
 					SUM((UNIX_TIMESTAMP(playedto)-UNIX_TIMESTAMP(playedfrom))/60) AS minutesplayed,
 					nick,
-					SUBSTR(pbguid,32-7,8) AS pbguid,
 					SUBSTR(etproguid,40-9,10) AS etproguid,
 					slacnick,
 					IF(slacid=0,'',slacid) AS slacid,
 					CONCAT(TRIM( TRAILING '0' FROM INET_NTOA(players.ip & 4294967040) ), '*') AS ip,
 					INET_NTOA(players.ip) AS realip,
-					players.id as playerid
+					COUNT(DISTINCT ip) AS ip_count,
+					COUNT(DISTINCT nick) AS nick_count,
+					COUNT(DISTINCT etproguid) AS etproguid_count
 				FROM times 
 					JOIN players ON playerid=players.id 
 				%s
@@ -53,11 +54,11 @@ EOF
 					nick,
 					SUBSTR(pbguid,32-7,8) AS pbguid,
 					SUBSTR(etproguid,40-9,10) AS etproguid,
-					slacnick,
-					IF(slacid=0,'',slacid) AS slacid,
 					CONCAT(TRIM( TRAILING '0' FROM INET_NTOA(players.ip & 4294967040) ), '*') AS ip,
 					INET_NTOA(players.ip) AS realip,
-					players.id as playerid
+					COUNT(DISTINCT ip) AS ip_count,
+					COUNT(DISTINCT nick) AS nick_count,
+					COUNT(DISTINCT etproguid) AS etproguid_count
 				FROM times 
 					JOIN players ON playerid=players.id 
 				%s
@@ -167,21 +168,23 @@ EOF
 				SELECT SQL_CALC_FOUND_ROWS
 					minutesplayed,
 					nick,
-					SUBSTR(pbguid,32-7,8) AS pbguid,
 					SUBSTR(etproguid,40-9,10) AS etproguid,
 					slacnick,
 					IF(slacid=0,'',slacid) AS slacid,
 					CONCAT(TRIM( TRAILING '0' FROM INET_NTOA(players.ip & 4294967040) ), '*') AS ip,
 					INET_NTOA(players.ip) AS realip,
-					players.id as playerid
+					COUNT(DISTINCT ip) AS ip_count,
+					COUNT(DISTINCT nick) AS nick_count,
+					COUNT(DISTINCT etproguid) AS etproguid_count
 				FROM stats_players_alltime_byslac 
-					JOIN players ON playerid=players.id 
+					RIGHT JOIN players USING(slacid)
 				%s
+				GROUP BY slacid
 EOF
 			);
 			$select->order("minutesplayed DESC");
 			$select->where("AND slacid IS NOT NULL");
-			$select->where("AND slacid <> ''");
+			$select->where("AND slacid <> 0");
 			return $select;
 		}
 		
@@ -197,14 +200,15 @@ EOF
 					nick,
 					SUBSTR(pbguid,32-7,8) AS pbguid,
 					SUBSTR(etproguid,40-9,10) AS etproguid,
-					slacnick,
-					IF(slacid=0,'',slacid) AS slacid,
 					CONCAT(TRIM( TRAILING '0' FROM INET_NTOA(players.ip & 4294967040) ), '*') AS ip,
 					INET_NTOA(players.ip) AS realip,
-					players.id as playerid
+					COUNT(DISTINCT ip) AS ip_count,
+					COUNT(DISTINCT nick) AS nick_count,
+					COUNT(DISTINCT etproguid) AS etproguid_count
 				FROM stats_players_alltime_bypb 
-					JOIN players ON playerid=players.id 
+					RIGHT JOIN players USING(pbguid)
 				%s
+				GROUP BY pbguid
 EOF
 			);
 			$select->order("minutesplayed DESC");
@@ -266,16 +270,73 @@ EOF
 		public static function refreshStatsCache()
 		{
 			$sql = Tmvc_Model_Mysql::getConnection();
-			$sql->query("DELETE FROM stats_players_alltime_byslac");
-			$sql->query("DELETE FROM stats_players_alltime_bypb");
-			$sql->query("DELETE FROM stats_players_alltime_byid");
-			$sql->query("DELETE FROM stats_servers_alltime");
+			$sql->query("TRUNCATE TABLE stats_players_alltime_byslac");
+			$sql->query("TRUNCATE TABLE stats_players_alltime_bypb");
+			$sql->query("TRUNCATE TABLE stats_players_alltime_byid");
+			$sql->query("TRUNCATE TABLE stats_servers_alltime");
+			$sql->query("TRUNCATE TABLE times_monthly");
+			$sql->query("TRUNCATE TABLE times_monthly_slac");
+			$sql->query("TRUNCATE TABLE times_monthly_pb");
+			$sql->query(<<<EOF
+			
+				INSERT INTO times_monthly SELECT
+					serverid,
+					playerid,
+					MONTH(playedfrom) AS month,
+					YEAR(playedfrom) AS year,
+					SUM((UNIX_TIMESTAMP(playedto)-UNIX_TIMESTAMP(playedfrom))/60) AS minutesplayed
+				FROM times  
+				GROUP BY serverid, playerid, month, year
+				ORDER BY minutesplayed
+EOF
+			);
+			$sql->query(<<<EOF
+			
+				INSERT INTO times_monthly_slac SELECT
+					serverid,
+					slacid,
+					MONTH(playedfrom) AS month,
+					YEAR(playedfrom) AS year,
+					SUM((UNIX_TIMESTAMP(playedto)-UNIX_TIMESTAMP(playedfrom))/60) AS minutesplayed
+				FROM times  
+					JOIN players ON playerid=players.id 
+				GROUP BY serverid, slacid, month, year
+				ORDER BY minutesplayed
+EOF
+			);
+			$sql->query(<<<EOF
+			
+				INSERT INTO times_monthly_pb SELECT
+					serverid,
+					pbguid,
+					MONTH(playedfrom) AS month,
+					YEAR(playedfrom) AS year,
+					SUM((UNIX_TIMESTAMP(playedto)-UNIX_TIMESTAMP(playedfrom))/60) AS minutesplayed
+				FROM times  
+					JOIN players ON playerid=players.id 
+				GROUP BY serverid, pbguid, month, year
+				ORDER BY minutesplayed
+EOF
+			);
+			$sql->query(<<<EOF
+			
+				INSERT INTO times_monthly SELECT
+					serverid,
+					playerid,
+					MONTH(playedfrom) AS month,
+					YEAR(playedfrom) AS year,
+					SUM((UNIX_TIMESTAMP(playedto)-UNIX_TIMESTAMP(playedfrom))/60) AS minutesplayed
+				FROM times  
+				GROUP BY serverid, playerid, month, year
+				ORDER BY minutesplayed
+EOF
+			);
 			$sql->query(<<<EOF
 			
 				INSERT INTO stats_players_alltime_byslac SELECT
-					playerid,
-					SUM((UNIX_TIMESTAMP(playedto)-UNIX_TIMESTAMP(playedfrom))/60) AS minutesplayed
-				FROM times 
+					slacid,
+					SUM(minutesplayed) AS minutesplayed
+				FROM times_monthly 
 					JOIN players ON playerid=players.id 
 				GROUP BY slacid
 EOF
@@ -283,9 +344,9 @@ EOF
 			$sql->query(<<<EOF
 			
 				INSERT INTO stats_players_alltime_bypb SELECT
-					playerid,
-					SUM((UNIX_TIMESTAMP(playedto)-UNIX_TIMESTAMP(playedfrom))/60) AS minutesplayed
-				FROM times 
+					pbguid,
+					SUM(minutesplayed) AS minutesplayed
+				FROM times_monthly 
 					JOIN players ON playerid=players.id 
 				GROUP BY pbguid
 EOF
@@ -294,8 +355,8 @@ EOF
 			
 				INSERT INTO stats_players_alltime_byid SELECT
 					playerid,
-					SUM((UNIX_TIMESTAMP(playedto)-UNIX_TIMESTAMP(playedfrom))/60) AS minutesplayed
-				FROM times
+					SUM(minutesplayed) AS minutesplayed
+				FROM times_monthly
 				GROUP BY playerid
 EOF
 			);
@@ -303,8 +364,8 @@ EOF
 			
 				INSERT INTO stats_servers_alltime SELECT
 					serverid,
-					SUM((UNIX_TIMESTAMP(playedto)-UNIX_TIMESTAMP(playedfrom))/60) AS minutesplayed
-				FROM times
+					SUM(minutesplayed) AS minutesplayed
+				FROM times_monthly
 				GROUP BY serverid
 EOF
 			);
