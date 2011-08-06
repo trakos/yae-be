@@ -4,12 +4,13 @@ class Tmvc_Model_Mysql_BaseSelect
 {
 	protected $_queryBase;
 	protected $_selectArguments = array();
+	protected $_groups = array();
 	protected $_groupArguments = array();
-	protected $_wheres;
+	protected $_wheres = array();
 	protected $_whereArguments = array();
-	protected $_havings;
+	protected $_havings = array();
 	protected $_havingArguments = array();
-	protected $_orders;
+	protected $_orders = array();
 	protected $_orderArguments = array();
 	protected $_limitOffset = 0;
 	protected $_limitSize = 0;
@@ -18,12 +19,11 @@ class Tmvc_Model_Mysql_BaseSelect
 	 */
 	protected $_dbInstance = null;
 	
-	public function __construct( Tmvc_Model_Mysql $dbInstance, $queryBase = '', $selectArguments = array(), $groupArguments = array() )
+	public function __construct( Tmvc_Model_Mysql $dbInstance, $queryBase = '', $selectArguments = array())
 	{
 		$this->_dbInstance = $dbInstance;
 		$this->_queryBase = $queryBase;
 		$this->_selectArguments = $selectArguments;
-		$this->_groupArguments = $groupArguments;
 	}
 	
 	/**
@@ -32,7 +32,7 @@ class Tmvc_Model_Mysql_BaseSelect
 	 * @param array $groupArguments
 	 * @return Tmvc_Model_Mysql_BaseSelect
 	 */
-	public function setQueryBase( $queryBase, $selectArguments = array(), $groupArguments = array() )
+	public function setQueryBase( $queryBase, $selectArguments = array() )
 	{
 		$this->_queryBase = $queryBase;
 		$this->_selectArguments = $selectArguments;
@@ -59,6 +59,28 @@ class Tmvc_Model_Mysql_BaseSelect
 	{
 		$this->_wheres = array();
 		$this->_whereArguments = array();
+		return $this;
+	}
+	
+	/**
+	 * @param string $group
+	 * @param array $arguments
+	 * @return Tmvc_Model_Mysql_BaseSelect
+	 */
+	public function group($group, $arguments = array())
+	{
+		$this->_groups[] = $group;
+		$this->_groupArguments = array_merge($this->_orderArguments, $arguments);
+		return $this;
+	}
+	
+	/**
+	 * @return Tmvc_Model_Mysql_BaseSelect
+	 */
+	public function resetGroup()
+	{
+		$this->_groups = array();
+		$this->_groupArguments = array();
 		return $this;
 	}
 	
@@ -97,6 +119,16 @@ class Tmvc_Model_Mysql_BaseSelect
 	}
 	
 	/**
+	 * @return Tmvc_Model_Mysql_BaseSelect
+	 */
+	public function resetOrder()
+	{
+		$this->_orders = array();
+		$this->_orderArguments = array();
+		return $this;
+	}
+	
+	/**
 	 * @param int $offset
 	 * @param int $size
 	 * @return Tmvc_Model_Mysql_BaseSelect
@@ -120,16 +152,6 @@ class Tmvc_Model_Mysql_BaseSelect
 		return $this;
 	}
 	
-	/**
-	 * @return Tmvc_Model_Mysql_BaseSelect
-	 */
-	public function resetOrder()
-	{
-		$this->_orders = array();
-		$this->_orderArguments = array();
-		return $this;
-	}
-	
 	public function toString()
 	{
 		if ( empty($this->_queryBase) )
@@ -137,11 +159,12 @@ class Tmvc_Model_Mysql_BaseSelect
 			throw new Tmvc_Model_Mysql_Exception(E_MYSQL, "No query base given to the baseSelect, and conversion to string occured!");
 		}
 		$where = $this->_getWhere();
+		$group = $this->_getGroupBy();
 		$having = $this->_getHaving();
 		$order = $this->_getOrderBy();
 		$limit = $this->_getLimit();
 		$arguments = array_merge($this->_selectArguments, $this->_whereArguments, $this->_groupArguments, $this->_havingArguments, $this->_orderArguments );
-		$query = sprintf($this->_queryBase, $where)." $having $order $limit";
+		$query = $this->_queryBase." $where $group $having $order $limit";
 		return $this->_dbInstance->parseQuery($query, $arguments);
 	}
 	
@@ -174,6 +197,12 @@ class Tmvc_Model_Mysql_BaseSelect
 	{
 		if ( empty($this->_wheres) ) return "";
 		return 'WHERE 1 '.implode(" ", $this->_wheres).'';
+	}
+	
+	protected function _getGroupBy()
+	{
+		if ( !$this->_groups ) return '';
+		return 'GROUP BY '.implode(",", $this->_groups);
 	}
 	
 	protected function _getHaving()

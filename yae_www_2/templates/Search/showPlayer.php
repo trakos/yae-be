@@ -1,4 +1,5 @@
 
+<? $this->render("blocks/snippets"); ?>
 <? if( empty($player) ) { ?>
 <p class="error">Player with given id not found, 404 error!</p>
 <? } else { ?>
@@ -6,54 +7,56 @@
 		<tr>
 			<th colspan='2'>Player</th>
 		</tr>
-		<tr>
-			<th>Nick:</th>
-			<td>
-				<a rel="nofollow" href="<?= $this->link("Search","players", array('nick'=>$player['nick'])) ?>">
-					<?=View_Yae::formatValue('nick', $player['nick'], 'player') ?>
-				</a>
-			</td>
-		</tr>
-		<tr>
-			<th>IP:</th>
-			<td>
-				<a rel="nofollow" href="<?= $this->link("Search","players", array('ip'=>$player['ip'])) ?>">
-					<?=View_Yae::formatValue('ip', $player['realip'], 'player') ?>
-				</a>
-			</td>
-		</tr>
-		<tr>
-			<th>PunkBuster guid:</th>
-			<td>
-				<a rel="nofollow" href="<?= $this->link("Search","players", array('pbguid'=>$player['pbguid'])) ?>">
-					<?=View_Yae::formatValue('pbguid', $player['pbguid'], 'player') ?>
-				</a>
-			</td>
-		</tr>
-		<tr>
+		<? if ( $idType == "slacid" ) { ?>
+			<tr>
+				<th>SLAC id:</th>
+				<? showYaeSearchValue($player, 'slacid'); ?>
+			</tr>
+			<tr>
+				<th>SLAC nick:</th>
+				<? showYaeSearchValue($player, 'slacnick'); ?>
+			</tr>
+		<? } else if ( $idType == "ip" ) { ?>
+			<tr>
+				<th>IP:</th>
+				<? showYaeSearchValue($player, 'ip'); ?>
+			</tr>
+		<? } else if ( $idType == "pbguid" ) { ?>
+			<tr>
+				<th>PunkBuster guid:</th>
+				<? showYaeSearchValue($player, 'pbguid'); ?>
+			</tr>
+		<? } else if ( $idType == "etproguid" ) { ?>
+			<tr>
 			<th>ET Pro guid:</th>
-			<td>
-				<a rel="nofollow" href="<?= $this->link("Search","players", array('etproguid'=>$player['etproguid'])) ?>">
-					<?=View_Yae::formatValue('etproguid', $player['etproguid'], 'player') ?>
-				</a>
-			</td>
-		</tr>
-		<tr>
-			<th>SLAC id:</th>
-			<td>
-				<a rel="nofollow" href="<?= $this->link("Search","players", array('slacid'=>$player['slacid'])) ?>">
-					<?=View_Yae::formatValue('slacid', $player['slacid'], 'player') ?>
-				</a>
-			</td>
-		</tr>
-		<tr>
-			<th>SLAC nick:</th>
-			<td>
-				<a rel="nofollow" href="<?= $this->link("Search","players", array('slacnick'=>$player['slacnick'])) ?>">
-					<?=View_Yae::formatValue('slacnick', $player['slacnick'], 'player') ?>
-				</a>
-			</td>
-		</tr>
+				<? showYaeSearchValue($player, 'etproguid'); ?>
+			</tr>
+		<? } else { ?>
+			<tr>
+				<th>Nick:</th>
+				<? showYaeSearchValue($player, 'nick'); ?>
+			</tr>
+			<tr>
+				<th>IP:</th>
+				<? showYaeSearchValue($player, 'ip'); ?>
+			</tr>
+			<tr>
+				<th>PunkBuster guid:</th>
+				<? showYaeSearchValue($player, 'pbguid'); ?>
+			</tr>
+			<tr>
+				<th>ET Pro guid:</th>
+				<? showYaeSearchValue($player, 'etproguid'); ?>
+			</tr>
+			<tr>
+				<th>SLAC id:</th>
+				<? showYaeSearchValue($player, 'slacid'); ?>
+			</tr>
+			<tr>
+				<th>SLAC nick:</th>
+				<? showYaeSearchValue($player, 'slacnick'); ?>
+			</tr>
+		<? } ?>
 	</table>
 	<table class="result wrap">
 		<tr>
@@ -62,7 +65,7 @@
 					<? if ( $typeKey == $currentType ) { ?>
 						<p class="tab selected"><?=$typeName ?></p>
 					<? } else { ?>
-						<a href="<?= $this->link("Search","showPlayer", array("player_id"=>$player["id"], "type"=>$typeKey)) ?>" class="tab">
+						<a href="<?= $this->link("Search","showPlayer", array("player_id"=>$playerId, "type"=>$typeKey, "id_type"=>$idType)) ?>" class="tab">
 							<?=$typeName ?>
 						</a>
 					<? } ?>
@@ -84,6 +87,29 @@
 						<? } ?>
 						<th>server</th>
 						<th>name</th>
+						<? if ( $currentType == "exact" ) { ?>
+							<? if ( $idType == "slacid" ) { ?>
+								<th>nick</th>
+								<th>ip</th>
+								<th>etproguid</th>
+							<? } else if ( $idType == "ip" ) { ?>
+								<th>nick</th>
+								<th>pbguid</th>
+								<th>etproguid</th>
+								<th>slacnick</th>
+								<th>slacid</th>
+							<? } else if ( $idType == "pbguid" ) { ?>
+								<th>nick</th>
+								<th>ip</th>
+								<th>etproguid</th>
+							<? } else if ( $idType == "etproguid" ) { ?>
+								<th>nick</th>
+								<th>ip</th>
+								<th>pbguid</th>
+								<th>slacnick</th>
+								<th>slacid</th>
+							<? } ?>
+						<? } ?>
 						<th></th>
 					</tr>
 					<? foreach ( $history as $entry ) { ?>
@@ -111,8 +137,31 @@
 						<td>
 							<?=View_Yae::formatValue('name', $entry['name'], 'server') ?>
 						</td>
+						<? if ( $currentType == "exact" ) { ?>
+							<? if ( $idType == "slacid" ) { ?>
+								<? showYaeSearchValue($entry, 'nick'); ?>
+								<? showYaeSearchValue($entry, 'ip'); ?>
+								<? showYaeSearchValue($entry, 'etproguid'); ?>
+							<? } else if ( $idType == "ip" ) { ?>
+								<? showYaeSearchValue($entry, 'nick'); ?>
+								<? showYaeSearchValue($entry, 'pbguid'); ?>
+								<? showYaeSearchValue($entry, 'etproguid'); ?>
+								<? showYaeSearchValue($entry, 'slacnick'); ?>
+								<? showYaeSearchValue($entry, 'slacid'); ?>
+							<? } else if ( $idType == "pbguid" ) { ?>
+								<? showYaeSearchValue($entry, 'nick'); ?>
+								<? showYaeSearchValue($entry, 'ip'); ?>
+								<? showYaeSearchValue($entry, 'etproguid'); ?>
+							<? } else if ( $idType == "etproguid" ) { ?>
+								<? showYaeSearchValue($entry, 'nick'); ?>
+								<? showYaeSearchValue($entry, 'ip'); ?>
+								<? showYaeSearchValue($entry, 'pbguid'); ?>
+								<? showYaeSearchValue($entry, 'slacnick'); ?>
+								<? showYaeSearchValue($entry, 'slacid'); ?>
+							<? } ?>
+						<? } ?>
 						<td>
-							<a class="important_link details_stats" rel="nofollow"href="<?= $this->link("Search","showServer", array("server_id"=>$entry['id'])) ?>">
+							<a class="important_link details_stats" rel="nofollow"href="<?= $this->link("Search","showServer", array("server_id"=>$entry['serverid'])) ?>">
 								server stats »
 							</a>
 						</td>
@@ -122,5 +171,6 @@
 			</td>
 		</tr>
 	</table>
-	<?=$this->paginator($page, $limit, $count, "Search", "showPlayer", array("player_id"=>$player["id"], "type"=>$currentType), "page") ?>
+	<?=$this->paginator($page, $limit, $count, "Search", "showPlayer", array("player_id"=>$playerId, "type"=>$currentType, "id_type"=>$idType), "page") ?>
 <? } ?>
+<p class='note'>Monthly & all time stats are updated nightly.</p>

@@ -26,12 +26,12 @@ class Tmvc_View
 	 * Name of a currently called controller.
 	 * @var string
 	 */
-	static protected $controllerName;
+	static public $controllerName;
 	/**
 	 * Name of an currently called action.
 	 * @var string
 	 */
-	static protected $actionName;
+	static public $actionName;
 	/**
 	 * Stack of view variables, each subrender (render called from within other render)
 	 * will have all variables assigned in a parent view plus all variables that the parent view could access,

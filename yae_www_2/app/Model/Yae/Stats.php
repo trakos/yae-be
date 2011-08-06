@@ -21,11 +21,10 @@
 					COUNT(DISTINCT nick) AS nick_count,
 					COUNT(DISTINCT etproguid) AS etproguid_count
 				FROM times 
-					JOIN players ON playerid=players.id 
-				%s
-				GROUP BY slacid
+					JOIN players ON playerid=players.id
 EOF
 			);
+			$select->group("slacid");
 			$select->order("minutesplayed DESC");
 			$select->where("AND slacid IS NOT NULL");
 			$select->where("AND slacid <> ''");
@@ -60,11 +59,10 @@ EOF
 					COUNT(DISTINCT nick) AS nick_count,
 					COUNT(DISTINCT etproguid) AS etproguid_count
 				FROM times 
-					JOIN players ON playerid=players.id 
-				%s
-				GROUP BY pbguid
+					JOIN players ON playerid=players.id
 EOF
 			);
+			$select->group("pbguid");
 			$select->order("minutesplayed DESC");
 			$select->where("AND pbguid IS NOT NULL");
 			$select->where("AND pbguid <> ''");
@@ -99,11 +97,10 @@ EOF
 					INET_NTOA(players.ip) AS realip,
 					players.id as playerid
 				FROM times 
-					JOIN players ON playerid=players.id 
-				%s
-				GROUP BY players.id
+					JOIN players ON playerid=players.id
 EOF
 			);
+			$select->group("players.id");
 			$select->order("minutesplayed DESC");
 			return $select;
 		}
@@ -135,11 +132,10 @@ EOF
 					servers.id AS id
 				FROM times
 					JOIN servers ON serverid=servers.id
-				%s
-				GROUP BY servers.id
 
 EOF
 			);
+			$select->group("servers.id");
 			$select->order("minutesplayed DESC");
 			return $select;
 		}
@@ -178,10 +174,9 @@ EOF
 					COUNT(DISTINCT etproguid) AS etproguid_count
 				FROM stats_players_alltime_byslac 
 					RIGHT JOIN players USING(slacid)
-				%s
-				GROUP BY slacid
 EOF
 			);
+			$select->group("slacid");
 			$select->order("minutesplayed DESC");
 			$select->where("AND slacid IS NOT NULL");
 			$select->where("AND slacid <> 0");
@@ -207,10 +202,9 @@ EOF
 					COUNT(DISTINCT etproguid) AS etproguid_count
 				FROM stats_players_alltime_bypb 
 					RIGHT JOIN players USING(pbguid)
-				%s
-				GROUP BY pbguid
 EOF
 			);
+			$select->group("pbguid");
 			$select->order("minutesplayed DESC");
 			$select->where("AND pbguid IS NOT NULL");
 			$select->where("AND pbguid <> ''");
@@ -236,7 +230,7 @@ EOF
 					players.id as playerid
 				FROM stats_players_alltime_byid 
 					JOIN players ON playerid=players.id 
-				%s
+					
 EOF
 			);
 			$select->order("minutesplayed DESC");
@@ -259,8 +253,8 @@ EOF
 					UNIX_TIMESTAMP(lastonline) AS lastonline,
 					servers.id AS id
 				FROM stats_servers_alltime 
-					JOIN servers ON serverid=servers.id 
-				%s
+					JOIN servers ON serverid=servers.id
+					
 EOF
 			);
 			$select->order("minutesplayed DESC");

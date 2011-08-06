@@ -1,3 +1,4 @@
+<? $this->render("blocks/snippets"); ?>
 <? $serversForm->render(); ?>
 <? if( empty($servers) ) { ?>
 	<p class="error">no matches</p>
@@ -12,22 +13,10 @@
 		</tr>
 		<? foreach ( $servers as $server ) { ?>
 			<tr>
-				<td>
-					<a rel="nofollow" href="<?= $this->link("Search","servers", array('ip'=>$server['ip'])) ?>">
-						<?=View_Yae::formatValue('ip', $server['ip'], 'server') ?>
-					</a>
-				</td>
-				<td>
-					<a rel="nofollow" href="<?= $this->link("Search","servers", array('port'=>$server['port'])) ?>">
-						<?=View_Yae::formatValue('port', $server['port'], 'server') ?>
-					</a>
-				</td>
-				<td>
-					<?=View_Yae::formatValue('name', $server['name'], 'server') ?>
-				</td>
-				<td>
-					<?=View_Yae::formatValue('lastonline', $server['lastonline'], 'server') ?>
-				</td>
+				<? showYaeSearchValue($server, 'ip', "server"); ?>
+				<? showYaeSearchValue($server, 'port', "server"); ?>
+				<? showYaeSearchValue($server, 'name', "server"); ?>
+				<? showYaeSearchValue($server, 'lastonline', "server"); ?>
 				<td>
 					<a class="important_link details_stats" rel="nofollow" href="<?= $this->link("Search","showServer", array("server_id"=>$server['id'])) ?>">server stats »</a>
 				</td>
@@ -36,3 +25,4 @@
 	</table>
 	<?=$this->paginator($page, $limit, $count, "Search", "servers", $serversForm->getValues(), "page") ?>
 <? } ?>
+<p class='note'>Monthly & all time stats are updated nightly.</p>

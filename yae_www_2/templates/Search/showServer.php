@@ -1,4 +1,5 @@
 
+<? $this->render("blocks/snippets"); ?>
 <? if( empty($server) ) { ?>
 <p class="error">Server with given id not found, 404 error!</p>
 <? } else { ?>
@@ -8,30 +9,30 @@
 		</tr>
 		<tr>
 			<th>IP:</th>
-			<td>
-				<a rel="nofollow" href="<?= $this->link("Search","servers", array('ip'=>$server['ip'])) ?>">
-					<?=View_Yae::formatValue('ip', $server['ip'], 'server') ?>
-				</a>
-			</td>
+			<? showYaeSearchValue($server, 'ip', "server"); ?>
 		</tr>
 		<tr>
 			<th>Port:</th>
-			<td>
-				<a rel="nofollow" href="<?= $this->link("Search","servers", array('port'=>$server['port'])) ?>">
-					<?=View_Yae::formatValue('port', $server['port'], 'server') ?>
-				</a>
-			</td>
+			<? showYaeSearchValue($server, 'port', "server"); ?>
 		</tr>
 		<tr>
 			<th>Name:</th>
-			<td>
-				<?=View_Yae::formatValue('name', $server['name'], 'server') ?>
-			</td>
+			<? showYaeSearchValue($server, 'name', "server"); ?>
 		</tr>
 		<tr>
 			<th>Last online:</th>
+			<? showYaeSearchValue($server, 'lastonline', "server"); ?>
+		</tr>
+		<tr>
+			<th>Group by:</th>
 			<td>
-				<?=View_Yae::formatValue('lastonline', $server['lastonline'], 'server') ?>
+				<select name="groupby" id="groupby">
+					<? foreach ( $groups as $groupKey => $groupName ) { ?>
+						<option <?= ( $groupKey==$currentGroup ) ? 'selected="selected"' : '' ?> value="<?=$groupKey ?>">
+							<?=$groupName ?>
+						</option>
+					<? } ?>
+				</select>
 			</td>
 		</tr>
 	</table>
@@ -42,7 +43,7 @@
 					<? if ( $typeKey == $currentType ) { ?>
 						<p class="tab selected"><?=$typeName ?></p>
 					<? } else { ?>
-						<a href="<?= $this->link("Search","showServer", array("server_id"=>$server["id"], "type"=>$typeKey)) ?>" class="tab">
+						<a href="<?= $this->link("Search","showServer", array("server_id"=>$server["id"], "type"=>$typeKey, "group_by"=>$currentGroup)) ?>" class="tab">
 							<?=$typeName ?>
 						</a>
 					<? } ?>
@@ -59,12 +60,23 @@
 						<? } else if ( $currentType == "alltime" || $currentType == "lastmonth" ) { ?>
 							<th>time played (sum)</th>
 						<? } ?>
-						<th>nick</th>
-						<th>ip</th>
-						<th>pbguid</th>
-						<th>etproguid</th>
-						<th>slacnick</th>
-						<th>slacid</th>
+						<? if ( $currentGroup == "ip" ) { ?>
+							<th>ip</th>
+						<? } else if ( $currentGroup == "etproguid" ) { ?>
+							<th>etproguid</th>
+						<? } else if ( $currentGroup == "slacid" ) { ?>
+							<th>slacid</th>
+							<th>slacnick</th>
+						<? } else if ( $currentGroup == "pbguid" ) { ?>
+							<th>pbguid</th>
+						<? } else { ?>
+							<th>nick</th>
+							<th>ip</th>
+							<th>pbguid</th>
+							<th>etproguid</th>
+							<th>slacnick</th>
+							<th>slacid</th>
+						<? } ?>
 						<th>details</th>
 					</tr>
 					<? foreach ( $history as $entry ) { ?>
@@ -81,38 +93,26 @@
 								<?=View_Yae::formatValue('minutesplayed', $entry['minutesplayed'], 'player') ?>
 							</td>
 						<? } ?>
+						<? if ( $currentGroup == "ip" ) { ?>
+							<? showYaeSearchValue($entry, 'ip'); ?>
+						<? } else if ( $currentGroup == "etproguid" ) { ?>
+							<? showYaeSearchValue($entry, 'etproguid'); ?>
+						<? } else if ( $currentGroup == "slacid" ) { ?>
+							<? showYaeSearchValue($entry, 'slacid'); ?>
+							<? showYaeSearchValue($entry, 'slacnick'); ?>
+						<? } else if ( $currentGroup == "pbguid" ) { ?>
+							<? showYaeSearchValue($entry, 'pbguid'); ?>
+						<? } else { ?>
+							<? showYaeSearchValue($entry, 'nick'); ?>
+							<? showYaeSearchValue($entry, 'ip'); ?>
+							<? showYaeSearchValue($entry, 'pbguid'); ?>
+							<? showYaeSearchValue($entry, 'etproguid'); ?>
+							<? showYaeSearchValue($entry, 'slacnick'); ?>
+							<? showYaeSearchValue($entry, 'slacid'); ?>
+						<? } ?>
 						<td>
-							<a rel="nofollow" href="<?= $this->link("Search","players", array('nick'=>$entry['nick'])) ?>">
-								<?=View_Yae::formatValue('nick', $entry['nick'], 'player') ?>
-							</a>
-						</td>
-						<td>
-							<a rel="nofollow" href="<?= $this->link("Search","players", array('ip'=>$entry['ip'])) ?>">
-								<?=View_Yae::formatValue('ip', $entry['realip'], 'player') ?>
-							</a>
-						</td>
-						<td>
-							<a rel="nofollow" href="<?= $this->link("Search","players", array('pbguid'=>$entry['pbguid'])) ?>">
-								<?=View_Yae::formatValue('pbguid', $entry['pbguid'], 'player') ?>
-							</a>
-						</td>
-						<td>
-							<a rel="nofollow" href="<?= $this->link("Search","players", array('etproguid'=>$entry['etproguid'])) ?>">
-								<?=View_Yae::formatValue('etproguid', $entry['etproguid'], 'player') ?>
-							</a>
-						</td>
-						<td>
-							<a rel="nofollow" href="<?= $this->link("Search","players", array('slacnick'=>$entry['slacnick'])) ?>">
-								<?=View_Yae::formatValue('slacnick', $entry['slacnick'], 'player') ?>
-							</a>
-						</td>
-						<td>
-							<a rel="nofollow" href="<?= $this->link("Search","players", array('slacid'=>$entry['slacid'])) ?>">
-								<?=View_Yae::formatValue('slacid', $entry['slacid'], 'player') ?>
-							</a>
-						</td>
-						<td>
-							<a class="important_link details_stats" rel="nofollow"href="<?= $this->link("Search","showPlayer", array("player_id"=>$entry['playerid'])) ?>">
+							<? $currentGroupId = $currentGroup=="id"?"playerid":$currentGroup; ?>
+							<a class="important_link details_stats" rel="nofollow"href="<?= $this->link("Search","showPlayer", array("id_type"=>$currentGroup,"player_id"=>$entry[$currentGroupId])) ?>">
 								player stats »
 							</a>
 						</td>
@@ -124,3 +124,4 @@
 	</table>
 	<?=$this->paginator($page, $limit, $count, "Search", "showServer", array("server_id"=>$server["id"], "type"=>$currentType), "page") ?>
 <? } ?>
+<p class='note'>Monthly & all time stats are updated nightly.</p>

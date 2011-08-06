@@ -8,7 +8,7 @@
 				array
 				(
 					'title' => "Stats!",
-					'date'	=> "10.08.2011",
+					'date'	=> "05.08.2011",
 					'text'	=> "<p>During a past weeks, entire website had been rewritten from scratch. It was done mostly to allow new changes, but for now not much have changes. As a little surface change of a big underground changes, statistics were being added in a few places. I find them quite fun to browse through.</p>"
 				),
 				array

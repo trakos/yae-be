@@ -30,5 +30,12 @@ class Lib_Controller extends Tmvc_Controller_Abstract
 		$this->view->assign("isLogged", $isLogged );
 		$this->view->assign("userLogin", $userLogin );
 		$this->view->assign("userLevel", $userLevel );
+		$this->addJavascript("jquery.js");
+		$this->addJavascript("query.js");
+		$jsFile = Tmvc_View::$controllerName.'/'.Tmvc_View::$actionName.'.js';
+		if ( file_exists(SRC_PATH_JS.'/'.$jsFile) )
+		{
+			$this->addJavascript($jsFile);
+		} 
 	}
 };

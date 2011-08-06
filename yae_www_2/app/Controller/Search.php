@@ -13,10 +13,38 @@ class Controller_Search extends Lib_Controller
 		$players = array();
 		$limit = 20;
 		$page = isset($_GET['page'])?(int)$_GET['page']:1;
+		$types = array
+		(
+			"id"		=> "non-grouped",
+			"slac"		=> "group by SLAC",
+			"pb"		=> "group by PB",
+			"ip"		=> "group by IP",
+			"etpro"		=> "group by etpro guid"
+		);
+		$type = ( isset($_GET['type']) && in_array( $_GET['type'], array_keys($types) ) ) ? $_GET['type'] : "id";
 		$count = 0;
 		if ( $playersForm->validate() )
 		{
-			$select = Model_Yae_Search::getPlayersSelect();
+			if ( $type == "slac" )
+			{
+				$select = Model_Yae_Search::getPlayersSlacSelect();
+			}
+			else if ( $type == "pb" )
+			{
+				$select = Model_Yae_Search::getPlayersPbSelect();
+			}
+			else if ( $type == "ip" )
+			{
+				$select = Model_Yae_Search::getPlayersIpSelect();
+			}
+			else if ( $type == "etpro" )
+			{
+				$select = Model_Yae_Search::getPlayersEtproSelect();
+			}
+			else
+			{
+				$select = Model_Yae_Search::getPlayersSelect();
+			}
 			$values = $playersForm->getValues();
 			foreach ( $values as $key => $value )
 			{
@@ -82,6 +110,8 @@ class Controller_Search extends Lib_Controller
 		$this->view->assign('page', $page);
 		$this->view->assign('count', $count);
 		$this->view->assign('players', $players);
+		$this->view->assign('currentType', $type);
+		$this->view->assign('types', $types);
 		$this->view->assign('playersForm', $playersForm);
 	}
 
@@ -137,37 +167,79 @@ class Controller_Search extends Lib_Controller
 		$page = isset($_GET['page'])?(int)$_GET['page']:1;
 		$types = array
 		(
-			"monthly"	=> "monthly stats",
 			"exact"		=> "exact times",
-			"total"		=> "total stats"
+			"monthly"	=> "monthly stats",
+			"total"		=> "all time stats"
 		);
-		$type = ( isset($_GET['type']) && in_array( $_GET['type'], array_keys($types) ) ) ? $_GET['type'] : "monthly";
+		$type = ( isset($_GET['type']) && in_array( $_GET['type'], array_keys($types) ) ) ? $_GET['type'] : "exact";
 		$count = 0;
-		$playerId = isset($_GET['player_id'])?(int)$_GET['player_id']:-1;
-		$player = Model_Yae_Search::getPlayersSelect()->where("AND id=?",array($playerId))->getRow();
+		$playerId = isset($_GET['player_id'])?$_GET['player_id']:-1;
+		$idType = isset($_GET['id_type'])?$_GET['id_type']:'id';
+		if ( !in_array($idType,array("id","ip","pbguid","slacid","etproguid")) )
+		{
+			$idType = "id";
+		}
+		if ( $idType == "id" )
+		{
+			$player = Model_Yae_Search::getPlayersSelect()->where("AND id=?",array($playerId))->getRow();
+		}
+		else if ( $idType == "slacid" )
+		{
+			$select = Model_Yae_Search::getPlayersSelect();
+			$select->where("AND slacid=?",array($playerId));
+			$select->Where("AND slacnick<>''");
+			$select->Where("AND slacnick IS NOT NULL");
+			$player = $select->getRow();
+			if ( !$player )
+			{
+				$player = Model_Yae_Search::getPlayersSelect()->where("AND slacid=?",array($playerId))->getRow();
+			}
+		}
+		else if ( $idType == "ip" )
+		{
+			$player = array($idType=>$playerId,"realip"=>$playerId);
+		}
+		else
+		{
+			$player = array($idType=>$playerId);
+		}
 		if ( $player )
 		{
-			$playerId = $player['id'];
 			if ( $type == "exact" )
 			{
-				$select = Model_Yae_Search::getPlayerTimesSelect($playerId);
-				$select->page($page,$limit);
-				$history = $select->getAll();
+				$select = Model_Yae_Search::getPlayerTimesSelect();
 			}
 			else if ( $type == "monthly" )
 			{
-				$select = Model_Yae_Search::getPlayerTimesMonthlySelect($playerId);
-				$select->page($page,$limit);
-				$history = $select->getAll();
+				$select = Model_Yae_Search::getPlayerTimesMonthlySelect();
 			}
 			else if ( $type == "total" )
 			{
-				$select = Model_Yae_Search::getPlayerTimesTotalSelect($playerId);
-				$select->page($page,$limit);
-				$history = $select->getAll();
+				$select = Model_Yae_Search::getPlayerTimesAllTimeSelect();
 			}
+			switch ( $idType )
+			{
+				case "ip":			
+				{
+					$ip = $playerId;
+					if( preg_match('/^([0-9]*)\.?([0-9*%]*)\.?([0-9*%]*)\.?([0-9*%]*)$/', trim($ip), $matches ) )
+					{
+						$ip = "$matches[1].$matches[2].$matches[3].0";
+					}
+					$select->where("AND INET_NTOA(players.ip & 4294967040)=?",array($ip));
+					break;	
+				}
+				case "pbguid":		$select->where("AND pbguid LIKE ?",array("%$playerId")); break;
+				case "slacid":		$select->where("AND slacid=?",array($playerId)); break;
+				case "etproguid":	$select->where("AND etproguid LIKE ?",array("%$playerId")); break;
+				default:			$select->where("AND playerid LIKE ?",array($playerId)); break;	
+			}
+			$select->page($page,$limit);
+			$history = $select->getAll();
 			$count = Tmvc_Model_Mysql::getConnection()->getCountCalcRows();
 		}
+		$this->view->assign('idType', $idType);
+		$this->view->assign('playerId', $playerId);
 		$this->view->assign('player', $player);
 		$this->view->assign('history', $history);
 		$this->view->assign('limit', $limit);
@@ -184,12 +256,22 @@ class Controller_Search extends Lib_Controller
 		$history = array();
 		$limit = 20;
 		$page = isset($_GET['page'])?(int)$_GET['page']:1;
+		$groups = array
+		(
+			"id"		=> "do not group",
+			"ip"		=> "by IP address",
+			"etproguid"	=> "by EtPro guid",
+			"slacid"	=> "by SLAC id",
+			"pbguid"	=> "by PunkBuster guid"
+		);
+		$groupBy = ( isset($_GET['group_by']) && in_array( $_GET['group_by'], array_keys($groups) ) ) ? $_GET['group_by'] : "id";
 		$types = array
 		(
-			"lastmonth"	=> "played this month",
-			"exact"		=> "dates played",
+			"lastmonth"	=> "last 30 days",
+			"exact"		=> "exact times",
 			"alltime"	=> "all time stats"
 		);
+		if ( $groupBy != "id" ) unset($types["exact"]);
 		$type = ( isset($_GET['type']) && in_array( $_GET['type'], array_keys($types) ) ) ? $_GET['type'] : "lastmonth";
 		$count = 0;
 		$serverId = isset($_GET['server_id'])?(int)$_GET['server_id']:-1;
@@ -199,25 +281,40 @@ class Controller_Search extends Lib_Controller
 			$serverId = $server['id'];
 			if ( $type == "exact" )
 			{
-				$select = Model_Yae_Search::getExactTimesPlayersSelect();
-				$select->where("AND serverid=?",array($serverId));
-				$select->page($page,$limit);
-				$history = $select->getAll();
+				$select = Model_Yae_Search::getServerPlayersExactTimes();
 			}
 			else if ( $type == "alltime" )
 			{
-				$select = Model_Yae_Search::getAllPlayersTimeSelect();
-				$select->where("AND serverid=?",array($serverId));
-				$select->page($page,$limit);
-				$history = $select->getAll();
+				$select = Model_Yae_Search::getServerPlayersAllTimeSelect();
 			}
 			else if ( $type == "lastmonth" )
 			{
-				$select = Model_Yae_Search::getLastMonthPlayersSelect();
-				$select->where("AND serverid=?",array($serverId));
-				$select->page($page,$limit);
-				$history = $select->getAll();
+				$select = Model_Yae_Search::getServerPlayersLastMonthSelect();
 			}
+			if ( $groupBy == "ip" )
+			{
+				$select->group("players.ip");
+			}
+			else if ( $groupBy == "etproguid" )
+			{
+				$select->group("etproguid");
+			}
+			else if ( $groupBy == "slacid" )
+			{
+				$select->group("slacid");
+				$select->where("AND slacid <> 0");
+			}
+			else if ( $groupBy == "pbguid" )
+			{
+				$select->group("pbguid");
+			}
+			else
+			{
+				$select->group("players.id");
+			}
+			$select->where("AND serverid=?",array($serverId));
+			$select->page($page,$limit);
+			$history = $select->getAll();
 			$count = Tmvc_Model_Mysql::getConnection()->getCountCalcRows();
 		}
 		$this->view->assign('server', $server);
@@ -227,5 +324,7 @@ class Controller_Search extends Lib_Controller
 		$this->view->assign('count', $count);
 		$this->view->assign('currentType', $type);
 		$this->view->assign('types', $types);
+		$this->view->assign('groups', $groups);
+		$this->view->assign('currentGroup', $groupBy);
 	}
 };
