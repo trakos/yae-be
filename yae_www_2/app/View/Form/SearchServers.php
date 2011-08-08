@@ -5,7 +5,7 @@
 		{
 			parent::__construct();
 			$this->setMethod("get");
-			$this->setCssClass("form");
+			$this->setCssClass("simpleForm");
 			$this->addInputSection("search", "Search for servers");
 			$this->addInput(new Tmvc_View_Form_Input_Text("ip", "IP"));
 			$this->addInput(new Tmvc_View_Form_Input_Text("port", "Port"));

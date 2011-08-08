@@ -8,7 +8,7 @@
 	}
 	else
 	{
-		$menuPages = array_merge($menuPages, array("Log in to add server" => array("auth", "login"),"Create account" => array("auth", "register") ) );
+		$menuPages = array_merge($menuPages, array("Log in" => array("auth", "login"),"Create account" => array("Authentication", "register") ) );
 	}
 	foreach( $menuPages as $pageName => $controllerAction )
 	{

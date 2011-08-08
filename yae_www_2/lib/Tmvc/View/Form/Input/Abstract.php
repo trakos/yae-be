@@ -7,6 +7,7 @@
 		protected $_validationErrorText = null;
 		protected $_name;
 		protected $_label;
+		protected $_cssClass = "";
 		
 		/**
 		 * @param $value
@@ -32,17 +33,20 @@
 		}
 		
 		/**
+		 * @param array $context
 		 * @return boolean
 		 */
-		public function validate()
+		public function validate($context)
 		{
 			$value = $this->getValue();
 			$valid = false;
 			foreach ( $this->_validators as $validator )
 			{
-				$this->_validationErrorText = $validator->validate($value);
+				$this->_validationErrorText = $validator->validate($value, $context);
 				if ( $this->_validationErrorText )
 				{
+					$this->_validationErrorText = str_replace("%label", $this->_label, $this->_validationErrorText);
+					$this->_cssClass.= " invalid";
 					return false;
 				}
 			}

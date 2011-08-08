@@ -185,8 +185,9 @@ abstract class Tmvc_Model_Auth
 	 * Sets password for an user given by $login or otherwise currently logged in.
 	 * 
 	 * @param string $password
-	 * @param string $login
+	 * @param string $userId
+	 * @param bool $forcePrivileges whether to ignore privileges check and allow to set password of other users or while being unlogged
 	 * @throws Tmvc_Model_Auth_Exception
 	 */
-	abstract public function setPassword($password, $login=false);
+	abstract public function setPassword($password, $userId=false, $forcePrivileges=false);
 }

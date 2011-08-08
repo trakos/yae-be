@@ -21,6 +21,11 @@ h1.top
 	        border:         none;
 			
 	}
+	
+#top-right
+{
+	float:		right;
+}
 
 #menu
 {
@@ -73,30 +78,37 @@ div.news
 		font-size:	12px;
 	}
 	
-#content table.yae
+table.yae
 {
 	border:         1px dotted #afafaf;
 	padding:        0;
 	margin:         20px auto;
 }
-	#content table.yae tr td, table.yae tr th
+	table.yae tr td, table.yae tr th
 	{
 		background:     url(images/table_bg.png);
 		padding:        5px;
 	}
-	#content  table.yae tr th
+	
+	table.yae tr th
 	{
 		background:     url(images/header_bg.png);
 		font-weight:    bold;
 		font-family:	'serif';
 		text-align:		center;
 	}
-	#content td
+	
+	td
 	{
 		text-align:     center;
 	}
+	
+table.form
+{
+	width:		400px;
+}
 
-#content table.form, #content table.result_description
+table.simpleForm, table.result_description
 {
 	float:		left;
 	width:		350px;
@@ -104,40 +116,51 @@ div.news
 	padding:	0;
 }
 
-	#content table.form tr th
+	table.loginForm
+	{
+		float:			none;
+		margin-bottom:	0;
+	}
+
+	table.simpleForm tr th
 	{
 		padding:		4px 0 15px 0;
 	}
 		
-	#content table.form tr td.label
+	table.simpleForm tr td.label
 	{
 		text-align:		left;
 	}
 	
+	table.simpleForm tr td.buttons
+	{
+		padding:		15px 0 4px 0;
+	}
+	
 
-	/*table.form tr td, table.result_description tr td
+	/*table.simpleForm tr td, table.result_description tr td
 	{
 		background:	#e0f0f0;
 	}
-	table.form tr th, table.result_description tr th
+	table.simpleForm tr th, table.result_description tr th
         {
                 background:     #a0c0c0;
                 color:          #000000;
         }*/
  
-	#content table.result.wrap
+	table.result.wrap
 	{
 		padding:        0;
 		margin:         20px auto;
 		border-collapse:collapse;
 	}
 	
-		#content table.result.wrap table
+		table.result.wrap table
 		{
 			margin:			0;
 		}
 		
-		#content table.result .tab
+		table.result .tab
 		{
 			font-weight:	normal;
 			padding:		0 10px;
@@ -157,24 +180,24 @@ div.news
 			border-top-right-radius: 10px;
 		}
 		
-		#content table.result .tab.selected
+		table.result .tab.selected
 		{
 			background:     url(images/table_bg.png);
 		}
 		
-		#content table.result a.tab:hover
+		table.result a.tab:hover
 		{
 			color:			#000;
 			background:     url(images/table_bg.png);
 		}
 		
-	#content tr.tabs td
+	tr.tabs td
 	{
 		background:		transparent;
 		border:			none;
 	}
 	
-	#content table.submenu a, #content table.submenu td.selected p
+	table.submenu a, table.submenu td.selected p
 	{
 		display:		block;
 		width:			100%;
@@ -184,7 +207,7 @@ div.news
 		text-align:		left;
 	}
 	
-	#content table.statsmenu a,#content table.statsmenu span 
+	table.statsmenu a, table.statsmenu span 
 	{
 		display:		block;
 		width:			100%;
@@ -192,11 +215,13 @@ div.news
 		text-align:		left;
 	}
 	
-	#content table.submenu td.selected
+	table tr.errorMessage td
 	{
+		color:			#f00;
+		font-weight:	bold;
 	}
-
-#content input
+	
+input
 {
 	background:	url(images/input_bg.png);;
 	border:		1px dotted #a0c0c0;
@@ -204,7 +229,7 @@ div.news
 	color:		#3399aa;
 }
 
-#content input.button
+input.button
 {
 	border:		none;
 	color:          #3399aa;
@@ -216,11 +241,16 @@ div.news
 	font-weight:    bold;
 }
 
-#content input.button:hover
+input.button:hover
 {
 	border:		1px solid #ffffff;
 	padding:	2px 5px 4px 5px;
 	cursor:		pointer;
+}
+
+input.invalid
+{
+	border-color:#f00;
 }
 
 a
@@ -264,12 +294,12 @@ a
 		margin:		0 3px;
 	}
 
-#content p.error
+p.error
 {
 	color:          #cc0000;
 	text-align:     center;
 }
-#content p.note
+p.note
 {
 	font-size:      12px;
 	text-align:	center;

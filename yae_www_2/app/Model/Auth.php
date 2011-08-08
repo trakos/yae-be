@@ -10,17 +10,19 @@ class Model_Auth extends Tmvc_Model_Auth
 	 * 
 	 * @param string $password
 	 * @param string $login
+	 * @param bool $force skips privileges checks
 	 * @throws Tmvc_Model_Auth_Exception
 	 */
-	public function setPassword($password, $login=false)
+	public function setPassword($password, $userId=false, $force=false)
 	{
-		if ( !$login && $this->_isLogged )
+		$password = md5(base64_encode('***REMOVED***'.sha1( strrev($password).'***REMOVED***' ).'***REMOVED***').'***REMOVED***');
+		if ( !$userId && $this->_isLogged )
 		{
-			Tmvc_Model_Mysql::getConnection()->query("UPDATE uzytkownicy SET haslo=? WHERE login=?", $password, $this->uid);
+			Tmvc_Model_Mysql::getConnection()->query("UPDATE users SET password=? WHERE userid=?", $password, $this->uid);
 		}
-		else if ( $this->_userLevel >= LEVEL_SUPERADMIN )
+		else if ( $this->_userLevel >= LEVEL_SUPERADMIN || $force)
 		{
-			Tmvc_Model_Mysql::getConnection()->query("UPDATE uzytkownicy SET haslo=? WHERE login=?", $password, $login);
+			Tmvc_Model_Mysql::getConnection()->query("UPDATE users SET password=? WHERE userid=?", $password, $userId);
 		}
 		else
 		{
@@ -38,15 +40,15 @@ class Model_Auth extends Tmvc_Model_Auth
 		$query = 
 		"
 			SELECT 
-				login, imie, nazwisko, poziom
+				userid, crossfireid, username, role, unix_timestamp(date_registered)
 			FROM 
-				uzytkownicy
-				JOIN grupy_uzytk USING(id_grupy)
+				users
 			WHERE 
-				login=? 
-				AND haslo=?
+				username=? 
+				AND password=?
 		";
-		$user = Tmvc_Model_Mysql::getConnection()->getRow($query, $username,$password);
+		$password = md5(base64_encode('***REMOVED***'.sha1( strrev($password).'***REMOVED***' ).'***REMOVED***').'***REMOVED***');
+		$user = Tmvc_Model_Mysql::getConnection()->getRow($query, $username, $password);
 		if($user)
 		{
 			$this->_uid = $user['login'];

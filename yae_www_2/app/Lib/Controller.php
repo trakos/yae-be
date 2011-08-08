@@ -27,6 +27,10 @@ class Lib_Controller extends Tmvc_Controller_Abstract
 		$userLogin = $isLogged ? Tmvc_Model_Auth::getInstance()->getUserId() : "";
 		$userLevel = Tmvc_Model_Auth::getInstance()->getUserLevel();
 		$userNameAndSurname = $isLogged ? Tmvc_Model_Auth::getInstance()->get("imie")." ".Tmvc_Model_Auth::getInstance()->get("nazwisko") : "guest";
+		if ( !$isLogged ) 
+		{
+			$this->view->assign("loginForm", new View_Form_Login());
+		}
 		$this->view->assign("isLogged", $isLogged );
 		$this->view->assign("userLogin", $userLogin );
 		$this->view->assign("userLevel", $userLevel );

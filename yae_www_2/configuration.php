@@ -11,6 +11,7 @@
 	define('SRC_PATH_LIB',SRC_PATH_MAIN.'/lib');
 	define('SRC_PATH_APP',SRC_PATH_MAIN.'/app');
 	define('SRC_PATH_VIEW',SRC_PATH_MAIN.'/templates');
+	define('SRC_PATH_RESOURCES',SRC_PATH_MAIN.'/resources');
 	define('SRC_PATH_JS', './js/');
 	define('SRC_PATH_JS_CACHE', '/cache/');
 	define('SRC_PATH_CSS', './css/');
@@ -28,6 +29,11 @@
 	define('LEVEL_UNLOGGED', 0);
 	define('LEVEL_USER', 10);
 	define('LEVEL_SUPERADMIN', 100);
+	/* kody błędów yae */
+	define('E_SERVER_EXISTS', 200);
+	define('E_SERVER_UNAVAILABLE', 201);
+	define('E_SERVER_WRONG_PASSWORD', 202);
+	define('E_SERVER_DOESNT_EXISTS', 203);
 	/* kody błędów wewnętrznych */
 	define('E_CONTROLLER_DOESNT_EXIST', 101);
 	define('E_ACTION_DOESNT_EXIST', 102);

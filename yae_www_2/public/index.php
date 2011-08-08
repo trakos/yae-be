@@ -92,11 +92,18 @@
 					foreach ( $trace as $k => $tracePoint )
 					{
 						$args = "";
-						if ( isset($tracePoint['args']) )
+						if ( isset($tracePoint['args']) && is_array($tracePoint['args']) )
 						{
 							foreach ( $tracePoint['args'] as $arg )
 							{
-								$args.= json_encode($arg).",";
+								try 
+								{
+									$args.= json_encode($arg).",";
+								}
+								catch(Exception $e)
+								{
+									$args.= var_dump($arg).",";
+								}
 							}	
 						}
 						$function = isset($tracePoint['class']) ? $tracePoint['class'].$tracePoint['type'].$tracePoint['function'] : $tracePoint['function'];

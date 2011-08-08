@@ -60,14 +60,14 @@ abstract class Tmvc_Controller_Abstract
 	}
 	
 	/**
-	 * Metoda służąca do przekierowania na inną stronę wewnątrz systemu.
+	 * Redirect method, calls die after setting redirect header.
 	 * @param string $controller
 	 * @param string $action
 	 * @param array $arguments
 	 */
 	protected function _redirect($controller,$action='Index',$arguments=array())
 	{
-		$url = Tmvc_View::getInstance()->link($controller,$action,$arguments,false);
+		$url = Tmvc_View::getInstance()->link($controller,$action,$arguments,false,false);
 		header( "Location: ".$url );
 		die();
 	}
@@ -84,6 +84,35 @@ abstract class Tmvc_Controller_Abstract
 		} else {
 			return NULL;
 		}
+	}
+	
+	/**
+	 * Saves the variable in a session with a TMVC_ prefix for the key.
+	 * @param string $key
+	 * @param unknown_type $value
+	 */
+	protected function _setSession($key, $value)
+	{
+		Tmvc_Model_Session::setSession($key,$value);
+	}
+	
+	/**
+	 * Retrieves session variables set with _setSession
+	 * @param string $key
+	 * @return unknown_type
+	 */
+	protected function _getSession($key)
+	{
+		return Tmvc_Model_Session::getSession($key);
+	}
+	
+	/**
+	 * Unsert session variable set with _setSession
+	 * @param unknown_type $key
+	 */
+	protected function _unsetSession($key)
+	{
+		Tmvc_Model_Session::unsetSession($key);
 	}
 	
 	/**

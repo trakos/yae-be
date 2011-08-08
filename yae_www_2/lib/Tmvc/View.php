@@ -16,12 +16,12 @@ class Tmvc_View
 	/**
 	 * @var Tmvc_View
 	 */
-	static protected $instance;
+	static protected $_instance;
 	/**
 	 * Current variables which will be given to the rendered view.
 	 * @var array
 	 */
-	protected $viewVariables=array();
+	protected $_viewVariables=array();
 	/**
 	 * Name of a currently called controller.
 	 * @var string
@@ -39,18 +39,18 @@ class Tmvc_View
 	 * 
 	 * @var array
 	 */
-	protected $stackOfViewVariablesState=array();
+	protected $_stackOfViewVariablesState=array();
 	/**
 	 * Returns instance of a current object.
 	 * @return Tmvc_View
 	 */
 	static public function getInstance()
 	{
-		if(!self::$instance)
+		if(!self::$_instance)
 		{
-			self::$instance = new Tmvc_View();
+			self::$_instance = new Tmvc_View();
 		}
-		return self::$instance;
+		return self::$_instance;
 	}
 	
 	/**
@@ -67,13 +67,13 @@ class Tmvc_View
 	 */
 	public function getAssignedValue($name)
 	{
-		if(!isset($this->viewVariables[$name])) 
+		if(!isset($this->_viewVariables[$name])) 
 		{
 			return NULL;
 		}
 		else
 		{
-			return $this->viewVariables[$name];
+			return $this->_viewVariables[$name];
 		}
 	}
 	
@@ -84,7 +84,7 @@ class Tmvc_View
 	 */
 	public function assign($name,$value)
 	{
-		$this->viewVariables[$name] = $value;
+		$this->_viewVariables[$name] = $value;
 	}
 	/**
 	 * Assigns all values from $array under their corresponding key.
@@ -125,24 +125,24 @@ class Tmvc_View
 	public function render($viewName)
 	{
 		// przypisanie danych do widoku
-		foreach($this->viewVariables as $k => $v)
+		foreach($this->_viewVariables as $k => $v)
 		{
 			$$k = $v;
 		}
 		// zapisanie stanu zmiennych
-		array_push($this->stackOfViewVariablesState,$this->viewVariables);
+		array_push($this->_stackOfViewVariablesState,$this->_viewVariables);
 		// wywołanie widoku
 		include(SRC_PATH_VIEW.'/'.$viewName.'.php');
 		// usunięcie stanu zmiennych
-		array_pop($this->stackOfViewVariablesState);
+		array_pop($this->_stackOfViewVariablesState);
 		// cofnięcie do stanu sprzed pierwszego assigna (ostatni ze stosu, ale bez zdejmowania)
-		if(empty($this->stackOfViewVariablesState))
+		if(empty($this->_stackOfViewVariablesState))
 		{
-			$this->viewVariables = array();
+			$this->_viewVariables = array();
 		}
 		else
 		{
-			$this->viewVariables = $this->stackOfViewVariablesState[count($this->stackOfViewVariablesState)-1];
+			$this->_viewVariables = $this->_stackOfViewVariablesState[count($this->_stackOfViewVariablesState)-1];
 		}
 	}
 	

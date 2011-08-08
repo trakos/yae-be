@@ -31,6 +31,24 @@
 </head>
 <body>
 	<noscript><p><img src="http://piwik.s2.trakos.pl/piwik.php?idsite=2" style="border:0" alt="" /></p></noscript>
+	<div id="top-right">
+		<? if ( !$isLogged ) { ?>
+			<div id="top-right">
+				<form id="form_4e3e758d6e379" method="post" action="">
+					<table class="loginForm form" style="margin-top:50px;">
+						<tr>
+							<td class="label"><label for="form_4e3e758d6e379_login">login:</label></td>
+							<td><input type="text" value="" id="form_4e3e758d6e379_login" name="login"></td>
+						</tr>
+						<tr>
+							<td class="label"><label for="form_4e3e758d6e379_password">password:</label></td>
+							<td><input type="password" value="" id="form_4e3e758d6e379_password" name="password"></td>
+						</tr>
+					</table>
+				</form>
+			</div>
+		<? } ?>
+	</div>
 	<a href="index.php"><h1 class="top">YAE - you are exposed</h1></a>
 	<div id="menu-l"><div id="menu-r"><div id="menu">
 		<?php $this->render("blocks/menu"); ?>

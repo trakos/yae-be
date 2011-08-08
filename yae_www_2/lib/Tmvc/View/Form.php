@@ -55,6 +55,21 @@
 			$this->_buttonSections[$sectionKey][] = $button;
 		}
 		
+		public function getInput( $sectionKey, $inputName )
+		{
+			if ( isset($this->_inputSections[$sectionKey]) )
+			{
+				foreach( $this->_inputSections[$sectionKey] as $input ) 
+				{
+					if ( $input->getName() == $inputName )
+					{
+						return $input;
+					}
+				}
+			}
+			return null;
+		}
+		
 		public function setCssClass($className)
 		{
 			$this->_cssClass = $className;
@@ -95,7 +110,7 @@
 				}
 				if ( !empty($this->_buttonSections[$key]) )
 				{
-					echo '<tr><td colspan="2">';
+					echo '<tr><td></td><td class="buttons">';
 					foreach ( $this->_buttonSections[$key] as $button )
 					{
 						$button->render($this->_id);
@@ -111,11 +126,12 @@
 		public function validate()
 		{
 			$valid = true;
+			$values = $this->getValues();
 			foreach ( $this->_inputSections as $key => $inputs )
 			{
 				foreach ( $inputs as $input )
 				{
-					$valid = $input->validate() && $valid;
+					$valid = $input->validate($values) && $valid;
 				}
 			}
 			return $valid;
