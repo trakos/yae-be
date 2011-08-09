@@ -4,11 +4,11 @@
 	$menuPages = array("Search" => array("Index","index"), "Stats" => array("Stats", "stats"), "News" => array("News","index"));
 	if($isLogged)
 	{
-		$menuPages = array_merge($menuPages, array("Add server" => array("user","addserver"),"Log out from ".$login->getUsername() => array("auth","logout") ) );
+		$menuPages = array_merge($menuPages, array("Add server" => array("user","addserver"),"Log out from ".$userName => array("Authentication","logout") ) );
 	}
 	else
 	{
-		$menuPages = array_merge($menuPages, array("Log in" => array("auth", "login"),"Create account" => array("Authentication", "register") ) );
+		$menuPages = array_merge($menuPages, array("Log in" => array("Authentication", "login"),"Create account" => array("Authentication", "register") ) );
 	}
 	foreach( $menuPages as $pageName => $controllerAction )
 	{

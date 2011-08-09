@@ -51,9 +51,9 @@ class Model_Auth extends Tmvc_Model_Auth
 		$user = Tmvc_Model_Mysql::getConnection()->getRow($query, $username, $password);
 		if($user)
 		{
-			$this->_uid = $user['login'];
+			$this->_uid = $user['userid'];
 			$this->_data = $user;
-			$this->_userLevel = $user['poziom'];
+			$this->_userLevel = $user['role'];
 			$this->_isLogged = true;
 		}
 	}

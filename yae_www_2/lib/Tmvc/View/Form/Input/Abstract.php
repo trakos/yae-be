@@ -42,15 +42,20 @@
 			$valid = false;
 			foreach ( $this->_validators as $validator )
 			{
-				$this->_validationErrorText = $validator->validate($value, $context);
-				if ( $this->_validationErrorText )
+				$error = $validator->validate($value, $context);
+				if ( $error )
 				{
-					$this->_validationErrorText = str_replace("%label", $this->_label, $this->_validationErrorText);
-					$this->_cssClass.= " invalid";
+					$this->setErrorText($error);
 					return false;
 				}
 			}
 			return true;
+		}
+		
+		public function setErrorText( $errorText )
+		{
+			$this->_validationErrorText = str_replace("%label", $this->_label, $errorText);
+			$this->_cssClass.= " invalid";
 		}
 		
 		public function getName()

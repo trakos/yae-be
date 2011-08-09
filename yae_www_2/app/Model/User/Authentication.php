@@ -37,16 +37,18 @@ EOF;
 			$time = time();
 			$userId = $user['userid'];
 			$login = $user['username'];
+			$mail = $user['email'];
+			$password = $user['password'];
 			$ip = Model_Auth::getInstance()->getUserIP();
 			if ( $ip == "1.1.1.1" ) $ip = "... oh well, looks like it was undefined..";
-			$activationKey = self::_getForgotPasswordKey($userId, $login, $time);
+			$activationKey = self::_getForgotPasswordKey($userId, $login, $time, $password);
 			$arguments = array(
 				'userId'		=> $userId,
 				"time"			=> $time,
 				"key"			=> $activationKey
 			);
-			$link = Tmvc_View::getInstance()->link("Authentication", "remindPassword",$arguments, false, false);
-			$subject = "Your registration at yae";
+			$link = Tmvc_View::getInstance()->link("Authentication", "forgotPassword",$arguments, false, false);
+			$subject = "Forgotten password on YAE";
 			$text = <<<EOF
 	Hello $login!
 				
@@ -69,7 +71,7 @@ EOF;
 		static public function register($login, $password, $mail)
 		{
 			$sql = Tmvc_model_Mysql::getConnection();
-			$q = "INSERT INTO users (username, email) VALUES (?, ?)";
+			$q = "INSERT INTO users (username, email, confirmed_mail) VALUES (?, ?, 0)";
 			$a = array($login,$mail);
 			$sql->vquery($q,$a);
 			$userId = $sql->insert_id;
@@ -90,30 +92,31 @@ EOF;
 		
 		static public function activate($key, $userId, $login, $time)
 		{
-			if ( time() - $time > (30*60*60) || $this->_getActivationKey($userId, $login, $time) != $key )
+			if ( time() - $time > (7*24*60*60) || self::_getActivationKey($userId, $login, $time) != $key )
 			{
 				return false;
 			}
-			$user = Tmvc_Model_Mysql::getConnection()->getBaseSelect("SELECT * FROM users")->where("userid=?", $userId);
+			$user = Tmvc_Model_Mysql::getConnection()->getBaseSelect("SELECT * FROM users")->where("AND userid=?", array($userId))->getRow();
 			if ( $user['username'] != $login )
 			{
 				return false;
 			}
 			Tmvc_Model_Mysql::getConnection()->query("UPDATE users SET confirmed_mail=1 WHERE userid=?", $userId);
+			return true;
 		}
 		
-		static public function validateForgotPasswordKey($key, $userId, $login, $time)
+		static public function validateForgotPasswordKey($key, $userId, $login, $time, $password)
 		{
 			if ( time() - $time > (30*60*60) )
 			{
 				return false;
 			}
-			return $this->__getRemindPasswordKey($userId, $login, $time) == $key;
+			return self::_getForgotPasswordKey($userId, $login, $time, $password) == $key;
 		}
 		
-		static protected function _getForgotPasswordKey($userId, $login, $time)
+		static protected function _getForgotPasswordKey($userId, $login, $time, $password)
 		{
-			return md5($userId.";gaagasgasgasgasgasgassgasg".$login."time:".$time);
+			return md5($userId.";gaagasgasgasgasgasgassgasg".$login."time:".$time.$password);
 		} 
 		
 		static protected function _getActivationKey($userId, $login, $time)

@@ -24,15 +24,12 @@ class Lib_Controller extends Tmvc_Controller_Abstract
 	public function initView()
 	{
 		$isLogged = Tmvc_Model_Auth::getInstance()->isLogged();
-		$userLogin = $isLogged ? Tmvc_Model_Auth::getInstance()->getUserId() : "";
+		$userId = $isLogged ? Tmvc_Model_Auth::getInstance()->getUserId() : 0;
 		$userLevel = Tmvc_Model_Auth::getInstance()->getUserLevel();
-		$userNameAndSurname = $isLogged ? Tmvc_Model_Auth::getInstance()->get("imie")." ".Tmvc_Model_Auth::getInstance()->get("nazwisko") : "guest";
-		if ( !$isLogged ) 
-		{
-			$this->view->assign("loginForm", new View_Form_Login());
-		}
+		$username = $isLogged ? Tmvc_Model_Auth::getInstance()->get("username") : "guest";
 		$this->view->assign("isLogged", $isLogged );
-		$this->view->assign("userLogin", $userLogin );
+		$this->view->assign("userName", $username );
+		$this->view->assign("userId", $userId );
 		$this->view->assign("userLevel", $userLevel );
 		$this->addJavascript("jquery.js");
 		$this->addJavascript("query.js");

@@ -34,16 +34,17 @@
 	<div id="top-right">
 		<? if ( !$isLogged ) { ?>
 			<div id="top-right">
-				<form id="form_4e3e758d6e379" method="post" action="">
+				<form method="post" action="<?= $this->link("Authentication","login",array(),true) ?>">
 					<table class="loginForm form" style="margin-top:50px;">
 						<tr>
 							<td class="label"><label for="form_4e3e758d6e379_login">login:</label></td>
-							<td><input type="text" value="" id="form_4e3e758d6e379_login" name="login"></td>
+							<td><input type="text" value="" name="login" /></td>
 						</tr>
 						<tr>
 							<td class="label"><label for="form_4e3e758d6e379_password">password:</label></td>
-							<td><input type="password" value="" id="form_4e3e758d6e379_password" name="password"></td>
+							<td><input type="password" value="" name="password" /></td>
 						</tr>
+						<tr><td></td><td><input type="submit" name="submitLogin" value="login" /></td></tr>
 					</table>
 				</form>
 			</div>
