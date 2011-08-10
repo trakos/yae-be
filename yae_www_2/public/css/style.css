@@ -197,22 +197,17 @@ table.simpleForm, table.result_description
 		border:			none;
 	}
 	
-	table.submenu a, table.submenu td.selected p
+	table.statsmenu a, table.statsmenu span, table.submenu a, table.submenu span
 	{
 		display:		block;
 		width:			100%;
-		color:			#000;
 		border:  		none;
-		font-weight:	normal;
 		text-align:		left;
 	}
 	
-	table.statsmenu a, table.statsmenu span 
+	table.submenu a, table.submenu span
 	{
-		display:		block;
-		width:			100%;
-		border:  		none;
-		text-align:		left;
+		text-align:		center;
 	}
 	
 	table tr.errorMessage td
@@ -279,7 +274,7 @@ a
 	
 	a.important_link:hover
 	{
-		background:		#fdd;
+		background-color:#fdd;
 	}
 
 #pages
@@ -312,3 +307,28 @@ p.note
 	text-align:     center;
 	color:          #3399aa;
 }
+
+p.successMessage
+{
+	font-weight:	bold;
+	color:			#090;
+	padding:		10px 50px;
+	min-width:		500px;
+}
+
+p.errorMessage
+{
+	font-weight:	bold;
+	color:			#f00;
+	padding:		10px 50px;
+	min-width:		500px;
+}
+
+p.infoMessage
+{
+	font-weight:	bold;
+	color:			#fa0;
+	padding:		10px 50px;
+	min-width:		500px;
+}
+

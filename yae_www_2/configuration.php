@@ -7,7 +7,7 @@
  */
 	define('T_DEBUG', 1);
 	/* sciezki systemowe */
-	define('SRC_PATH_MAIN','..');
+	define('SRC_PATH_MAIN', getcwd()."/..");
 	define('SRC_PATH_LIB',SRC_PATH_MAIN.'/lib');
 	define('SRC_PATH_APP',SRC_PATH_MAIN.'/app');
 	define('SRC_PATH_VIEW',SRC_PATH_MAIN.'/templates');
@@ -34,6 +34,7 @@
 	define('E_SERVER_UNAVAILABLE', 201);
 	define('E_SERVER_WRONG_PASSWORD', 202);
 	define('E_SERVER_DOESNT_EXISTS', 203);
+	define('E_SERVER_RCON_ENC_EMPTY', 204);
 	/* kody błędów wewnętrznych */
 	define('E_CONTROLLER_DOESNT_EXIST', 101);
 	define('E_ACTION_DOESNT_EXIST', 102);
@@ -45,3 +46,6 @@
 	define('E_INI_INVALID_SECTION_OR_VALUE',152);
 	define('E_MYSQL',153);
 	define('E_FORM_NO_SECTION_ADDED',170);
+	/* stałe yae */
+	define('YAE_SERVER_OFF_DATE', "2038-01-19 04:14:07");
+	define('YAE_SERVER_OFF_TIME', 2147483647);

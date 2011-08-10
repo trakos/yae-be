@@ -70,15 +70,19 @@
 					$show_value.= round($value)." minutes";
 				}
 			}
-			else if($key == "playedto" || $key == "playedfrom" || $key == "lastonline" )
+			else if($key == "playedto" || $key == "playedfrom" || $key == "lastonline" || $key == "nextcheck" )
 			{
-				if( $value > time() || ( $type == "server" && $value > time()-600 ) )
+				if( $key != "nextcheck" && ( $value > time() || ( $type == "server" && $value > time()-600 ) ) )
 				{
 					$show_value = "<span style='font-weight: bold; color: #ff8000;'>ONLINE</span>";
 				}
 				else if( $value == 0 )
 				{
 					$show_value = "<span style='font-weight: bold; color: #ff0000;'>NEVER</span>";
+				}
+				else if ( $value >= YAE_SERVER_OFF_TIME )
+				{
+					$show_value = "<span style='font-weight: bold; color: #ff0000;'>DISABLED</span>";
 				}
 				else
 				{
@@ -91,24 +95,41 @@
 						$date_day = floor(($value-$start)/$day);
 						if( $date_day == $current_day )
 						{
-							$show_value = date("\\t\o\d\a\y H:i",$value);
+							$diff = time()-$value;
+							$showAsTimeDifference = ( $key != "playedto" && $key != "playedfrom" );
+							if ( $showAsTimeDifference && $diff>0 && $diff<60 )
+							{
+								$show_value = $diff." seconds ago";
+							}
+							else if ( $showAsTimeDifference && $diff>0 && $diff<3600 )
+							{
+								$show_value = floor($diff/60)." minutes ago";
+							}
+							else
+							{
+								$show_value = date("\\t\o\d\a\y H:i",$value);
+							}
 						}
-						else if( $date_day >= $current_day-1 )
+						else if( $date_day == $current_day-1 )
 						{
 							$show_value = date("\y\e\s\\t\e\\r\d\a\y H:i",$value);
 						}
-						else if( $date_day >= $current_day-6 )
+						else if( $date_day == $current_day+1 )
+						{
+							$show_value = date("\\t\o\m\m\o\r\\r\o\w H:i",$value);
+						}
+						else if( $date_day < $current_day && $date_day >= $current_day-6 )
 						{
 							$show_value = date("l H:i",$value);
 						}
 						else
 						{
-							$show_value = date("m-d H:i",$value);
+							$show_value = date("d.m.Y H:i",$value);
 						}					
 					}
 					else
 					{
-						$show_value = date("Y-m-d H:i",$value);
+						$show_value = date("d.m.Y H:i",$value);
 					}
 				}
 			}

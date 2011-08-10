@@ -16,7 +16,7 @@
 				<? showYaeSearchValue($server, 'ip', "server"); ?>
 				<? showYaeSearchValue($server, 'port', "server"); ?>
 				<? showYaeSearchValue($server, 'name', "server"); ?>
-				<? showYaeSearchValue($server, 'lastonline', "server"); ?>
+				<? showYaeValue($server, 'lastonline', "server"); ?>
 				<td>
 					<a class="important_link details_stats" rel="nofollow" href="<?= $this->link("Search","showServer", array("server_id"=>$server['id'])) ?>">server stats »</a>
 				</td>

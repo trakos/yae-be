@@ -107,8 +107,8 @@
 							}	
 						}
 						$function = isset($tracePoint['class']) ? $tracePoint['class'].$tracePoint['type'].$tracePoint['function'] : $tracePoint['function'];
-						$line = $tracePoint['line'];
-						$file = $tracePoint['file'];
+						$line = isset($tracePoint['line']) ? $tracePoint['line'] : 0;
+						$file = isset($tracePoint['file']) ? $tracePoint['file'] : 'unknown';
 						printf("#%-2s %100s:%-4s %50s(%s)\n", $k, $file, $line, $function, $args);
 					}
 				?>

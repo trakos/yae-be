@@ -16,6 +16,17 @@ class Lib_Controller extends Tmvc_Controller_Abstract
 	{
 		$this->addStyle("style.css");
 		$this->addStyle("2/layout.css");
+		$this->addStyle("icons.css");
+	}
+	
+	public function useSessionMessages()
+	{
+		$this->view->assign("errorMessage", $this->_getSession("errorMessage") );
+		$this->view->assign("successMessage", $this->_getSession("successMessage") );
+		$this->view->assign("infoMessage", $this->_getSession("infoMessage") );
+		$this->_unsetSession("errorMessage");
+		$this->_unsetSession("successMessage");
+		$this->_unsetSession("infoMessage");
 	}
 	
 	/**
@@ -31,6 +42,8 @@ class Lib_Controller extends Tmvc_Controller_Abstract
 		$this->view->assign("userName", $username );
 		$this->view->assign("userId", $userId );
 		$this->view->assign("userLevel", $userLevel );
+		$this->view->assign("currentController", Tmvc_View::$controllerName );
+		$this->view->assign("currentAction", Tmvc_View::$actionName );
 		$this->addJavascript("jquery.js");
 		$this->addJavascript("query.js");
 		$jsFile = Tmvc_View::$controllerName.'/'.Tmvc_View::$actionName.'.js';

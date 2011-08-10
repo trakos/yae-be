@@ -4,7 +4,12 @@
 	$menuPages = array("Search" => array("Index","index"), "Stats" => array("Stats", "stats"), "News" => array("News","index"));
 	if($isLogged)
 	{
-		$menuPages = array_merge($menuPages, array("Add server" => array("user","addserver"),"Log out from ".$userName => array("Authentication","logout") ) );
+		$menuPages = array_merge($menuPages, array("Manage servers" => array("UserServers","userServerList"),"Manage friends"=>array("UserFriends","index"),"Edit profile"=>array("EditProfile","index")) );
+		if ( Model_Auth::getInstance()->isAtLeast(LEVEL_SUPERADMIN) )
+		{
+			$menuPages = array_merge($menuPages, array("Admin" => array("Admin","index")) );
+		}
+		$menuPages["Log out from ".$userName] = array("Authentication","logout");
 	}
 	else
 	{

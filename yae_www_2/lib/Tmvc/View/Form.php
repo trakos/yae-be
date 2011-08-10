@@ -28,6 +28,12 @@
 			$this->_buttonSections[$sectionKey] = array();
 		}
 		
+		
+		/**
+		 * @param Tmvc_View_Form_Input_Abstract $input
+		 * @param unknown_type $sectionKey
+		 * @return Tmvc_View_Form_Input_Abstract
+		 */
 		public function addInput( Tmvc_View_Form_Input_Abstract $input, $sectionKey=null )
 		{
 			if ( !$sectionKey )

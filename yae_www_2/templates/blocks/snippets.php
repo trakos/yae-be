@@ -6,3 +6,7 @@
 		</a>
 	</td>
 <? } ?>
+
+<? function showYaeValue($row, $valueIndex, $type="player") { ?>
+	<td><?=View_Yae::formatValue($valueIndex, $row[$valueIndex], $type) ?></td>
+<? } ?>
