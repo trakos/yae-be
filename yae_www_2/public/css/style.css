@@ -216,6 +216,11 @@ table.simpleForm, table.result_description
 		font-weight:	bold;
 	}
 	
+textarea
+{
+	padding:	5px 10px;
+}
+
 input
 {
 	background:	url(images/input_bg.png);;
@@ -302,33 +307,60 @@ p.note
 #footer
 {
 	width:          100%;
-	clear:		both;
+	clear:			both;
 	border-top:     1px dotted #3399aa;
 	text-align:     center;
 	color:          #3399aa;
 }
 
-p.successMessage
+.successMessage
 {
 	font-weight:	bold;
 	color:			#090;
 	padding:		10px 50px;
 	min-width:		500px;
+	text-align:		center;
 }
 
-p.errorMessage
+.errorMessage
 {
 	font-weight:	bold;
 	color:			#f00;
 	padding:		10px 50px;
 	min-width:		500px;
+	text-align:		center;
 }
 
-p.infoMessage
+.infoMessage
 {
 	font-weight:	bold;
 	color:			#fa0;
 	padding:		10px 50px;
 	min-width:		500px;
+	text-align:		center;
+}
+
+#contactFloatTab 
+{
+	margin:			0;
+	padding:		10px;
+	width:			295px;
+	height:			210px;
+	background:		#fff;
+	border:			1px solid #aaa;
+}
+
+#contactFloatTab .handle
+{
+	background:		url("images/contactTab.png") no-repeat;
+	width:			50px;
+	height:			172px; 
+	-webkit-border-top-left-radius: 20px;
+	-webkit-border-bottom-left-radius: 20px;
+	-moz-border-radius-topleft: 20px;
+	-moz-border-radius-bottomleft: 20px;
+	border-top-left-radius: 20px;
+	border-bottom-left-radius: 20px;
+	border:			1px solid #aaa;
 }
 

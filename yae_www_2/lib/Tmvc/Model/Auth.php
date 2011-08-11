@@ -119,7 +119,7 @@ abstract class Tmvc_Model_Auth
 		{
 			throw new Tmvc_Model_Auth_Exception(E_INSUFFICIENT_PRIVILEGES, "You must be logged in in order to use session data!");
 		}
-		else if ( !isset($this->_data[$name]))
+		else if ( !array_key_exists($name, $this->_data) )
 		{
 			throw new Tmvc_Model_Auth_Exception(E_INSUFFICIENT_PRIVILEGES, "Session data with given name does not exist!");
 		}

@@ -45,7 +45,9 @@ class Lib_Controller extends Tmvc_Controller_Abstract
 		$this->view->assign("currentController", Tmvc_View::$controllerName );
 		$this->view->assign("currentAction", Tmvc_View::$actionName );
 		$this->addJavascript("jquery.js");
-		$this->addJavascript("query.js");
+		$this->addJavascript("jquery.query.js");
+		$this->addJavascript("jquery.slideOut.js");
+		$this->addJavascript("yae.js");
 		$jsFile = Tmvc_View::$controllerName.'/'.Tmvc_View::$actionName.'.js';
 		if ( file_exists(SRC_PATH_JS.'/'.$jsFile) )
 		{

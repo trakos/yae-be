@@ -30,6 +30,16 @@
 	<!-- End Piwik Tracking Code -->
 </head>
 <body>
+	 <div id="contactFloatTab">
+	 	<a class="handle" href="http://link-for-non-js-users.html">Content</a>
+	 	<form method="post" action="<?= $this->link("Index","contact",array(),true) ?>">
+	 		<div>
+		 		<textarea cols="35" rows="10" name="message" style="width: 263px;height: 185px;"></textarea>
+		 		<input type="submit" value="send" class="button" style="display:block;margin:0 auto;" />
+		 	</div>
+	 	</form>
+	 </div>
+	
 	<noscript><p><img src="http://piwik.s2.trakos.pl/piwik.php?idsite=2" style="border:0" alt="" /></p></noscript>
 	<div id="top-right">
 		<? if ( !$isLogged ) { ?>

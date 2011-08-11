@@ -40,7 +40,7 @@ class Model_Auth extends Tmvc_Model_Auth
 		$query = 
 		"
 			SELECT 
-				userid, crossfireid, username, role, unix_timestamp(date_registered)
+				userid, crossfireid, username, role, email, unix_timestamp(date_registered) AS date_registered
 			FROM 
 				users
 			WHERE 

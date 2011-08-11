@@ -14,7 +14,7 @@
 		 */
 		public function validate($value, $context)
 		{
-			$captchaText = Tmvc_Model_Session::getSession("captcha");
+			$captchaText = Lib_Captcha::getCode();
 			if ( $captchaText != $value )
 			{
 				return $this->formatMessage("captcha");

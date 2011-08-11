@@ -19,7 +19,7 @@ class Controller_UserServers extends Lib_Controller
 	public function initView()
 	{
 		parent::initView();
-		$this->view->assign("submenu", array("index"=>"Server list","addServer"=>"Add server"));
+		$this->view->assign("submenu", array("userServerList"=>"Server list","addServer"=>"Add server"));
 	}
 	
 	public function userServerListAction()
