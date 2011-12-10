@@ -72,70 +72,94 @@
 			}
 			else if($key == "playedto" || $key == "playedfrom" || $key == "lastonline" || $key == "nextcheck" )
 			{
-				if( $key != "nextcheck" && ( $value > time() || ( $type == "server" && $value > time()-600 ) ) )
+				if( $type == "server" && $value > time()-600 )
 				{
 					$show_value = "<span style='font-weight: bold; color: #ff8000;'>ONLINE</span>";
 				}
-				else if( $value == 0 )
-				{
-					$show_value = "<span style='font-weight: bold; color: #ff0000;'>NEVER</span>";
-				}
-				else if ( $value >= YAE_SERVER_OFF_TIME )
-				{
-					$show_value = "<span style='font-weight: bold; color: #ff0000;'>DISABLED</span>";
-				}
 				else
 				{
-					$day = 60*60*24;
-					if( date("Y",$value) == date("Y") )
-					{
-						// numer dnia od 2009-1-1 :)
-						$start = mktime(0,0,0,1,1,2009,1);
-						$current_day = floor((time()-$start)/$day);
-						$date_day = floor(($value-$start)/$day);
-						if( $date_day == $current_day )
-						{
-							$diff = time()-$value;
-							$showAsTimeDifference = ( $key != "playedto" && $key != "playedfrom" );
-							if ( $showAsTimeDifference && $diff>0 && $diff<60 )
-							{
-								$show_value = $diff." seconds ago";
-							}
-							else if ( $showAsTimeDifference && $diff>0 && $diff<3600 )
-							{
-								$show_value = floor($diff/60)." minutes ago";
-							}
-							else
-							{
-								$show_value = date("\\t\o\d\a\y H:i",$value);
-							}
-						}
-						else if( $date_day == $current_day-1 )
-						{
-							$show_value = date("\y\e\s\\t\e\\r\d\a\y H:i",$value);
-						}
-						else if( $date_day == $current_day+1 )
-						{
-							$show_value = date("\\t\o\m\m\o\r\\r\o\w H:i",$value);
-						}
-						else if( $date_day < $current_day && $date_day >= $current_day-6 )
-						{
-							$show_value = date("l H:i",$value);
-						}
-						else
-						{
-							$show_value = date("d.m.Y H:i",$value);
-						}					
-					}
-					else
-					{
-						$show_value = date("d.m.Y H:i",$value);
-					}
+					$show_value = self::formatTime($value, $key != "nextcheck", $key == "nextcheck", $key != "playedto" && $key != "playedfrom");	
 				}
 			}
 			else
 			{
 				$show_value = $value;
+			}
+			return $show_value;
+		}
+		
+		static public function formatTime( $time, $notInFuture = true, $notInPast = false, $showAsTimeDifference = true )
+		{
+			if( abs($time - time()) < 10 || ( $notInFuture && $time > time() ) )
+			{
+				$show_value = "<span style='font-weight: bold; color: #ff8000;'>NOW</span>";
+			}
+			else if ( $time == 0 )
+			{
+				$show_value = "<span style='font-weight: bold; color: #ff0000;'>NEVER</span>";
+			}
+			else if ( $notInPast && $time < time() )
+			{
+				$show_value = "offline";
+			}
+			else if ( $time >= YAE_SERVER_OFF_TIME )
+			{
+				$show_value = "<span style='font-weight: bold; color: #ff0000;'>DISABLED</span>";
+			}
+			else
+			{
+				$day = 60*60*24;
+				if ( $time > time() && $showAsTimeDifference && $time-time() < $day*30  )
+				{
+					$diff = $time-time();
+					if ( $diff < 60 )
+					{
+						$show_value = "in $diff seconds";
+					}
+					else if ( $diff < 3600 )
+					{
+						$show_value = "in ".round($diff/60)." minutes";
+					}
+					else if ( $diff < $day )
+					{
+						$show_value = "in ".round($diff/3600)." hours";
+					}
+					else
+					{
+						$show_value = "in ".round($diff/$day)." days";
+					}
+					$show_value = "<a title='".date("d.m.Y H:i",$time)."'>".$show_value.'</a>';
+				}
+				else if ( $showAsTimeDifference && time()-$time < $day*30 )
+				{
+					$diff = time()-$time;
+					if ( $diff < 60 )
+					{
+						$show_value = "$diff seconds ago";
+					}
+					else if ( $diff < 3600 )
+					{
+						$show_value = round($diff/60)." minutes ago";
+					}
+					else if ( $diff < $day )
+					{
+						$show_value = round($diff/3600)." hours ago";
+					}
+					else
+					{
+						$show_value = round($diff/$day)." days ago";
+					}
+					$show_value = "<a title='".date("d.m.Y H:i",$time)."'>".$show_value.'</a>';
+				}
+				else if( date("Y",$time) == date("Y") )
+				{
+					// tu można niby uciąć rok, ale czy to czytelne?
+					$show_value = date("d.m.Y H:i",$time);
+				}
+				else
+				{
+					$show_value = date("d.m.Y H:i",$time);
+				}
 			}
 			return $show_value;
 		}

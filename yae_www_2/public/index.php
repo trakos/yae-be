@@ -1,4 +1,11 @@
 <?php
+	if ( isset($_REQUEST['show']) )
+	{
+		$_REQUEST['c'] = 'Search';
+		$_REQUEST['a'] = $_GET['show'];
+		$_REQUEST['search'] = 'search';
+		unset($_REQUEST['show']);
+	}
 	// require_once('firebug.php');
 	// wydłużenie maksymalnego czasu wykonywania
 	set_time_limit(120);
@@ -131,9 +138,9 @@
 	{
 		printError("There was a problem accessing the database.");
 	}
-	/*catch(Exception $e)
+	catch(Exception $e)
 	{
 		printError("Internal error occurred.");
-	}*/
+	}
 	
 	

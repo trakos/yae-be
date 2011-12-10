@@ -1,3 +1,3 @@
-<? $this->render("UserServers/submenu"); ?>
+<? $this->render("blocks/submenu"); ?>>
 
 <? $changeForm->render(); ?>

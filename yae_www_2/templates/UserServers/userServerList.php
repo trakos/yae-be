@@ -1,5 +1,5 @@
 <? $this->render("blocks/snippets"); ?>
-<? $this->render("UserServers/submenu"); ?>
+<? $this->render("blocks/submenu"); ?>
 
 <? if ( empty($servers) ) { ?>
 	<table class="yae result"><tr><td><p class="infoMessage">Currently you have no servers added.</p></td></tr></table>

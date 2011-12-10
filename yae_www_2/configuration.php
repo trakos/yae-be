@@ -5,7 +5,7 @@
  * @author		Piotr Stankowski
  * @version		1.0
  */
-	define('T_DEBUG', 1);
+	define('T_DEBUG', 0);
 	/* sciezki systemowe */
 	define('SRC_PATH_MAIN', getcwd()."/..");
 	define('SRC_PATH_LIB',SRC_PATH_MAIN.'/lib');
@@ -17,7 +17,7 @@
 	define('SRC_PATH_CSS', './css/');
 	define('SRC_PATH_CSS_CACHE', '/cache/');
 	/* sciezki www */
-	define('WWW_PATH_MAIN','http://yaedev.s2.trakos.pl/');
+	define('WWW_PATH_MAIN','http://yaetmp.s2.trakos.pl/');
 	define('WWW_PATH_JS',WWW_PATH_MAIN.'/js/');
 	define('WWW_PATH_CSS',WWW_PATH_MAIN.'/css/');
 	/* baza danych */
@@ -35,6 +35,13 @@
 	define('E_SERVER_WRONG_PASSWORD', 202);
 	define('E_SERVER_DOESNT_EXISTS', 203);
 	define('E_SERVER_RCON_ENC_EMPTY', 204);
+	define('E_USER_DOESNT_EXISTS', 210);
+	define('E_INVITE_ALREADY_EXISTS', 211);
+	define('E_INVITE_IGNORED', 212);
+	define('E_INVITE_ALREADY_ACCEPTED', 213);
+	define('E_INVITE_DOESNT_EXISTS', 214);
+	define('E_INVITE_UNEXPECTED_STATUS', 215);
+	define('E_INVITE_SELF', 216);
 	/* kody błędów wewnętrznych */
 	define('E_CONTROLLER_DOESNT_EXIST', 101);
 	define('E_ACTION_DOESNT_EXIST', 102);

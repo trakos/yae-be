@@ -10,3 +10,13 @@
 <? function showYaeValue($row, $valueIndex, $type="player") { ?>
 	<td><?=View_Yae::formatValue($valueIndex, $row[$valueIndex], $type) ?></td>
 <? } ?>
+
+<? function showYaetStatus($status) { ?>
+	<? if ( $status == 'offline ') { ?>
+		offline
+	<? } else if ( $status == 'onlineNotPlaying' ) { ?>
+		online (without ET)
+	<? } else if ( $status == 'onlineWithET' ) { ?>
+		online playing ET
+	<? } ?>
+<? } ?>

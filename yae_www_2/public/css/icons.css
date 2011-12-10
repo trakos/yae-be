@@ -7,3 +7,6 @@ a.ipassword { background: url(../images/icons/key.png) left center no-repeat; }
 a.ideactivate { background: url(../images/icons/cog_delete.png) left center no-repeat; } 
 a.iactivate { background: url(../images/icons/cog_go.png) left center no-repeat; }  
 a.istats { background: url(../images/icons/chart_pie.png) left center no-repeat; }
+a.iaccept { background: url(../images/icons/accept.png) left center no-repeat; }
+a.irefuse { background: url(../images/icons/arrow_redo.png) left center no-repeat; }
+a.iignore { background: url(../images/icons/delete.png) left center no-repeat; }

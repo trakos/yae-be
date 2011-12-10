@@ -17,6 +17,7 @@ class Lib_Controller extends Tmvc_Controller_Abstract
 		$this->addStyle("style.css");
 		$this->addStyle("2/layout.css");
 		$this->addStyle("icons.css");
+		$this->addStyle("jquery.css");
 	}
 	
 	public function useSessionMessages()
@@ -47,6 +48,7 @@ class Lib_Controller extends Tmvc_Controller_Abstract
 		$this->addJavascript("jquery.js");
 		$this->addJavascript("jquery.query.js");
 		$this->addJavascript("jquery.slideOut.js");
+		$this->addJavascript("jquery.autocomplete.js");
 		$this->addJavascript("yae.js");
 		$jsFile = Tmvc_View::$controllerName.'/'.Tmvc_View::$actionName.'.js';
 		if ( file_exists(SRC_PATH_JS.'/'.$jsFile) )

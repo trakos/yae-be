@@ -118,7 +118,7 @@
             obj.css({ 'right': '-' + properties.containerWidth});
             settings.tabHandle.css({'left' : '-' + properties.tabWidth});
             
-            $('html').css('overflow-x', 'hidden');
+            //$('html').css('overflow-x', 'hidden');
         }
 
         //functions for animation events
