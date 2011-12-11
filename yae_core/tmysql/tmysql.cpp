@@ -50,6 +50,7 @@ selectResult& tmysql::select( selectFields& sf,  const char* tableName,  const c
 	}
 	selectResult* srp = new selectResult( sf, rows, size );
 	mysql_free_result(res);
+	delete[] rows;
 	return *srp;
 }
 

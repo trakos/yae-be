@@ -40,15 +40,16 @@ template <typename T> array<T>::array( array<T> const& src ):default_value(src.d
 template <typename T> array<T>& array<T>::operator= (const array<T>& src)
 {
 	default_value = src.default_value;
-        init(src.current_size);
-        for( index nr=0; nr<src.current_size; nr++ )
-        {
+	clear();
+	init(src.current_size);
+	for( index nr=0; nr<src.current_size; nr++ )
+	{
 		if(src.isset(nr))
 		{
 			set(nr, src[nr]);
 		}
-        }
-        used_size = src.used_size;
+	}
+	used_size = src.used_size;
 }
 
 template <typename T> void array<T>::init(const index size)
@@ -178,6 +179,10 @@ template <typename T> void array<T>::set_size(const index size)
 		data = newdata;
 		current_size = size;
 	}
+	else
+	{
+		throw 69;
+	}
 }
 
 template <typename T> void array<T>::adjust_size(const index size)
@@ -242,9 +247,13 @@ template <typename T> void array<T>::unset(index nr)
 
 template <typename T> void array<T>::clear()
 {
-	for(index nr=0; nr<this->used_size; nr++)
+	for(index nr=0; nr<this->current_size; nr++)
 	{
-		this->unset(nr);
+		//this->unset(nr);
+		if ( this->data && this->data[nr] )
+		{
+			delete this->data[nr];
+		}
 	}
 	if(this->data)
 	{

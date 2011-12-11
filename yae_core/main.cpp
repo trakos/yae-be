@@ -2,6 +2,14 @@
 #include <pthread.h>
 #include <math.h>
 
+#include <netinet/in.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <fcntl.h>
+
+
 #include "yae.h"
 
 int main_loop_interval = 10;		// seconds
@@ -13,12 +21,19 @@ int currently_checking = 0;
 //TODO: mutex_lock w mysqlu zapewne by sie przydalo zeby nie naduzywalo jednego polaczenia
 //TODO: brak pb na serwerze objawia sie wyslaniem informacji fffprint\n bez niczego po nich, a dla mnie to connection fail
 
+void printServerData(int id, unsigned int ip, int port)
+{
+	struct in_addr addr;
+	addr.s_addr = ip;
+	printf("Server: %d - %s:%d\n", id, inet_ntoa(addr), port);
+}
+
 void* process_server( void *data )
 {
 	currently_checking++;
 	printf("new thread\n");
 	server_data* server = (server_data*) data;
-	printf("Server: %d - %u:%d\n", server->id, server->ip, server->port);
+	printServerData(server->id, server->ip, server->port);
 	decode_rcon(server->rcon_password);
 	player_data* players = 0; //null
 	char server_name[SERVERNAME_LEN+1];
