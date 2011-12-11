@@ -670,10 +670,10 @@ int rcon( server_data* server, player_data* &players, int fails, char* server_na
 		result.clear();
 		usleep(1000000*0.51);
 		
-		command = "sl_sv_listplayers";
+		command = "ac_sv_listplayers";
 		try
 		{
-			raw_rcon(server->ip, server->port, server->rcon_password, "sl_sv_listplayers", str);
+			raw_rcon(server->ip, server->port, server->rcon_password, "ac_sv_listplayers", str);
 			analyze_packet( str, result );
 			slac_players = sl_sv_listplayers( result, slac_count );
 			for( int p=0; p<slac_count; p++ )
